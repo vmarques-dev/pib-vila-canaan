@@ -24,6 +24,7 @@
       "@/components/*": ["./components/*"],
       "@/lib/*": ["./lib/*"],
       "@/hooks/*": ["./hooks/*"],
+      "@/types": ["./lib/types"],
       "@/types/*": ["./lib/types/*"],
       "@/services/*": ["./lib/services/*"],
       "@/constants/*": ["./lib/constants/*"],

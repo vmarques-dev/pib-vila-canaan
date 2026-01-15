@@ -110,11 +110,11 @@ export default function VersiculoDestaquePage() {
       }
     }
 
-    // Converter strings vazias para null nas datas
+    // Converter strings vazias para undefined nas datas
     const dataToSubmit = {
       ...data,
-      data_inicio: data.data_inicio?.trim() || null,
-      data_fim: data.data_fim?.trim() || null,
+      data_inicio: data.data_inicio?.trim() || undefined,
+      data_fim: data.data_fim?.trim() || undefined,
     }
 
     if (editingItem) {

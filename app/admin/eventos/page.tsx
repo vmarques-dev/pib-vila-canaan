@@ -83,8 +83,8 @@ export default function EventosPage() {
 
       const dataToSubmit = {
         ...data,
-        data_fim: data.data_fim?.trim() || null,
-        imagem_url: finalImageUrl || null,
+        data_fim: data.data_fim?.trim() || undefined,
+        imagem_url: finalImageUrl || undefined,
       }
 
       if (editingItem) {

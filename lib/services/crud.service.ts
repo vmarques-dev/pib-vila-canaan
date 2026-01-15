@@ -7,7 +7,7 @@ export interface CRUDOptions<T> {
 }
 
 export interface CRUDResult<T> {
-  data: T | T[] | null
+  data: T | null
   error: Error | null
 }
 

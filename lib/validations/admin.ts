@@ -130,7 +130,7 @@ export const versiculoDestaqueSchema = z.object({
     .max(1000, 'Texto deve ter no máximo 1000 caracteres'),
   data_inicio: z.string().optional().or(z.literal('')),
   data_fim: z.string().optional().or(z.literal('')),
-  ativo: z.boolean().default(false),
+  ativo: z.boolean(),
 })
 
 export type VersiculoDestaqueFormData = z.infer<typeof versiculoDestaqueSchema>
