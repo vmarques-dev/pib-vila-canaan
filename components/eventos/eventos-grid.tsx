@@ -99,7 +99,7 @@ export default function EventosGrid({ proximosEventos, eventosAnteriores }: Even
               {proximosEventos.map((evento, index) => renderEventCard(evento, index))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
+            <div className="text-center py-12 rounded-lg">
               <p className="text-lg text-gray-500">
                 Nenhum evento agendado no momento.
               </p>
