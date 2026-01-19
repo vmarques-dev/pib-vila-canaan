@@ -33,7 +33,7 @@ export default async function Footer() {
               </div>
               <span className="font-bold text-lg text-white">Vila Canaan</span>
             </div>
-            <p className="text-gray-300 leading-relaxed mb-4">
+            <p className="text-gray-300 leading-relaxed mb-4 -mt-[1px]">
               Uma igreja que ama a Deus e serve às pessoas.
             </p>
             <div className="flex space-x-4">
