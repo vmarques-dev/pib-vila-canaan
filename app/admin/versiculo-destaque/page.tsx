@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo, useCallback } from 'react'
 import { Edit, Trash2, CheckCircle, Circle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,11 +8,14 @@ import { useAdminCRUD } from '@/hooks/useAdminCRUD'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminTable, AdminTableColumn, AdminTableAction } from '@/components/admin/AdminTable'
 import { AdminModal } from '@/components/admin/AdminModal'
-import { supabase } from '@/lib/supabase/client'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { logger } from '@/lib/logger'
 import { versiculoDestaqueSchema, type VersiculoDestaqueFormData } from '@/lib/validations/admin'
 import { toast } from 'sonner'
 
+/**
+ * Interface que representa um versículo em destaque
+ */
 interface VersiculoDestaque {
   id: string
   livro: string
@@ -50,7 +53,18 @@ const initialFormData = {
   ativo: false,
 }
 
+/**
+ * Página de gerenciamento de versículos em destaque
+ *
+ * Permite criar, editar, ativar/desativar e excluir versículos.
+ * Apenas um versículo pode estar ativo por vez - ao ativar um,
+ * os demais são automaticamente desativados.
+ *
+ * @see {@link file://../../../lib/supabase/browser.ts} Cliente Supabase utilizado
+ */
 export default function VersiculoDestaquePage() {
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
+
   const {
     items: versiculos,
     loading,
@@ -75,11 +89,63 @@ export default function VersiculoDestaquePage() {
     formState: { errors, isSubmitting },
     reset,
     setValue,
-    watch,
   } = useForm<VersiculoDestaqueFormData>({
     resolver: zodResolver(versiculoDestaqueSchema),
     defaultValues: initialFormData,
   })
+
+  /**
+   * Desativa outros versículos ativos, exceto o especificado
+   *
+   * Verifica primeiro se existem versículos ativos antes de tentar desativá-los.
+   * Se não houver nenhum versículo ativo (ou nenhum cadastrado), não faz nada.
+   *
+   * @param excludeId - ID do versículo a ser excluído da desativação (opcional)
+   * @returns Objeto com sucesso (true/false) e mensagem de erro se houver
+   */
+  const deactivateOtherVerses = useCallback(async (excludeId?: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      // Primeiro, verificar se há versículos ativos para desativar
+      let query = supabase
+        .from('versiculo_destaque')
+        .select('id')
+        .eq('ativo', true)
+
+      // Se tiver um ID para excluir, adicionar o filtro
+      if (excludeId) {
+        query = query.neq('id', excludeId)
+      }
+
+      const { data: activeVerses, error: selectError } = await query
+
+      if (selectError) {
+        logger.error('Erro ao verificar versículos ativos', selectError)
+        return { success: false, error: 'Erro ao verificar versículos ativos' }
+      }
+
+      // Se não houver versículos ativos para desativar, retornar sucesso
+      if (!activeVerses || activeVerses.length === 0) {
+        return { success: true }
+      }
+
+      // Desativar os versículos ativos encontrados
+      const idsToDeactivate = activeVerses.map(v => v.id)
+      const { error: updateError } = await supabase
+        .from('versiculo_destaque')
+        .update({ ativo: false })
+        .in('id', idsToDeactivate)
+
+      if (updateError) {
+        logger.error('Erro ao desativar versículos', updateError)
+        return { success: false, error: 'Erro ao desativar outros versículos' }
+      }
+
+      return { success: true }
+    } catch (error) {
+      logger.error('Erro inesperado ao desativar versículos', error)
+      return { success: false, error: 'Erro inesperado ao desativar versículos' }
+    }
+  }, [supabase])
 
   // Preencher formulário ao editar
   useEffect(() => {
@@ -95,17 +161,17 @@ export default function VersiculoDestaquePage() {
     }
   }, [editingItem, setValue, reset])
 
+  /**
+   * Processa o envio do formulário de criação/edição
+   *
+   * Se o versículo estiver sendo ativado, desativa os demais primeiro.
+   */
   const onSubmit = async (data: VersiculoDestaqueFormData) => {
     // Se está ativando, desativar todos os outros primeiro
     if (data.ativo) {
-      const { error: deactivateError } = await supabase
-        .from('versiculo_destaque')
-        .update({ ativo: false })
-        .neq('id', editingItem?.id || '')
-
-      if (deactivateError) {
-        logger.error('Erro ao desativar outros versículos', deactivateError)
-        toast.error('Erro ao desativar outros versículos')
+      const { success, error } = await deactivateOtherVerses(editingItem?.id)
+      if (!success) {
+        toast.error(error || 'Erro ao desativar outros versículos')
         return
       }
     }
@@ -131,31 +197,34 @@ export default function VersiculoDestaquePage() {
     reset(initialFormData)
   }
 
-  const handleToggleAtivo = async (id: string, ativo: boolean) => {
-    if (!ativo) {
+  /**
+   * Alterna o estado ativo/inativo de um versículo
+   *
+   * Ao ativar, desativa todos os outros versículos primeiro.
+   *
+   * @param id - ID do versículo
+   * @param currentlyActive - Estado atual (true = ativo, false = inativo)
+   */
+  const handleToggleAtivo = async (id: string, currentlyActive: boolean) => {
+    if (!currentlyActive) {
       // Ativando: desativar todos os outros primeiro
-      const { error: deactivateError } = await supabase
-        .from('versiculo_destaque')
-        .update({ ativo: false })
-        .neq('id', id)
-
-      if (deactivateError) {
-        logger.error('Erro ao desativar outros versículos', deactivateError)
-        toast.error('Erro ao desativar outros versículos')
+      const { success, error } = await deactivateOtherVerses(id)
+      if (!success) {
+        toast.error(error || 'Erro ao desativar outros versículos')
         return
       }
 
       // Ativar o selecionado
-      const { error } = await supabase
+      const { error: activateError } = await supabase
         .from('versiculo_destaque')
         .update({ ativo: true })
         .eq('id', id)
 
-      if (error) {
-        logger.error('Erro ao ativar versículo', error)
-        toast.error('Erro ao ativar versículo: ' + error.message)
+      if (activateError) {
+        logger.error('Erro ao ativar versículo', activateError)
+        toast.error('Erro ao ativar versículo: ' + activateError.message)
       } else {
-        toast.success('Versículo ativado! Outros foram desativados.')
+        toast.success('Versículo ativado!')
         await fetchItems()
       }
     } else {
