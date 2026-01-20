@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useCallback } from 'react'
+import { useEffect, useMemo, useCallback, useState } from 'react'
 import { Edit, Trash2, CheckCircle, Circle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,6 +8,7 @@ import { useAdminCRUD } from '@/hooks/useAdminCRUD'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminTable, AdminTableColumn, AdminTableAction } from '@/components/admin/AdminTable'
 import { AdminModal } from '@/components/admin/AdminModal'
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { logger } from '@/lib/logger'
 import { versiculoDestaqueSchema, type VersiculoDestaqueFormData } from '@/lib/validations/admin'
@@ -65,6 +66,11 @@ const initialFormData = {
 export default function VersiculoDestaquePage() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), [])
 
+  // Estado do diálogo de confirmação de exclusão
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<VersiculoDestaque | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+
   const {
     items: versiculos,
     loading,
@@ -72,7 +78,6 @@ export default function VersiculoDestaquePage() {
     editingItem,
     handleCreate,
     handleUpdate,
-    handleDelete,
     fetchItems,
     openCreateModal,
     openEditModal,
@@ -198,6 +203,54 @@ export default function VersiculoDestaquePage() {
   }
 
   /**
+   * Abre o diálogo de confirmação de exclusão
+   *
+   * @param versiculo - Versículo a ser excluído
+   */
+  const openDeleteDialog = (versiculo: VersiculoDestaque) => {
+    setItemToDelete(versiculo)
+    setShowDeleteDialog(true)
+  }
+
+  /**
+   * Fecha o diálogo de confirmação de exclusão
+   */
+  const closeDeleteDialog = () => {
+    setShowDeleteDialog(false)
+    setItemToDelete(null)
+  }
+
+  /**
+   * Confirma e executa a exclusão do versículo
+   */
+  const confirmDelete = async () => {
+    if (!itemToDelete) return
+
+    setIsDeleting(true)
+
+    try {
+      const { error } = await supabase
+        .from('versiculo_destaque')
+        .delete()
+        .eq('id', itemToDelete.id)
+
+      if (error) {
+        logger.error('Erro ao excluir versículo', error)
+        toast.error('Erro ao excluir versículo: ' + error.message)
+      } else {
+        toast.success('Versículo excluído com sucesso!')
+        await fetchItems()
+      }
+    } catch (error) {
+      logger.error('Erro inesperado ao excluir versículo', error)
+      toast.error('Erro inesperado ao excluir versículo')
+    } finally {
+      setIsDeleting(false)
+      closeDeleteDialog()
+    }
+  }
+
+  /**
    * Alterna o estado ativo/inativo de um versículo
    *
    * Ao ativar, desativa todos os outros versículos primeiro.
@@ -315,8 +368,7 @@ export default function VersiculoDestaquePage() {
     },
     {
       icon: <Trash2 size={18} />,
-      onClick: (versiculo) =>
-        handleDelete(versiculo.id, 'Tem certeza que deseja deletar este versículo?'),
+      onClick: openDeleteDialog,
       className: 'text-red-600 hover:text-red-900',
       ariaLabel: 'Deletar versículo',
     },
@@ -500,6 +552,22 @@ export default function VersiculoDestaquePage() {
           </div>
         </form>
       </AdminModal>
+
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        onClose={closeDeleteDialog}
+        onConfirm={confirmDelete}
+        title="Excluir versículo"
+        message={
+          itemToDelete
+            ? `Tem certeza que deseja excluir o versículo "${itemToDelete.livro} ${itemToDelete.referencia}"? Esta ação não pode ser desfeita.`
+            : ''
+        }
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        variant="danger"
+        isLoading={isDeleting}
+      />
     </main>
   )
 }
