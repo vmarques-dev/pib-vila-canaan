@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
+import { useState, useEffect, useMemo } from 'react'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { logger } from '@/lib/logger'
 import { toast } from 'sonner'
 
+/**
+ * Opções de configuração do hook useAdminCRUD
+ */
 interface UseAdminCRUDOptions<T> {
   tableName: string
   orderBy?: {
@@ -13,55 +15,84 @@ interface UseAdminCRUDOptions<T> {
   initialFormData: Partial<T>
 }
 
+/**
+ * Retorno do hook useAdminCRUD
+ */
 interface UseAdminCRUDReturn<T> {
-  // Estado
+  /** Lista de itens carregados da tabela */
   items: T[]
+  /** Indica se está carregando dados */
   loading: boolean
+  /** Controla visibilidade do modal de criação/edição */
   showModal: boolean
+  /** Item sendo editado ou null se criando novo */
   editingItem: T | null
+  /** Dados do formulário atual */
   formData: Partial<T>
 
-  // Funções de estado
+  /** Define visibilidade do modal */
   setShowModal: (show: boolean) => void
+  /** Define item em edição */
   setEditingItem: (item: T | null) => void
+  /** Define dados do formulário */
   setFormData: (data: Partial<T>) => void
 
-  // Funções CRUD
+  /** Recarrega itens da tabela */
   fetchItems: () => Promise<void>
+  /** Cria novo item */
   handleCreate: (data: Partial<T>) => Promise<boolean>
+  /** Atualiza item existente */
   handleUpdate: (id: string, data: Partial<T>) => Promise<boolean>
+  /** Deleta item */
   handleDelete: (id: string, confirmMessage?: string) => Promise<boolean>
 
-  // Funções auxiliares
+  /** Abre modal para criar novo item */
   openCreateModal: () => void
+  /** Abre modal para editar item existente */
   openEditModal: (item: T) => void
+  /** Fecha modal e limpa estado */
   closeModal: () => void
 }
 
+/**
+ * Hook genérico para operações CRUD no painel administrativo
+ *
+ * Gerencia estado de listagem, criação, edição e exclusão de itens
+ * de qualquer tabela do Supabase. A proteção de rotas é delegada
+ * ao middleware server-side, evitando verificações redundantes.
+ *
+ * @template T - Tipo do item (deve ter propriedade 'id')
+ * @param options - Configurações do hook
+ * @returns Estado e funções para operações CRUD
+ *
+ * @example
+ * ```tsx
+ * const {
+ *   items,
+ *   loading,
+ *   handleCreate,
+ *   openCreateModal,
+ * } = useAdminCRUD<Evento>({
+ *   tableName: 'eventos',
+ *   orderBy: { column: 'data_inicio', ascending: false },
+ *   initialFormData: { titulo: '', descricao: '' },
+ * })
+ * ```
+ *
+ * @see {@link file://../middleware.ts} Middleware que protege rotas /admin/*
+ */
 export function useAdminCRUD<T extends { id: string }>({
   tableName,
   orderBy = { column: 'created_at', ascending: false },
   initialFormData,
 }: UseAdminCRUDOptions<T>): UseAdminCRUDReturn<T> {
-  const router = useRouter()
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
   const [items, setItems] = useState<T[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingItem, setEditingItem] = useState<T | null>(null)
   const [formData, setFormData] = useState<Partial<T>>(initialFormData)
 
-  // Verifica autenticação
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/login/admin')
-      }
-    }
-    checkAuth()
-  }, [router])
-
-  // Busca inicial
   useEffect(() => {
     fetchItems()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps

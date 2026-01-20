@@ -1,20 +1,34 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { LogOut } from 'lucide-react'
 import { logger } from '@/lib/logger'
 import { useAuth } from '@/lib/hooks/useAuth'
 
+/**
+ * Estatísticas exibidas no dashboard
+ */
 interface Stats {
   eventos: number
   estudos: number
   fotos: number
 }
 
+/**
+ * Página principal do painel administrativo
+ *
+ * Exibe estatísticas gerais do sistema (eventos, estudos, fotos)
+ * e informações do usuário logado. Atualiza automaticamente
+ * quando há mudanças via evento 'admin-stats-update'.
+ *
+ * @see {@link file://../../../lib/supabase/browser.ts} Cliente Supabase utilizado
+ * @see {@link file://../../../middleware.ts} Middleware que protege esta rota
+ */
 export default function DashboardPage() {
   const router = useRouter()
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
   const { user, logout } = useAuth()
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState<Stats>({

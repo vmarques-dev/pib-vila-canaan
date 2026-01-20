@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Edit, Trash2, Archive } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,11 +8,26 @@ import { useAdminCRUD } from '@/hooks/useAdminCRUD'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminTable, AdminTableColumn, AdminTableAction } from '@/components/admin/AdminTable'
 import { AdminModal } from '@/components/admin/AdminModal'
-import { supabase } from '@/lib/supabase/client'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { logger } from '@/lib/logger'
 import { estudoSchema, type EstudoFormData } from '@/lib/validations/admin'
 import { toast } from 'sonner'
 
+/**
+ * Página de gerenciamento de estudos bíblicos
+ *
+ * Permite criar, editar, arquivar e excluir estudos bíblicos.
+ * Cada estudo contém referência bíblica (livro, capítulo, versículo),
+ * texto do versículo, conteúdo do estudo e categoria.
+ *
+ * @see {@link file://../../../hooks/useAdminCRUD.ts} Hook de CRUD utilizado
+ * @see {@link file://../../../lib/supabase/browser.ts} Cliente Supabase utilizado
+ * @see {@link file://../../../middleware.ts} Middleware que protege esta rota
+ */
+
+/**
+ * Representa um estudo bíblico
+ */
 interface Estudo {
   id: string
   titulo: string
@@ -54,6 +69,8 @@ const initialFormData = {
 }
 
 export default function EstudosPage() {
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
+
   const {
     items: estudos,
     loading,

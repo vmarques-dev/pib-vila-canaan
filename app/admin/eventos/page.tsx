@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Edit, Trash2, CheckCircle } from 'lucide-react'
 import { useAdminCRUD } from '@/hooks/useAdminCRUD'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
@@ -9,10 +9,22 @@ import { AdminModal } from '@/components/admin/AdminModal'
 import { EventoForm } from '@/components/admin/eventos/EventoForm'
 import { type EventoFormData } from '@/lib/validations/admin'
 import { type Evento } from '@/lib/types'
-import { supabase } from '@/lib/supabase/client'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { uploadImage, deleteImage, optimizeImage } from '@/lib/services/storage.service'
 import { toast } from 'sonner'
 import { logger } from '@/lib/logger'
+
+/**
+ * Página de gerenciamento de eventos
+ *
+ * Permite criar, editar, concluir e excluir eventos da igreja.
+ * Suporta upload de imagens com otimização automática.
+ * Ao concluir um evento, a imagem é excluída para economizar espaço.
+ *
+ * @see {@link file://../../../hooks/useAdminCRUD.ts} Hook de CRUD utilizado
+ * @see {@link file://../../../lib/supabase/browser.ts} Cliente Supabase utilizado
+ * @see {@link file://../../../middleware.ts} Middleware que protege esta rota
+ */
 
 const initialFormData = {
   titulo: '',
@@ -25,6 +37,7 @@ const initialFormData = {
 }
 
 export default function EventosPage() {
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
   const [uploadingImage, setUploadingImage] = useState(false)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)

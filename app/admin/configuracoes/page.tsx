@@ -1,11 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase/client'
+import { useEffect, useState, useMemo } from 'react'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { Save } from 'lucide-react'
 import { logger } from '@/lib/logger'
 import { toast } from 'sonner'
 
+/**
+ * Dados de configuração da igreja
+ */
 interface Configuracoes {
   id: string
   nome: string
@@ -16,7 +19,18 @@ interface Configuracoes {
   visao: string
 }
 
+/**
+ * Página de configurações gerais da igreja
+ *
+ * Permite editar informações básicas exibidas no site público:
+ * nome, endereço, telefone, email, missão e visão da igreja.
+ * Os dados são persistidos na tabela 'informacoes_igreja'.
+ *
+ * @see {@link file://../../../lib/supabase/browser.ts} Cliente Supabase utilizado
+ * @see {@link file://../../../middleware.ts} Middleware que protege esta rota
+ */
 export default function ConfiguracoesPage() {
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [configId, setConfigId] = useState<string | null>(null)
