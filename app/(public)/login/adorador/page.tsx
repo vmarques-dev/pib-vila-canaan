@@ -1,25 +1,44 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { ArrowLeft } from 'lucide-react'
 
+/**
+ * Página de login para membros da igreja (adoradores)
+ *
+ * Implementa autenticação simples com email e senha para membros cadastrados.
+ * Diferente do login admin, não requer verificações adicionais de role ou
+ * registro em tabelas especiais.
+ *
+ * Após autenticação bem-sucedida, redireciona para a página inicial (/).
+ * Também oferece links para recuperação de senha e cadastro de novos membros.
+ *
+ * @see {@link file://../../../../lib/supabase/browser.ts} Cliente Supabase utilizado
+ * @see {@link file://../admin/page.tsx} Login para administradores (com verificações adicionais)
+ */
 export default function LoginAdoradorPage() {
   const router = useRouter()
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  /**
+   * Processa o envio do formulário de login
+   *
+   * Autentica o usuário via Supabase Auth e, em caso de sucesso,
+   * atualiza os cookies via router.refresh() e redireciona para home.
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
     try {
-      // Login com email e senha
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -32,7 +51,7 @@ export default function LoginAdoradorPage() {
       }
 
       if (data.user) {
-        // Login bem-sucedido, redireciona para home
+        router.refresh()
         router.push('/')
       }
     } catch (err) {

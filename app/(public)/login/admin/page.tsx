@@ -1,19 +1,42 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { logger } from '@/lib/logger'
 
+/**
+ * Página de login para administradores
+ *
+ * Implementa autenticação com verificação em três camadas:
+ * 1. Credenciais válidas (email/senha)
+ * 2. Role 'admin' no user_metadata do Supabase Auth
+ * 3. Registro ativo na tabela usuarios_admin
+ *
+ * Após autenticação bem-sucedida, redireciona para /admin/dashboard.
+ * Em caso de falha em qualquer camada, exibe mensagem de erro apropriada
+ * e realiza logout para limpar sessão parcial.
+ *
+ * @see {@link file://../../../../lib/supabase/browser.ts} Cliente Supabase utilizado
+ * @see {@link file://../../../../middleware.ts} Middleware que protege rotas /admin/*
+ */
 export default function LoginAdminPage() {
   const router = useRouter()
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  /**
+   * Processa o envio do formulário de login
+   *
+   * Executa as três verificações de segurança em sequência.
+   * Se todas passarem, atualiza os cookies via router.refresh()
+   * e redireciona para o dashboard administrativo.
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
@@ -66,6 +89,7 @@ export default function LoginAdminPage() {
           return
         }
 
+        router.refresh()
         router.push('/admin/dashboard')
       }
     } catch (err) {
