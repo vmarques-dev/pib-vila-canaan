@@ -29,7 +29,7 @@ export default function VersiculoSection({ versiculo }: VersiculoSectionProps) {
           </h2>
           {versiculo && versiculo.texto?.trim() ? (
             <>
-              <blockquote className="text-2xl md:text-3xl text-gray-800 font-serif italic mb-4 leading-relaxed">
+              <blockquote className="text-xl md:text-2xl text-gray-800 font-serif italic mb-4 leading-relaxed">
                 "{versiculo.texto}"
               </blockquote>
               <p className="text-lg md:text-xl text-blue-700 font-semibold">
