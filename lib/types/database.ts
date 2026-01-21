@@ -3,8 +3,6 @@ export interface VersiculoDestaque {
   livro: string
   referencia: string
   texto: string
-  data_inicio?: string
-  data_fim?: string
   ativo: boolean
   created_at: string
 }

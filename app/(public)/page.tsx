@@ -6,6 +6,8 @@ import EventosSection from '@/components/home/eventos-section'
 import MinisteriosSection from '@/components/home/ministerios-section'
 import CTASection from '@/components/home/cta-section'
 
+export const revalidate = 3600
+
 async function getVersiculoDestaque(): Promise<VersiculoDestaque | null> {
   try {
     const { data, error } = await supabase

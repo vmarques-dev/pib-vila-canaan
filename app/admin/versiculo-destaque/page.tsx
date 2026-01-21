@@ -22,8 +22,6 @@ interface VersiculoDestaque {
   livro: string
   referencia: string
   texto: string
-  data_inicio?: string
-  data_fim?: string
   ativo: boolean
   created_at: string
 }
@@ -49,8 +47,6 @@ const initialFormData = {
   livro: '',
   referencia: '',
   texto: '',
-  data_inicio: '',
-  data_fim: '',
   ativo: false,
 }
 
@@ -158,8 +154,6 @@ export default function VersiculoDestaquePage() {
       setValue('livro', editingItem.livro)
       setValue('referencia', editingItem.referencia)
       setValue('texto', editingItem.texto)
-      setValue('data_inicio', editingItem.data_inicio || '')
-      setValue('data_fim', editingItem.data_fim || '')
       setValue('ativo', editingItem.ativo)
     } else {
       reset(initialFormData)
@@ -181,17 +175,10 @@ export default function VersiculoDestaquePage() {
       }
     }
 
-    // Converter strings vazias para undefined nas datas
-    const dataToSubmit = {
-      ...data,
-      data_inicio: data.data_inicio?.trim() || undefined,
-      data_fim: data.data_fim?.trim() || undefined,
-    }
-
     if (editingItem) {
-      await handleUpdate(editingItem.id, dataToSubmit)
+      await handleUpdate(editingItem.id, data)
     } else {
-      await handleCreate(dataToSubmit)
+      await handleCreate(data)
     }
 
     reset(initialFormData)
@@ -315,27 +302,6 @@ export default function VersiculoDestaquePage() {
             : versiculo.texto}
         </div>
       ),
-    },
-    {
-      header: 'Período',
-      accessor: (versiculo) => {
-        if (!versiculo.data_inicio && !versiculo.data_fim) {
-          return <div className="text-sm text-gray-500">-</div>
-        }
-
-        const formatDate = (dateStr: string) => {
-          const [ano, mes, dia] = dateStr.split('-')
-          return `${dia}/${mes}/${ano}`
-        }
-
-        return (
-          <div className="text-sm text-gray-500">
-            {versiculo.data_inicio && formatDate(versiculo.data_inicio)}
-            {versiculo.data_inicio && versiculo.data_fim && ' - '}
-            {versiculo.data_fim && formatDate(versiculo.data_fim)}
-          </div>
-        )
-      },
     },
     {
       header: 'Status',
@@ -470,48 +436,6 @@ export default function VersiculoDestaquePage() {
             {errors.texto && (
               <p className="text-sm text-red-500 mt-1">{errors.texto.message}</p>
             )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="data_inicio"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Data Início (opcional)
-              </label>
-              <input
-                id="data_inicio"
-                type="date"
-                {...register('data_inicio')}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-                  errors.data_inicio ? 'border-red-500' : ''
-                }`}
-              />
-              {errors.data_inicio && (
-                <p className="text-sm text-red-500 mt-1">{errors.data_inicio.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label
-                htmlFor="data_fim"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Data Fim (opcional)
-              </label>
-              <input
-                id="data_fim"
-                type="date"
-                {...register('data_fim')}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-                  errors.data_fim ? 'border-red-500' : ''
-                }`}
-              />
-              {errors.data_fim && (
-                <p className="text-sm text-red-500 mt-1">{errors.data_fim.message}</p>
-              )}
-            </div>
           </div>
 
           <div className="flex items-center gap-2">
