@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { ArrowLeft } from 'lucide-react'
 
 export default function CadastroPage() {
   const router = useRouter()
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

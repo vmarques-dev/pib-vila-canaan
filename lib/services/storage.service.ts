@@ -1,9 +1,13 @@
-import { supabase } from '@/lib/supabase/client'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { logger } from '@/lib/logger'
 import { STORAGE_CONFIG } from '@/lib/constants/config'
 
 /**
  * Faz upload de uma imagem para o bucket do Supabase Storage
+ *
+ * Utiliza o cliente SSR do Supabase para garantir acesso à sessão
+ * de autenticação do usuário, necessária para as políticas RLS.
+ *
  * @param file - Arquivo a ser enviado
  * @param bucket - Nome do bucket
  * @param folder - Pasta dentro do bucket (opcional)
@@ -36,6 +40,9 @@ export async function uploadImage(
     // Definir caminho completo
     const filePath = folder ? `${folder}/${fileName}` : fileName
 
+    // Cliente com sessão de autenticação
+    const supabase = createSupabaseBrowserClient()
+
     // Fazer upload
     const { data, error } = await supabase.storage
       .from(bucket)
@@ -64,6 +71,10 @@ export async function uploadImage(
 
 /**
  * Exclui uma imagem do bucket do Supabase Storage
+ *
+ * Utiliza o cliente SSR do Supabase para garantir acesso à sessão
+ * de autenticação do usuário, necessária para as políticas RLS.
+ *
  * @param imageUrl - URL da imagem a ser excluída
  * @param bucket - Nome do bucket
  * @returns true se excluiu com sucesso, false caso contrário
@@ -86,6 +97,9 @@ export async function deleteImage(
     }
 
     const filePath = urlParts[1]
+
+    // Cliente com sessão de autenticação
+    const supabase = createSupabaseBrowserClient()
 
     // Excluir arquivo
     const { error } = await supabase.storage

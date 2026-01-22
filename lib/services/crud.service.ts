@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { logger } from '@/lib/logger'
 
 export interface CRUDOptions<T> {
@@ -18,6 +18,7 @@ export async function fetchItems<T>(
   options: CRUDOptions<T>
 ): Promise<CRUDResult<T[]>> {
   try {
+    const supabase = createSupabaseBrowserClient()
     let query = supabase.from(options.tableName).select('*')
 
     if (options.orderBy) {
@@ -48,6 +49,7 @@ export async function createItem<T>(
   data: Partial<T>
 ): Promise<CRUDResult<T>> {
   try {
+    const supabase = createSupabaseBrowserClient()
     const { data: created, error } = await supabase
       .from(tableName)
       .insert([data])
@@ -75,6 +77,7 @@ export async function updateItem<T>(
   data: Partial<T>
 ): Promise<CRUDResult<T>> {
   try {
+    const supabase = createSupabaseBrowserClient()
     const { data: updated, error } = await supabase
       .from(tableName)
       .update(data)
@@ -102,6 +105,7 @@ export async function deleteItem(
   id: string
 ): Promise<{ error: Error | null }> {
   try {
+    const supabase = createSupabaseBrowserClient()
     const { error } = await supabase.from(tableName).delete().eq('id', id)
 
     if (error) {

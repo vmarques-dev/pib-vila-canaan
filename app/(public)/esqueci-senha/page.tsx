@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useMemo } from 'react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase/client'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { ArrowLeft } from 'lucide-react'
 
 export default function EsqueciSenhaPage() {
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
