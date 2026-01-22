@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Edit, Trash2, CheckCircle } from 'lucide-react'
+import { parseISO, format } from 'date-fns'
 import { useAdminCRUD } from '@/hooks/useAdminCRUD'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminTable, AdminTableColumn, AdminTableAction } from '@/components/admin/AdminTable'
@@ -189,7 +190,7 @@ export default function EventosPage() {
       header: 'Data',
       accessor: (evento) => (
         <div className="text-sm text-gray-500">
-          {new Date(evento.data_inicio).toLocaleDateString('pt-BR')}
+          {format(parseISO(evento.data_inicio), 'dd/MM/yyyy')}
         </div>
       ),
     },

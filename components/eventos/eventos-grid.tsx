@@ -6,7 +6,7 @@ import { Evento } from '@/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar, MapPin, Clock } from 'lucide-react'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import EventoModal from './evento-modal'
 
@@ -57,7 +57,7 @@ export default function EventosGrid({ proximosEventos, eventosAnteriores }: Even
           <CardDescription className="space-y-2 text-base">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              {format(new Date(evento.data_inicio), "dd 'de' MMMM 'de' yyyy", {
+              {format(parseISO(evento.data_inicio), "dd 'de' MMMM 'de' yyyy", {
                 locale: ptBR,
               })}
             </div>
