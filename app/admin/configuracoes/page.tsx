@@ -1,22 +1,50 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { IMaskInput } from 'react-imask'
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
-import { Save } from 'lucide-react'
+import { Save, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { logger } from '@/lib/logger'
 import { toast } from 'sonner'
+import {
+  configuracoesSchema,
+  type ConfiguracoesFormData,
+} from '@/lib/validations/admin'
 
 /**
- * Dados de configuração da igreja
+ * Componente de campo de formulário com suporte a erros
  */
-interface Configuracoes {
-  id: string
-  nome: string
-  endereco: string
-  telefone: string
-  email: string
-  missao: string
-  visao: string
+interface FormFieldProps {
+  label: string
+  htmlFor: string
+  error?: string
+  children: React.ReactNode
+  hint?: string
+}
+
+function FormField({ label, htmlFor, error, children, hint }: FormFieldProps) {
+  return (
+    <div>
+      <label
+        htmlFor={htmlFor}
+        className="block text-sm font-medium text-gray-700 mb-2"
+      >
+        {label}
+      </label>
+      {children}
+      {hint && !error && (
+        <p className="mt-1 text-xs text-gray-500">{hint}</p>
+      )}
+      {error && (
+        <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+          <AlertCircle size={14} />
+          {error}
+        </p>
+      )}
+    </div>
+  )
 }
 
 /**
@@ -26,29 +54,41 @@ interface Configuracoes {
  * nome, endereço, telefone, email, missão e visão da igreja.
  * Os dados são persistidos na tabela 'informacoes_igreja'.
  *
+ * Implementa validações enterprise-level:
+ * - Validação de formato de telefone brasileiro com máscara
+ * - Validação rigorosa de email com bloqueio de domínios descartáveis
+ * - Feedback visual em tempo real de erros de validação
+ * - Sanitização automática de inputs
+ *
+ * @see {@link file://../../../lib/validations/admin.ts} Schema de validação
  * @see {@link file://../../../lib/supabase/browser.ts} Cliente Supabase utilizado
  * @see {@link file://../../../middleware.ts} Middleware que protege esta rota
  */
 export default function ConfiguracoesPage() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), [])
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
   const [configId, setConfigId] = useState<string | null>(null)
-  const [formData, setFormData] = useState({
-    nome: '',
-    endereco: '',
-    telefone: '',
-    email: '',
-    missao: '',
-    visao: '',
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting, isDirty },
+    reset,
+  } = useForm<ConfiguracoesFormData>({
+    resolver: zodResolver(configuracoesSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      nome: '',
+      endereco: '',
+      telefone: '',
+      email: '',
+      missao: '',
+      visao: '',
+    },
   })
 
-  useEffect(() => {
-    // Middleware já protege a rota, apenas carregar configurações
-    fetchConfiguracoes()
-  }, [])
-
-  const fetchConfiguracoes = async () => {
+  const fetchConfiguracoes = useCallback(async () => {
     const { data, error } = await supabase
       .from('informacoes_igreja')
       .select('*')
@@ -58,7 +98,7 @@ export default function ConfiguracoesPage() {
       logger.error('Erro ao buscar configurações', error)
     } else if (data) {
       setConfigId(data.id)
-      setFormData({
+      reset({
         nome: data.nome || '',
         endereco: data.endereco || '',
         telefone: data.telefone || '',
@@ -68,12 +108,13 @@ export default function ConfiguracoesPage() {
       })
     }
     setLoading(false)
-  }
+  }, [supabase, reset])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSaving(true)
+  useEffect(() => {
+    fetchConfiguracoes()
+  }, [fetchConfiguracoes])
 
+  const onSubmit = async (formData: ConfiguracoesFormData) => {
     try {
       if (configId) {
         const { error } = await supabase
@@ -84,9 +125,11 @@ export default function ConfiguracoesPage() {
         if (error) {
           logger.error('Erro ao atualizar configurações', error)
           toast.error('Erro ao atualizar configurações: ' + error.message)
-        } else {
-          toast.success('Configurações atualizadas com sucesso!')
+          return
         }
+
+        toast.success('Configurações atualizadas com sucesso!')
+        reset(formData)
       } else {
         const { data, error } = await supabase
           .from('informacoes_igreja')
@@ -97,23 +140,39 @@ export default function ConfiguracoesPage() {
         if (error) {
           logger.error('Erro ao criar configurações', error)
           toast.error('Erro ao criar configurações: ' + error.message)
-        } else {
-          setConfigId(data.id)
-          toast.success('Configurações criadas com sucesso!')
+          return
         }
+
+        setConfigId(data.id)
+        toast.success('Configurações criadas com sucesso!')
+        reset(formData)
       }
     } catch (error) {
       logger.error('Erro ao salvar configurações', error)
       toast.error('Erro ao salvar configurações')
-    } finally {
-      setSaving(false)
     }
   }
+
+  const inputClassName = (hasError: boolean) =>
+    `w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors ${
+      hasError
+        ? 'border-red-500 focus:ring-red-500'
+        : 'border-gray-300 focus:border-blue-500'
+    }`
+
+  const textareaClassName = (hasError: boolean) =>
+    `w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none transition-colors ${
+      hasError
+        ? 'border-red-500 focus:ring-red-500'
+        : 'border-gray-300 focus:border-blue-500'
+    }`
 
   if (loading) {
     return (
       <main className="p-8">
-        <div>Carregando...</div>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+        </div>
       </main>
     )
   }
@@ -122,127 +181,141 @@ export default function ConfiguracoesPage() {
     <main className="p-8">
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Configurações</h1>
-        <p className="text-gray-600 mt-1">Configure as informações da igreja</p>
+        <p className="text-gray-600 mt-1">
+          Configure as informações da igreja exibidas no site
+        </p>
       </header>
 
       <div className="bg-white rounded-lg shadow p-8 max-w-3xl">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              htmlFor="nome"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Nome da Igreja
-            </label>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            label="Nome da Igreja"
+            htmlFor="nome"
+            error={errors.nome?.message}
+          >
             <input
               id="nome"
               type="text"
-              value={formData.nome}
-              onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              required
+              {...register('nome')}
+              className={inputClassName(!!errors.nome)}
+              placeholder="Ex: Igreja Batista Central"
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label
-              htmlFor="endereco"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Endereço
-            </label>
+          <FormField
+            label="Endereço"
+            htmlFor="endereco"
+            error={errors.endereco?.message}
+            hint="Inclua rua, número, bairro, cidade e CEP"
+          >
             <input
               id="endereco"
               type="text"
-              value={formData.endereco}
-              onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              required
+              {...register('endereco')}
+              className={inputClassName(!!errors.endereco)}
+              placeholder="Ex: Rua das Flores, 123 - Centro, São Paulo/SP - CEP 01234-567"
             />
-          </div>
+          </FormField>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="telefone"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Telefone
-              </label>
-              <input
-                id="telefone"
-                type="tel"
-                value={formData.telefone}
-                onChange={(e) =>
-                  setFormData({ ...formData, telefone: e.target.value })
-                }
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                required
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              label="Telefone"
+              htmlFor="telefone"
+              error={errors.telefone?.message}
+              hint="Formato: (XX) XXXXX-XXXX"
+            >
+              <Controller
+                name="telefone"
+                control={control}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <IMaskInput
+                    id="telefone"
+                    mask={[
+                      { mask: '(00) 0000-0000' },
+                      { mask: '(00) 00000-0000' },
+                    ]}
+                    value={value}
+                    onAccept={(val) => onChange(val)}
+                    onBlur={onBlur}
+                    inputRef={ref}
+                    className={inputClassName(!!errors.telefone)}
+                    placeholder="(21) 99999-9999"
+                  />
+                )}
               />
-            </div>
+            </FormField>
 
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Email
-              </label>
+            <FormField
+              label="Email"
+              htmlFor="email"
+              error={errors.email?.message}
+            >
               <input
                 id="email"
                 type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                required
+                {...register('email')}
+                className={inputClassName(!!errors.email)}
+                placeholder="contato@igreja.com.br"
               />
-            </div>
+            </FormField>
           </div>
 
-          <div>
-            <label
-              htmlFor="missao"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Missão
-            </label>
+          <FormField
+            label="Missão"
+            htmlFor="missao"
+            error={errors.missao?.message}
+            hint="Descreva a missão da igreja (mín. 20 caracteres)"
+          >
             <textarea
               id="missao"
-              value={formData.missao}
-              onChange={(e) => setFormData({ ...formData, missao: e.target.value })}
+              {...register('missao')}
               rows={4}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-              required
+              className={textareaClassName(!!errors.missao)}
+              placeholder="Descreva a missão da igreja..."
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label
-              htmlFor="visao"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Visão
-            </label>
+          <FormField
+            label="Visão"
+            htmlFor="visao"
+            error={errors.visao?.message}
+            hint="Descreva a visão da igreja (mín. 20 caracteres)"
+          >
             <textarea
               id="visao"
-              value={formData.visao}
-              onChange={(e) => setFormData({ ...formData, visao: e.target.value })}
+              {...register('visao')}
               rows={4}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-              required
+              className={textareaClassName(!!errors.visao)}
+              placeholder="Descreva a visão da igreja..."
             />
-          </div>
+          </FormField>
 
-          <div className="pt-4">
+          <div className="pt-4 flex items-center gap-4">
             <button
               type="submit"
-              disabled={saving}
-              className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isSubmitting || !isDirty}
+              className="flex items-center justify-center gap-2 flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Salvar configurações"
             >
-              <Save size={20} />
-              {saving ? 'Salvando...' : 'Salvar Configurações'}
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <Save size={20} />
+                  Salvar Configurações
+                </>
+              )}
             </button>
+
+            {!isDirty && !isSubmitting && (
+              <span className="flex items-center gap-1 text-sm text-green-600">
+                <CheckCircle2 size={16} />
+                Salvo
+              </span>
+            )}
           </div>
         </form>
       </div>
