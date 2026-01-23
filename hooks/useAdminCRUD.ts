@@ -154,7 +154,8 @@ export function useAdminCRUD<T extends { id: string }>({
     id: string,
     confirmMessage = 'Tem certeza que deseja deletar este item?'
   ): Promise<boolean> => {
-    if (!confirm(confirmMessage)) return false
+    // Permite pular confirmação se já foi feita externamente (ex: ConfirmDialog)
+    if (confirmMessage && !confirm(confirmMessage)) return false
 
     const { error } = await supabase
       .from(tableName)

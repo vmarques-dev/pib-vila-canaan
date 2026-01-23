@@ -7,6 +7,7 @@ import { useAdminCRUD } from '@/hooks/useAdminCRUD'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminTable, AdminTableColumn, AdminTableAction } from '@/components/admin/AdminTable'
 import { AdminModal } from '@/components/admin/AdminModal'
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
 import { EventoForm } from '@/components/admin/eventos/EventoForm'
 import { type EventoFormData } from '@/lib/validations/admin'
 import { type Evento } from '@/lib/types'
@@ -42,6 +43,11 @@ export default function EventosPage() {
   const [uploadingImage, setUploadingImage] = useState(false)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+
+  // Estados para diálogos de confirmação
+  const [confirmConcluir, setConfirmConcluir] = useState<Evento | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<Evento | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const {
     items: eventos,
@@ -125,25 +131,24 @@ export default function EventosPage() {
     setImagePreview(null)
   }
 
-  const handleConcluirEvento = async (evento: Evento) => {
+  const handleConcluirEvento = (evento: Evento) => {
     if (evento.concluido) {
       toast.info('Este evento já está concluído')
       return
     }
+    setConfirmConcluir(evento)
+  }
 
-    const confirmar = confirm(
-      `Deseja concluir o evento "${evento.titulo}"?\n\n` +
-        `${evento.imagem_url ? 'A imagem será excluída automaticamente para economizar espaço.' : ''}`
-    )
+  const executeConcluirEvento = async () => {
+    if (!confirmConcluir) return
 
-    if (!confirmar) return
-
+    setIsProcessing(true)
     try {
-      if (evento.imagem_url) {
-        const deleted = await deleteImage(evento.imagem_url, 'eventos')
+      if (confirmConcluir.imagem_url) {
+        const deleted = await deleteImage(confirmConcluir.imagem_url, 'eventos')
         if (!deleted) {
           logger.warn('Não foi possível excluir a imagem', {
-            url: evento.imagem_url,
+            url: confirmConcluir.imagem_url,
           })
         }
       }
@@ -154,28 +159,40 @@ export default function EventosPage() {
           concluido: true,
           imagem_url: null,
         })
-        .eq('id', evento.id)
+        .eq('id', confirmConcluir.id)
 
       if (error) {
         logger.error('Erro ao concluir evento', error)
         toast.error('Erro ao concluir evento: ' + error.message)
       } else {
-        toast.success('Evento concluído! Imagem excluída automaticamente.')
+        toast.success('Evento concluído com sucesso!')
         await fetchItems()
       }
     } catch (error) {
       logger.error('Erro ao concluir evento', error)
       toast.error('Erro ao concluir evento')
+    } finally {
+      setIsProcessing(false)
+      setConfirmConcluir(null)
     }
   }
 
-  const handleDeleteEvento = async (evento: Evento) => {
-    const confirmar = confirm('Tem certeza que deseja deletar este evento?')
-    if (confirmar) {
-      if (evento.imagem_url) {
-        await deleteImage(evento.imagem_url, 'eventos')
+  const handleDeleteEvento = (evento: Evento) => {
+    setConfirmDelete(evento)
+  }
+
+  const executeDeleteEvento = async () => {
+    if (!confirmDelete) return
+
+    setIsProcessing(true)
+    try {
+      if (confirmDelete.imagem_url) {
+        await deleteImage(confirmDelete.imagem_url, 'eventos')
       }
-      await handleDelete(evento.id, '')
+      await handleDelete(confirmDelete.id, '')
+    } finally {
+      setIsProcessing(false)
+      setConfirmDelete(null)
     }
   }
 
@@ -285,6 +302,34 @@ export default function EventosPage() {
           onImageFileChange={handleImageFileChange}
         />
       </AdminModal>
+
+      <ConfirmDialog
+        isOpen={!!confirmConcluir}
+        onClose={() => setConfirmConcluir(null)}
+        onConfirm={executeConcluirEvento}
+        title="Concluir evento"
+        message={
+          confirmConcluir?.imagem_url
+            ? `Deseja marcar "${confirmConcluir?.titulo}" como concluído? A imagem do evento será excluída automaticamente para economizar espaço de armazenamento.`
+            : `Deseja marcar "${confirmConcluir?.titulo}" como concluído?`
+        }
+        confirmText="Concluir"
+        cancelText="Cancelar"
+        variant="success"
+        isLoading={isProcessing}
+      />
+
+      <ConfirmDialog
+        isOpen={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={executeDeleteEvento}
+        title="Excluir evento"
+        message={`Tem certeza que deseja excluir o evento "${confirmDelete?.titulo}"? Esta ação não pode ser desfeita.`}
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        variant="danger"
+        isLoading={isProcessing}
+      />
     </main>
   )
 }

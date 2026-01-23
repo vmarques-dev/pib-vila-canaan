@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
-import { AlertTriangle, Trash2, Info, X } from 'lucide-react'
+import { AlertTriangle, Trash2, Info, X, CheckCircle } from 'lucide-react'
 
 /**
  * Variantes visuais do diálogo de confirmação
  */
-type ConfirmDialogVariant = 'danger' | 'warning' | 'info'
+type ConfirmDialogVariant = 'danger' | 'warning' | 'info' | 'success'
 
 /**
  * Props do componente ConfirmDialog
@@ -53,6 +53,12 @@ const variantConfig = {
     iconBg: 'bg-blue-100',
     iconColor: 'text-blue-600',
     confirmBg: 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500',
+  },
+  success: {
+    icon: CheckCircle,
+    iconBg: 'bg-green-100',
+    iconColor: 'text-green-600',
+    confirmBg: 'bg-green-600 hover:bg-green-700 focus:ring-green-500',
   },
 }
 

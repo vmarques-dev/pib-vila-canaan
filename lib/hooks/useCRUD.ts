@@ -75,7 +75,8 @@ export function useCRUD<T extends { id: string }>(options: UseCRUDOptions<T>) {
     id: string,
     confirmMessage = 'Tem certeza que deseja deletar este item?'
   ): Promise<boolean> => {
-    if (!confirm(confirmMessage)) {
+    // Permite pular confirmação se já foi feita externamente (ex: ConfirmDialog)
+    if (confirmMessage && !confirm(confirmMessage)) {
       return false
     }
 
