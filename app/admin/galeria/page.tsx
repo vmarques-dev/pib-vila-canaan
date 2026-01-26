@@ -1,14 +1,18 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import { useAdminCRUD } from '@/hooks/useAdminCRUD'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminModal } from '@/components/admin/AdminModal'
+import { ImageUpload } from '@/components/admin/ImageUpload'
 import { galeriaSchema, type GaleriaFormData } from '@/lib/validations/admin'
+import { uploadImage, deleteImage, optimizeImage } from '@/lib/services/storage.service'
+import { STORAGE_CONFIG } from '@/lib/constants/config'
 
 interface Foto {
   id: string
@@ -27,13 +31,17 @@ const initialFormData: GaleriaFormData = {
 }
 
 export default function GaleriaPage() {
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+
   const {
     items: fotos,
     loading,
     showModal,
     editingItem,
     handleCreate,
-    handleDelete,
+    handleDelete: crudDelete,
     openCreateModal,
     closeModal,
   } = useAdminCRUD<Foto>({
@@ -48,12 +56,14 @@ export default function GaleriaPage() {
     formState: { errors, isSubmitting },
     reset,
     setValue,
+    watch,
   } = useForm<GaleriaFormData>({
     resolver: zodResolver(galeriaSchema),
     defaultValues: initialFormData,
   })
 
-  // Preencher formulário ao editar (galeria não tem edição, só adição)
+  const urlValue = watch('url')
+
   useEffect(() => {
     if (editingItem) {
       setValue('titulo', editingItem.titulo)
@@ -65,14 +75,92 @@ export default function GaleriaPage() {
     }
   }, [editingItem, setValue, reset])
 
+  const handleImageFileChange = useCallback((file: File | null) => {
+    setImageFile(file)
+
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+      setValue('url', '')
+    } else {
+      setImagePreview(null)
+    }
+  }, [setValue])
+
+  const handleUrlChange = useCallback((url: string) => {
+    setValue('url', url)
+    if (url) {
+      setImageFile(null)
+      setImagePreview(null)
+    }
+  }, [setValue])
+
+  const resetImageState = useCallback(() => {
+    setImageFile(null)
+    setImagePreview(null)
+    setUploadingImage(false)
+  }, [])
+
   const onSubmit = async (data: GaleriaFormData) => {
-    await handleCreate(data)
+    if (!imageFile && !data.url) {
+      toast.error('Selecione uma imagem ou informe uma URL')
+      return
+    }
+
+    let finalImageUrl = data.url || ''
+
+    if (imageFile) {
+      setUploadingImage(true)
+      toast.info('Otimizando e enviando imagem...')
+
+      try {
+        const optimizedFile = await optimizeImage(imageFile, 1200, 0.85)
+
+        const uploadedUrl = await uploadImage(
+          optimizedFile,
+          STORAGE_CONFIG.BUCKETS.GALERIA
+        )
+
+        if (!uploadedUrl) {
+          toast.error('Erro ao fazer upload da imagem')
+          setUploadingImage(false)
+          return
+        }
+
+        finalImageUrl = uploadedUrl
+      } catch {
+        toast.error('Erro ao processar a imagem')
+        setUploadingImage(false)
+        return
+      }
+    }
+
+    await handleCreate({
+      ...data,
+      url: finalImageUrl,
+    })
+
     reset(initialFormData)
+    resetImageState()
   }
 
   const handleModalClose = () => {
     closeModal()
     reset(initialFormData)
+    resetImageState()
+  }
+
+  const handleDelete = async (foto: Foto) => {
+    const isSupabaseUrl = foto.url.includes(STORAGE_CONFIG.BUCKETS.GALERIA)
+
+    await crudDelete(foto.id, 'Tem certeza que deseja deletar esta foto?')
+
+    if (isSupabaseUrl) {
+      await deleteImage(foto.url, STORAGE_CONFIG.BUCKETS.GALERIA)
+    }
   }
 
   if (loading) {
@@ -82,6 +170,8 @@ export default function GaleriaPage() {
       </main>
     )
   }
+
+  const isFormSubmitting = isSubmitting || uploadingImage
 
   return (
     <main className="p-8">
@@ -122,9 +212,7 @@ export default function GaleriaPage() {
                   <p className="text-sm text-gray-600 mb-3">{foto.descricao}</p>
                 )}
                 <button
-                  onClick={() =>
-                    handleDelete(foto.id, 'Tem certeza que deseja deletar esta foto?')
-                  }
+                  onClick={() => handleDelete(foto)}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm"
                   aria-label={`Deletar foto ${foto.titulo}`}
                 >
@@ -155,35 +243,30 @@ export default function GaleriaPage() {
               id="titulo"
               type="text"
               {...register('titulo')}
+              disabled={isFormSubmitting}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 errors.titulo ? 'border-red-500' : ''
-              }`}
+              } ${isFormSubmitting ? 'bg-gray-100' : ''}`}
             />
             {errors.titulo && (
               <p className="text-sm text-red-500 mt-1">{errors.titulo.message}</p>
             )}
           </div>
 
-          <div>
-            <label
-              htmlFor="url"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              URL da Foto
-            </label>
-            <input
-              id="url"
-              type="url"
-              {...register('url')}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-                errors.url ? 'border-red-500' : ''
-              }`}
-              placeholder="https://exemplo.com/foto.jpg"
-            />
-            {errors.url && (
-              <p className="text-sm text-red-500 mt-1">{errors.url.message}</p>
-            )}
-          </div>
+          <ImageUpload
+            inputId="galeria-foto"
+            label="Imagem"
+            imageFile={imageFile}
+            imagePreview={imagePreview}
+            onFileChange={handleImageFileChange}
+            showUrlInput={true}
+            urlValue={urlValue || ''}
+            onUrlChange={handleUrlChange}
+            urlPlaceholder="https://exemplo.com/foto.jpg"
+            error={errors.url?.message}
+            disabled={isFormSubmitting}
+            helperText="Formatos aceitos: JPG, PNG, WebP (máx. 5MB)"
+          />
 
           <div>
             <label
@@ -195,9 +278,10 @@ export default function GaleriaPage() {
             <select
               id="categoria"
               {...register('categoria')}
+              disabled={isFormSubmitting}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 errors.categoria ? 'border-red-500' : ''
-              }`}
+              } ${isFormSubmitting ? 'bg-gray-100' : ''}`}
             >
               <option value="Cultos">Cultos</option>
               <option value="Jovens">Jovens</option>
@@ -220,9 +304,10 @@ export default function GaleriaPage() {
               id="descricao"
               {...register('descricao')}
               rows={3}
+              disabled={isFormSubmitting}
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none ${
                 errors.descricao ? 'border-red-500' : ''
-              }`}
+              } ${isFormSubmitting ? 'bg-gray-100' : ''}`}
             />
             {errors.descricao && (
               <p className="text-sm text-red-500 mt-1">{errors.descricao.message}</p>
@@ -232,15 +317,15 @@ export default function GaleriaPage() {
           <div className="flex gap-4 pt-4">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isFormSubmitting}
               className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Salvando...' : 'Adicionar'}
+              {uploadingImage ? 'Enviando imagem...' : isSubmitting ? 'Salvando...' : 'Adicionar'}
             </button>
             <button
               type="button"
               onClick={handleModalClose}
-              disabled={isSubmitting}
+              disabled={isFormSubmitting}
               className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition disabled:opacity-50"
             >
               Cancelar

@@ -68,13 +68,20 @@ export type EventoFormData = z.infer<typeof eventoSchema>
 
 /**
  * Schema de validação para galeria de fotos
+ * URL é opcional quando há upload de arquivo
  */
 export const galeriaSchema = z.object({
   titulo: z
     .string()
     .min(3, 'Título deve ter no mínimo 3 caracteres')
     .max(100, 'Título deve ter no máximo 100 caracteres'),
-  url: z.string().url('URL da imagem inválida'),
+  url: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val === '' || z.string().url().safeParse(val).success,
+      'URL da imagem inválida'
+    ),
   categoria: z.enum(['Cultos', 'Jovens', 'Eventos Especiais', 'Infantil']),
   descricao: z
     .string()
