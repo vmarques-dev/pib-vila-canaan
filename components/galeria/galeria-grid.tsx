@@ -5,12 +5,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Galeria } from '@/types'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Lightbox } from './lightbox'
 
 interface GaleriaGridProps {
   fotos: Galeria[]
@@ -70,7 +65,12 @@ export default function GaleriaGrid({ fotos }: GaleriaGridProps) {
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <p className="text-white p-4 font-semibold">{foto.titulo}</p>
+                    <div className="p-4">
+                      <span className="inline-block px-2 py-0.5 mb-2 text-xs font-medium text-white/90 bg-white/20 rounded-full">
+                        {foto.categoria}
+                      </span>
+                      <p className="text-white font-semibold">{foto.titulo}</p>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -84,25 +84,13 @@ export default function GaleriaGrid({ fotos }: GaleriaGridProps) {
           </div>
         )}
 
-        {/* Modal */}
-        <Dialog open={!!fotoSelecionada} onOpenChange={() => setFotoSelecionada(null)}>
-          <DialogContent className="max-w-4xl">
-            <DialogHeader>
-              <DialogTitle>{fotoSelecionada?.titulo}</DialogTitle>
-            </DialogHeader>
-            {fotoSelecionada && (
-              <div className="relative aspect-video w-full">
-                <Image
-                  src={fotoSelecionada.url}
-                  alt={fotoSelecionada.titulo}
-                  fill
-                  sizes="(max-width: 896px) 100vw, 896px"
-                  className="object-contain rounded-lg"
-                />
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+        {/* Lightbox */}
+        <Lightbox
+          fotos={fotosFiltradas}
+          fotoAtual={fotoSelecionada}
+          onClose={() => setFotoSelecionada(null)}
+          onNavigate={setFotoSelecionada}
+        />
       </div>
     </section>
   )

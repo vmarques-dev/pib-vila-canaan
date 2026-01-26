@@ -48,6 +48,7 @@ export interface Galeria {
   titulo: string
   categoria: 'Cultos' | 'Jovens' | 'Eventos Especiais' | 'Infantil'
   url: string
+  descricao?: string
   ordem: number
   created_at: string
 }
