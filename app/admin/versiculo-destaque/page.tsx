@@ -287,24 +287,25 @@ export default function VersiculoDestaquePage() {
   const columns: AdminTableColumn<VersiculoDestaque>[] = [
     {
       header: 'Referência',
+      width: '180px',
       accessor: (versiculo) => (
-        <div className="text-sm font-medium text-gray-900">
+        <div className="text-sm font-medium text-gray-900 truncate" title={`${versiculo.livro} ${versiculo.referencia}`}>
           {versiculo.livro} {versiculo.referencia}
         </div>
       ),
     },
     {
       header: 'Texto',
+      width: '50%',
       accessor: (versiculo) => (
-        <div className="text-sm text-gray-500 max-w-md truncate">
-          {versiculo.texto.length > 80
-            ? versiculo.texto.substring(0, 80) + '...'
-            : versiculo.texto}
+        <div className="text-sm text-gray-500 truncate" title={versiculo.texto}>
+          {versiculo.texto}
         </div>
       ),
     },
     {
       header: 'Status',
+      width: '100px',
       accessor: (versiculo) => (
         <span
           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${

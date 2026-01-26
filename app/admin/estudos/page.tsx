@@ -147,28 +147,35 @@ export default function EstudosPage() {
   const columns: AdminTableColumn<Estudo>[] = [
     {
       header: 'Título',
+      width: '30%',
       accessor: (estudo) => (
-        <div className="text-sm font-medium text-gray-900">{estudo.titulo}</div>
+        <div className="text-sm font-medium text-gray-900 truncate" title={estudo.titulo}>
+          {estudo.titulo}
+        </div>
       ),
     },
     {
       header: 'Versículo',
+      width: '20%',
       accessor: (estudo) => (
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-500 truncate" title={`${estudo.livro} ${estudo.referencia}`}>
           {estudo.livro} {estudo.referencia}
         </div>
       ),
     },
     {
       header: 'Categoria',
+      width: '15%',
       accessor: (estudo) => (
-        <div className="text-sm text-gray-500">{estudo.categoria}</div>
+        <div className="text-sm text-gray-500 truncate" title={estudo.categoria}>
+          {estudo.categoria}
+        </div>
       ),
     },
     {
       header: 'Data',
+      width: '100px',
       accessor: (estudo) => {
-        // Formatar data sem conversão de timezone
         const [ano, mes, dia] = estudo.data_estudo.split('-')
         return (
           <div className="text-sm text-gray-500">
@@ -179,6 +186,7 @@ export default function EstudosPage() {
     },
     {
       header: 'Status',
+      width: '100px',
       accessor: (estudo) => (
         <span
           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${

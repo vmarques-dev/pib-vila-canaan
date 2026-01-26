@@ -199,12 +199,16 @@ export default function EventosPage() {
   const columns: AdminTableColumn<Evento>[] = [
     {
       header: 'Título',
+      width: '25%',
       accessor: (evento) => (
-        <div className="text-sm font-medium text-gray-900">{evento.titulo}</div>
+        <div className="text-sm font-medium text-gray-900 truncate" title={evento.titulo}>
+          {evento.titulo}
+        </div>
       ),
     },
     {
       header: 'Data',
+      width: '100px',
       accessor: (evento) => (
         <div className="text-sm text-gray-500">
           {format(parseISO(evento.data_inicio), 'dd/MM/yyyy')}
@@ -213,16 +217,25 @@ export default function EventosPage() {
     },
     {
       header: 'Horário',
+      width: '120px',
       accessor: (evento) => (
-        <div className="text-sm text-gray-500">{evento.horario}</div>
+        <div className="text-sm text-gray-500 truncate" title={evento.horario}>
+          {evento.horario}
+        </div>
       ),
     },
     {
       header: 'Local',
-      accessor: (evento) => <div className="text-sm text-gray-500">{evento.local}</div>,
+      width: '25%',
+      accessor: (evento) => (
+        <div className="text-sm text-gray-500 truncate" title={evento.local}>
+          {evento.local}
+        </div>
+      ),
     },
     {
       header: 'Status',
+      width: '100px',
       accessor: (evento) => (
         <span
           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
