@@ -87,8 +87,8 @@ export default function EventosSection({ eventos }: EventosSectionProps) {
                           <Clock className="h-4 w-4" />
                           {evento.horario}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
+                        <div className="flex items-start gap-2">
+                          <MapPin className="h-4 w-4 mt-1 flex-shrink-0" />
                           {evento.local}
                         </div>
                       </CardDescription>
