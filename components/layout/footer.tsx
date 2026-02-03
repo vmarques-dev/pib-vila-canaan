@@ -80,13 +80,13 @@ export default async function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/estudos" className="text-gray-300 hover:text-white transition-colors">
-                  Estudos Bíblicos
+                <Link href="/eventos" className="text-gray-300 hover:text-white transition-colors">
+                  Eventos
                 </Link>
               </li>
               <li>
-                <Link href="/eventos" className="text-gray-300 hover:text-white transition-colors">
-                  Eventos
+                <Link href="/estudos" className="text-gray-300 hover:text-white transition-colors">
+                  Estudos Bíblicos
                 </Link>
               </li>
               <li>
