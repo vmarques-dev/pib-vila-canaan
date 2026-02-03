@@ -38,15 +38,15 @@ export default function MissaoVisaoSection() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.6 }}
             >
-              <Card className="h-full shadow-lg">
-                <CardHeader>
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              <Card className="h-full shadow-lg gap-2">
+                <CardHeader className="justify-items-center text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-1">
                     <item.icon className="h-8 w-8 text-blue-700" />
                   </div>
                   <CardTitle className="text-2xl">{item.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                  <p className="text-gray-600 leading-relaxed text-center">{item.description}</p>
                 </CardContent>
               </Card>
             </motion.div>
