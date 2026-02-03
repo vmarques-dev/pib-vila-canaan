@@ -40,12 +40,9 @@ export default function ContatoInfo({ info }: ContatoInfoProps) {
             </div>
             <h3 className="font-semibold text-lg text-gray-900">Telefone</h3>
           </div>
-          <div className="ml-16">
-            <p className="text-gray-600">{info?.telefone || '(00) 0000-0000'}</p>
-            {info?.whatsapp && (
-              <p className="text-gray-600">WhatsApp: {info.whatsapp}</p>
-            )}
-          </div>
+          <p className="text-gray-600 ml-16">
+            {info?.telefone || '(00) 0000-0000'}
+          </p>
         </div>
 
         <div>
