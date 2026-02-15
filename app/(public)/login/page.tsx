@@ -26,7 +26,7 @@ export default function LoginPage() {
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900">Canal do Adorador</h2>
                 <p className="text-gray-600">
-                  Acesse como beneficiário para consultar informações, comprovantes e muito mais
+                  Acesse para acompanhar eventos, estudos bíblicos, galeria e novidades da igreja
                 </p>
                 <div className="pt-4">
                   <span className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg group-hover:bg-blue-700 transition-colors">
