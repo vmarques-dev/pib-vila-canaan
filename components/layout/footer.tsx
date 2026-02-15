@@ -26,14 +26,14 @@ export default async function Footer() {
       <div className="container mx-auto px-8">
         <div className="flex flex-wrap gap-12 justify-center items-start">
           {/* About */}
-          <div className="w-64">
-            <div className="flex items-start space-x-2 mb-[0.7rem]">
-              <div className="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center -mt-[0.475rem]">
+          <div className="w-64 flex flex-col">
+            <div className="flex items-center space-x-2 mb-4 h-7">
+              <div className="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xl">PIB</span>
               </div>
               <span className="font-bold text-lg text-white">Vila Canaan</span>
             </div>
-            <p className="text-gray-300 leading-relaxed mb-4 -mt-[1px]">
+            <p className="text-gray-300 leading-relaxed mb-4">
               Uma igreja que ama a Deus e serve às pessoas.
             </p>
             <div className="flex space-x-4">
@@ -71,9 +71,9 @@ export default async function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="w-48">
-            <h3 className="text-lg font-bold text-white mb-4">Links</h3>
-            <ul className="space-y-2">
+          <div className="w-48 flex flex-col">
+            <h3 className="text-lg font-bold text-white mb-4 h-7 flex items-center">Links</h3>
+            <ul className="space-y-2 mt-[0.07rem]">
               <li>
                 <Link href="/sobre" className="text-gray-300 hover:text-white transition-colors">
                   Sobre Nós
@@ -98,10 +98,10 @@ export default async function Footer() {
           </div>
 
           {/* Contact */}
-          <div className="w-64">
-            <h3 className="text-lg font-bold text-white mb-4">Contato</h3>
-            <div className="space-y-3 text-gray-300">
-              <div className="flex items-start gap-2">
+          <div className="w-64 flex flex-col">
+            <h3 className="text-lg font-bold text-white mb-4 h-7 flex items-center">Contato</h3>
+            <div className="space-y-3 text-gray-300 mt-[0.20rem]">
+              <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-blue-400 flex-shrink-0" />
                 <span className="text-sm">
                   {info?.endereco || 'Rua da Igreja, 123\nVila Canaan - Cidade/UF'}
@@ -119,8 +119,8 @@ export default async function Footer() {
           </div>
 
           {/* Mapa */}
-          <div className="w-80">
-            <h3 className="text-lg font-bold text-white mb-4">Localização</h3>
+          <div className="w-80 flex flex-col">
+            <h3 className="text-lg font-bold text-white mb-4 h-7 flex items-center">Localização</h3>
             <div className="w-full h-48 rounded-lg overflow-hidden shadow-xl">
               <iframe
                 src="https://maps.google.com/maps?q=Rua+4+Lote+11+Vila+Canaan+Duque+de+Caxias+RJ&output=embed&z=16"
