@@ -328,11 +328,7 @@ export default function EventosPage() {
         onClose={() => setConfirmConcluir(null)}
         onConfirm={executeConcluirEvento}
         title="Concluir evento"
-        message={
-          confirmConcluir?.imagem_url
-            ? `Deseja marcar "${confirmConcluir?.titulo}" como concluído? A imagem do evento será excluída automaticamente para economizar espaço de armazenamento.`
-            : `Deseja marcar "${confirmConcluir?.titulo}" como concluído?`
-        }
+        message={`Deseja marcar "${confirmConcluir?.titulo}" como concluído?`}
         confirmText="Concluir"
         cancelText="Cancelar"
         variant="success"
