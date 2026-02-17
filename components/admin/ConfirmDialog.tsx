@@ -157,23 +157,22 @@ export function ConfirmDialog({
 
           <div className="p-6">
             {/* Icon and content */}
-            <div className="flex items-start gap-4">
+            <div className="flex items-center gap-4">
               <div
                 className={`flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full ${config.iconBg}`}
               >
                 <Icon className={config.iconColor} size={24} aria-hidden="true" />
               </div>
 
-              <div className="flex-1 pt-1">
-                <h3
-                  id="confirm-dialog-title"
-                  className="text-lg font-semibold text-gray-900"
-                >
-                  {title}
-                </h3>
-                <p className="mt-2 text-sm text-gray-600">{message}</p>
-              </div>
+              <h3
+                id="confirm-dialog-title"
+                className="text-lg font-semibold text-gray-900"
+              >
+                {title}
+              </h3>
             </div>
+
+            <p className="mt-3 text-sm text-gray-600">{message}</p>
 
             {/* Actions */}
             <div className="mt-6 flex gap-3 justify-end">
