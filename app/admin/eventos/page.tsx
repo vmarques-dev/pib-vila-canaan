@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from 'react'
 import { Edit, Trash2, CheckCircle } from 'lucide-react'
-import { parseISO, format } from 'date-fns'
+import { format } from 'date-fns'
+import { parseLocalDate } from '@/lib/utils'
 import { useAdminCRUD } from '@/hooks/useAdminCRUD'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminTable, AdminTableColumn, AdminTableAction } from '@/components/admin/AdminTable'
@@ -207,12 +208,17 @@ export default function EventosPage() {
     },
     {
       header: 'Data',
-      width: '100px',
-      accessor: (evento) => (
-        <div className="text-sm text-gray-500">
-          {format(parseISO(evento.data_inicio), 'dd/MM/yyyy')}
-        </div>
-      ),
+      width: '180px',
+      accessor: (evento) => {
+        const inicio = format(parseLocalDate(evento.data_inicio), 'dd/MM/yyyy')
+        const fim = evento.data_fim ? format(parseLocalDate(evento.data_fim), 'dd/MM/yyyy') : null
+        const texto = fim ? `${inicio} - ${fim}` : inicio
+        return (
+          <div className="text-sm text-gray-500 truncate" title={texto}>
+            {texto}
+          </div>
+        )
+      },
     },
     {
       header: 'Horário',
