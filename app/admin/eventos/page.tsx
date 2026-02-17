@@ -35,7 +35,6 @@ const initialFormData = {
   data_fim: '',
   horario: '',
   local: '',
-  imagem_url: '',
 }
 
 export default function EventosPage() {
@@ -81,7 +80,7 @@ export default function EventosPage() {
 
   const onSubmit = async (data: EventoFormData) => {
     try {
-      let finalImageUrl = data.imagem_url || ''
+      let finalImageUrl = ''
 
       // Upload de imagem se houver arquivo
       if (imageFile) {

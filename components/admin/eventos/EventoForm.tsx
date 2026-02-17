@@ -32,12 +32,9 @@ export function EventoForm({
     formState: { errors, isSubmitting },
     reset,
     setValue,
-    watch,
   } = useForm<EventoFormData>({
     resolver: zodResolver(eventoSchema),
   })
-
-  const watchImageUrl = watch('imagem_url')
 
   // Preencher formulário ao editar
   useEffect(() => {
@@ -48,7 +45,6 @@ export function EventoForm({
       setValue('data_fim', editingItem.data_fim || '')
       setValue('horario', editingItem.horario)
       setValue('local', editingItem.local)
-      setValue('imagem_url', editingItem.imagem_url || '')
     } else {
       reset()
     }
@@ -179,8 +175,6 @@ export function EventoForm({
       </div>
 
       <EventoImageUpload
-        register={register}
-        errors={errors}
         imageFile={imageFile}
         imagePreview={imagePreview}
         onImageFileChange={onImageFileChange}

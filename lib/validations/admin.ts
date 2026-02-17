@@ -55,13 +55,6 @@ export const eventoSchema = z.object({
     .string()
     .min(3, 'Local deve ter no mínimo 3 caracteres')
     .max(200, 'Local deve ter no máximo 200 caracteres'),
-  imagem_url: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || val === '' || z.string().url().safeParse(val).success,
-      'URL da imagem inválida'
-    ),
 })
 
 export type EventoFormData = z.infer<typeof eventoSchema>

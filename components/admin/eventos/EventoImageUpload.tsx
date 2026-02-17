@@ -1,20 +1,14 @@
 'use client'
 
 import { Upload } from 'lucide-react'
-import { UseFormRegister, FieldErrors } from 'react-hook-form'
-import { EventoFormData } from '@/lib/validations/admin'
 
 interface EventoImageUploadProps {
-  register: UseFormRegister<EventoFormData>
-  errors: FieldErrors<EventoFormData>
   imageFile: File | null
   imagePreview: string | null
   onImageFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export function EventoImageUpload({
-  register,
-  errors,
   imageFile,
   imagePreview,
   onImageFileChange,
@@ -43,30 +37,6 @@ export function EventoImageUpload({
           onChange={onImageFileChange}
           className="hidden"
         />
-      </div>
-
-      {/* OU */}
-      <div className="flex items-center gap-2">
-        <div className="flex-1 border-t border-gray-300"></div>
-        <span className="text-xs text-gray-500 uppercase">ou</span>
-        <div className="flex-1 border-t border-gray-300"></div>
-      </div>
-
-      {/* URL da Imagem */}
-      <div>
-        <input
-          id="imagem_url"
-          type="url"
-          placeholder="Cole a URL de uma imagem"
-          {...register('imagem_url')}
-          disabled={!!imageFile}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-            errors.imagem_url ? 'border-red-500' : ''
-          } ${imageFile ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-        />
-        {errors.imagem_url && (
-          <p className="text-sm text-red-500 mt-1">{errors.imagem_url.message}</p>
-        )}
       </div>
 
       {/* Preview da Imagem */}
