@@ -4,7 +4,8 @@ import { Evento } from '@/types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Calendar, MapPin, Clock } from 'lucide-react'
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
+import { parseLocalDate } from '@/lib/utils'
 import { ptBR } from 'date-fns/locale'
 
 interface EventoModalProps {
@@ -58,11 +59,11 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
                 <div>
                   <p className="font-semibold text-gray-900">Data</p>
                   <p className="text-gray-600">
-                    {format(parseISO(evento.data_inicio), "dd 'de' MMMM 'de' yyyy", {
+                    {format(parseLocalDate(evento.data_inicio), "dd 'de' MMMM 'de' yyyy", {
                       locale: ptBR,
                     })}
                     {evento.data_fim && evento.data_fim !== evento.data_inicio && (
-                      <> até {format(parseISO(evento.data_fim), "dd 'de' MMMM 'de' yyyy", {
+                      <> até {format(parseLocalDate(evento.data_fim), "dd 'de' MMMM 'de' yyyy", {
                         locale: ptBR,
                       })}</>
                     )}

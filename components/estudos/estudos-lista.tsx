@@ -5,7 +5,8 @@ import { motion } from 'framer-motion'
 import { Estudo } from '@/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { X, Calendar } from 'lucide-react'
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
+import { parseLocalDate } from '@/lib/utils'
 import { ptBR } from 'date-fns/locale'
 
 interface EstudosListaProps {
@@ -58,7 +59,7 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
                   <CardDescription className="flex flex-wrap gap-4 text-base">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
-                      {format(parseISO(estudo.data_estudo + 'T12:00:00'), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                      {format(parseLocalDate(estudo.data_estudo), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
                     </span>
                   </CardDescription>
                 </CardHeader>
@@ -105,7 +106,7 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
                 <p className="text-gray-600 italic mt-2 mb-3">"{estudoSelecionado.texto_versiculo}"</p>
                 <p className="text-gray-500 text-sm flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  {format(parseISO(estudoSelecionado.data_estudo + 'T12:00:00'), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  {format(parseLocalDate(estudoSelecionado.data_estudo), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
                 </p>
               </div>
               <button

@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import { Evento } from '@/types'
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
+import { parseLocalDate } from '@/lib/utils'
 import { ptBR } from 'date-fns/locale'
 import EventoModal from '@/components/eventos/evento-modal'
 
@@ -79,7 +80,7 @@ export default function EventosSection({ eventos }: EventosSectionProps) {
                       <CardDescription className="space-y-2 text-base">
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
-                          {format(parseISO(evento.data_inicio), "dd 'de' MMMM 'de' yyyy", {
+                          {format(parseLocalDate(evento.data_inicio), "dd 'de' MMMM 'de' yyyy", {
                             locale: ptBR,
                           })}
                         </div>
