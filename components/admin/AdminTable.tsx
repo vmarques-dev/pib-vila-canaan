@@ -93,7 +93,7 @@ export function AdminTable<T extends { id: string }>({
                       minWidth: column.minWidth,
                       maxWidth: column.maxWidth,
                     }}
-                    className={column.cellClassName || 'px-4 py-4'}
+                    className={column.cellClassName || 'px-4 py-4 text-left'}
                   >
                     {renderCellContent(item, column)}
                   </td>

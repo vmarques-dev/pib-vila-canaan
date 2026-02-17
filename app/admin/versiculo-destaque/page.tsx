@@ -306,6 +306,8 @@ export default function VersiculoDestaquePage() {
     {
       header: 'Status',
       width: '100px',
+      headerClassName: 'px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider',
+      cellClassName: 'px-4 py-4 text-center',
       accessor: (versiculo) => (
         <span
           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
