@@ -54,37 +54,37 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
 
             {/* Informações do evento */}
             <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Calendar className="h-5 w-5 text-blue-700 mt-1 flex-shrink-0" />
-                <div>
+              <div>
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-5 w-5 text-blue-700 flex-shrink-0" />
                   <p className="font-semibold text-gray-900">Data</p>
-                  <p className="text-gray-600">
-                    {format(parseLocalDate(evento.data_inicio), "dd 'de' MMMM 'de' yyyy", {
+                </div>
+                <p className="text-gray-600 ml-8">
+                  {format(parseLocalDate(evento.data_inicio), "dd 'de' MMMM 'de' yyyy", {
+                    locale: ptBR,
+                  })}
+                  {evento.data_fim && evento.data_fim !== evento.data_inicio && (
+                    <> até {format(parseLocalDate(evento.data_fim), "dd 'de' MMMM 'de' yyyy", {
                       locale: ptBR,
-                    })}
-                    {evento.data_fim && evento.data_fim !== evento.data_inicio && (
-                      <> até {format(parseLocalDate(evento.data_fim), "dd 'de' MMMM 'de' yyyy", {
-                        locale: ptBR,
-                      })}</>
-                    )}
-                  </p>
-                </div>
+                    })}</>
+                  )}
+                </p>
               </div>
 
-              <div className="flex items-start gap-3">
-                <Clock className="h-5 w-5 text-blue-700 mt-1 flex-shrink-0" />
-                <div>
+              <div>
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-blue-700 flex-shrink-0" />
                   <p className="font-semibold text-gray-900">Horário</p>
-                  <p className="text-gray-600">{evento.horario}</p>
                 </div>
+                <p className="text-gray-600 ml-8">{evento.horario}</p>
               </div>
 
-              <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-blue-700 mt-1 flex-shrink-0" />
-                <div>
+              <div>
+                <div className="flex items-center gap-3">
+                  <MapPin className="h-5 w-5 text-blue-700 flex-shrink-0" />
                   <p className="font-semibold text-gray-900">Local</p>
-                  <p className="text-gray-600">{evento.local}</p>
                 </div>
+                <p className="text-gray-600 ml-8">{evento.local}</p>
               </div>
             </div>
 
@@ -94,7 +94,7 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
             {/* Descrição */}
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Sobre o Evento</h3>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+              <p className="text-gray-700 leading-relaxed whitespace-pre-line text-justify">
                 {evento.descricao}
               </p>
             </div>
