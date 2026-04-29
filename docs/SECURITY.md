@@ -319,25 +319,21 @@ export async function POST(request: Request) {
 
 ### Feature Flags
 
-**Arquivo**: `lib/constants/features.ts`
+Duas variáveis de ambiente permitem rollback rápido sem redeploy. Cada uma é
+lida diretamente via `process.env` no arquivo onde tem efeito.
 
-Permite rollback rápido sem redeploy:
+| Variável | Arquivo | Default | Efeito quando `false` |
+|---|---|---|---|
+| `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `middleware.ts` | `true` | Bypass total da proteção de `/admin/*` e `/adorador/*` |
+| `NEXT_PUBLIC_USE_RATE_LIMITING` | `app/api/contato/route.ts` | `true` | Desativa o limite de 3 req/h por IP |
 
-```typescript
-export const FEATURE_FLAGS = {
-  USE_MIDDLEWARE_AUTH: process.env.NEXT_PUBLIC_USE_MIDDLEWARE_AUTH === 'true',
-  USE_RATE_LIMITING: process.env.NEXT_PUBLIC_USE_RATE_LIMITING !== 'false',
-  DEBUG_MODE: process.env.NEXT_PUBLIC_DEBUG_MODE === 'true',
-} as const
-```
+**Como fazer rollback de emergência**:
+1. Acessar Vercel Dashboard → Settings → Environment Variables
+2. Mudar a flag relevante para `false`
+3. Aguardar redeploy automático (~2 minutos)
 
-**Como fazer rollback**:
-1. Acessar Vercel Dashboard
-2. Settings → Environment Variables
-3. Mudar `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` para `false`
-4. Aguardar redeploy automático (~2 minutos)
-
-**Documentação completa**: `docs/FEATURE_FLAGS.md`
+⚠️ Nunca manter `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH=false` em produção por tempo
+prolongado — a proteção de rotas admin fica totalmente desligada.
 
 ---
 
