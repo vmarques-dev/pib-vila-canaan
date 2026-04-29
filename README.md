@@ -4,7 +4,7 @@ Site oficial da Igreja Batista em Vila Canaan, desenvolvido com as melhores prá
 
 ## 🚀 Tecnologias
 
-- **Next.js 15** - Framework React com App Router e Server Components
+- **Next.js 16** - Framework React com App Router e Server Components
 - **TypeScript** - Tipagem estática para código mais seguro
 - **Tailwind CSS** - Estilização utility-first responsiva
 - **shadcn/ui** - Componentes UI acessíveis e customizáveis
@@ -67,20 +67,25 @@ pib-vila-canaan/
 │   └── ui/                       # Componentes shadcn/ui
 ├── lib/
 │   ├── constants/                # Constantes centralizadas
-│   │   ├── config.ts             # Configurações gerais
-│   │   ├── features.ts           # Feature flags
-│   │   ├── navigation.ts         # Rotas e navegação
-│   │   └── bible-books.ts        # Lista de livros da Bíblia
+│   │   ├── config.ts             # Configurações gerais (site, storage, validação, rate limit)
+│   │   └── navigation.ts         # Itens do menu administrativo
 │   ├── services/
-│   │   └── storage.service.ts    # Upload/delete de imagens
+│   │   └── storage.service.ts    # Upload/delete/otimização de imagens
 │   ├── supabase/
-│   │   ├── browser.ts            # Cliente para uso no browser
+│   │   ├── browser.ts            # Cliente para Client Components
+│   │   ├── client.ts             # Cliente padrão (Server Components)
 │   │   └── middleware.ts         # Cliente para middleware SSR
 │   ├── types/
-│   │   └── database.ts           # Interfaces TypeScript do banco
+│   │   ├── database.ts           # Interfaces TypeScript do banco
+│   │   └── index.ts              # Re-exports do alias @/types
 │   ├── validations/              # Schemas Zod por domínio
-│   ├── hooks/                    # React hooks customizados
+│   ├── hooks/
+│   │   └── useAuth.tsx           # AuthProvider e hook useAuth
+│   ├── providers/
+│   │   └── providers.tsx         # Composição de providers globais
 │   └── logger.ts                 # Logger seguro sem exposição de dados
+├── hooks/
+│   └── useAdminCRUD.ts           # Hook genérico de CRUD para o admin
 ├── middleware.ts                 # Proteção server-side de rotas
 ├── supabase/
 │   ├── schema.sql                # Schema completo do banco

@@ -16,16 +16,28 @@ Este diretório contém as migrations SQL para o banco de dados Supabase.
 
 ### Ordem de Execução
 
-As migrations devem ser executadas na seguinte ordem:
+As migrations estão divididas em duas fases. Execute todas as nomeadas
+(fase 1, criadas antes da convenção numerada) e depois as numeradas
+(fase 2, em ordem de prefixo).
 
-1. ✅ `adoradores.sql` - Cria tabela de adoradores
-2. ✅ `update_versiculo_destaque.sql` - Atualiza tabela de versículos
-3. ✅ `update_eventos_table.sql` - Atualiza estrutura de eventos
-4. ✅ `create_eventos_bucket.sql` - Cria bucket de storage para eventos
-5. ⚠️  `fix_eventos_bucket_policies.sql` - **DEPRECADA** - Policies permissivas (será substituída)
-6. ✅ `update_estudos_structure.sql` - Atualiza estrutura de estudos
-7. 🆕 `001_create_usuarios_admin.sql` - **NOVA** - Cria tabela de controle de admins
-8. 🆕 `002_fix_storage_rls.sql` - **NOVA** - Corrige RLS do Storage (apenas admins ativos)
+**Fase 1 — Migrations nomeadas (ordem aproximada de criação):**
+
+1. `adoradores.sql` — Cria tabela `adoradores` (Canal do Adorador)
+2. `canal_adorador.sql` — Cria tabela `avisos` (mural de avisos para membros)
+3. `update_versiculo_destaque.sql` — Atualiza tabela de versículos em destaque
+4. `update_eventos_table.sql` — Refatora estrutura da tabela `eventos`
+5. `evento_horario_split.sql` — Divide a coluna `horario` em `horario_inicio` e `horario_fim`
+6. `inscricoes.sql` — Cria tabela de inscrições em eventos
+7. `create_eventos_bucket.sql` — Cria bucket de Storage para imagens de eventos
+8. `fix_eventos_bucket_policies.sql` — Policies iniciais do bucket (substituídas pela `002_fix_storage_rls.sql`; mantida no histórico para rastreabilidade)
+9. `update_estudos_structure.sql` — Refatora estrutura da tabela `estudos`
+
+**Fase 2 — Migrations numeradas (executar na ordem do prefixo):**
+
+10. `001_create_usuarios_admin.sql` — Cria tabela de controle de admins
+11. `002_fix_storage_rls.sql` — RLS restritivo do Storage (apenas admins ativos)
+12. `003_simplify_versiculo_destaque.sql` — Remove agendamento por período da tabela versiculo_destaque
+13. `004_audit_fixes.sql` — Correções identificadas em auditoria do banco
 
 ## Migration 001: Tabela usuarios_admin
 

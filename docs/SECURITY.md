@@ -248,22 +248,31 @@ RESEND_API_KEY=re_sua-chave-resend
 
 **Arquivo**: `lib/logger.ts`
 
-Logger personalizado que não expõe dados sensíveis:
+Logger centralizado com três níveis (`info`, `warn`, `error`). `info` e `warn`
+saem apenas em desenvolvimento; `error` sempre, em qualquer ambiente. Os
+detalhes do erro são extraídos via `extractErrorMessage`, que entende
+`Error`, `PostgrestError` do Supabase (cuja `.message` é não-enumerável) e
+objetos genéricos com `message`.
 
 ```typescript
 class Logger {
-  error(message: string, error?: Error, context?: LogContext): void {
-    const fullContext = {
-      ...context,
-      errorMessage: error?.message,
-      stack: error?.stack,
-      // NÃO inclui: email, user_id, role, tokens
-    }
+  private readonly isDevelopment = process.env.NODE_ENV === 'development'
 
-    console.error(this.formatMessage('ERROR', message, fullContext))
+  error(message: string, error?: unknown, context?: LogContext): void {
+    const detail = extractErrorMessage(error ?? '')
+    console.error(
+      `[ERROR] ${message}${detail ? ': ' + detail : ''}`,
+      error,
+      context ?? ''
+    )
+    // TODO: encaminhar para um serviço externo em produção (ex.: Sentry)
   }
 }
 ```
+
+A integração com um serviço externo de error-tracking (Sentry, Datadog,
+etc.) está prevista — basta substituir os blocos `TODO` pelas chamadas do
+SDK escolhido.
 
 **O que NÃO logar**:
 - ❌ Emails de usuários
@@ -397,6 +406,6 @@ Responderemos em até 48 horas e manteremos você informado sobre o progresso.
 
 ---
 
-**Última atualização**: Janeiro 2026
-**Versão**: 2.0
+**Última atualização**: Abril 2026
+**Versão**: 2.1
 **Responsável**: Equipe de Desenvolvimento
