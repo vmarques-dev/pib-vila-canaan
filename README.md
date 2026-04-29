@@ -142,9 +142,7 @@ NEXT_PUBLIC_SITE_URL=https://pibvilacanaan.com.br
 
 # Feature flags (recomendado manter true em produção)
 NEXT_PUBLIC_USE_MIDDLEWARE_AUTH=true
-NEXT_PUBLIC_USE_STORAGE_RLS=true
 NEXT_PUBLIC_USE_RATE_LIMITING=true
-NEXT_PUBLIC_DEBUG_MODE=false
 ```
 
 #### Como obter as credenciais:
@@ -338,9 +336,7 @@ CREATE TABLE informacoes_igreja (
 | `CONTACT_EMAIL` | Email de destino do formulário de contato |
 | `NEXT_PUBLIC_SITE_URL` | URL pública do site em produção |
 | `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `true` (recomendado em produção) |
-| `NEXT_PUBLIC_USE_STORAGE_RLS` | `true` (recomendado em produção) |
 | `NEXT_PUBLIC_USE_RATE_LIMITING` | `true` (recomendado em produção) |
-| `NEXT_PUBLIC_DEBUG_MODE` | `false` (recomendado em produção) |
 
 4. Deploy automático a cada push em `main`!
 
