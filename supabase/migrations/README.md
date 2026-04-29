@@ -137,7 +137,3 @@ DROP TABLE IF EXISTS usuarios_admin CASCADE;
 DROP FUNCTION IF EXISTS update_usuarios_admin_updated_at() CASCADE;
 ```
 
-## Suporte
-
-Em caso de dúvidas sobre as migrations, consulte a documentação do plano de refatoração em:
-`C:\Users\vmarques\.claude\plans\stateful-dreaming-spindle.md`
