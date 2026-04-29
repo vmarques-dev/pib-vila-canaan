@@ -10,7 +10,7 @@ async function getInformacoesIgreja(): Promise<InformacoesIgreja | null> {
     const { data, error } = await supabase
       .from('informacoes_igreja')
       .select('*')
-      .single()
+      .maybeSingle()
 
     if (error) throw error
     return data
