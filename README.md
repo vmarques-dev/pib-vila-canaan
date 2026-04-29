@@ -86,8 +86,7 @@ pib-vila-canaan/
 │   ├── schema.sql                # Schema completo do banco
 │   └── migrations/               # Migrations incrementais
 ├── docs/
-│   ├── SECURITY.md               # Documentação de segurança
-│   └── FEATURE_FLAGS.md          # Guia de feature flags
+│   └── SECURITY.md               # Documentação de segurança
 └── public/                       # Arquivos estáticos
 ```
 
@@ -339,8 +338,6 @@ CREATE TABLE informacoes_igreja (
 | `NEXT_PUBLIC_USE_RATE_LIMITING` | `true` (recomendado em produção) |
 
 4. Deploy automático a cada push em `main`!
-
-> Para detalhes sobre as feature flags, consulte [`docs/FEATURE_FLAGS.md`](docs/FEATURE_FLAGS.md).
 
 ## ✅ Funcionalidades Implementadas
 
