@@ -30,7 +30,7 @@ export function extractErrorMessage(error: unknown): string {
   ) {
     return String((error as Record<string, unknown>).message)
   }
-  return 'Erro desconhecido'
+  return 'Unknown error'
 }
 
 class Logger {

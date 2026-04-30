@@ -66,20 +66,20 @@ export const metadata: Metadata = {
 }
 
 /**
- * Root Layout - Layout raiz da aplicação
+ * Root Layout — top-level application layout.
  *
- * Layout mais externo, aplicado a TODAS as páginas do site.
- * Contém apenas elementos essenciais compartilhados por toda a aplicação:
- * - Configuração do HTML e body
- * - Fontes globais (Geist Sans e Geist Mono)
- * - Providers (contextos React)
- * - Toaster para notificações
+ * The outermost layout, applied to EVERY page of the site. Contains
+ * only the essentials shared across the whole app:
+ * - HTML and body setup
+ * - Global fonts (Geist Sans and Geist Mono)
+ * - Providers (React contexts)
+ * - Toaster for notifications
  *
- * A Navbar e o Footer são gerenciados pelo layout do Route Group (public),
- * permitindo que o painel admin tenha seu próprio layout sem esses elementos.
+ * The Navbar and Footer are owned by the (public) Route Group's
+ * layout, so the admin panel can have its own layout without them.
  *
- * @see {@link file://./(public)/layout.tsx} Layout para páginas públicas (com Navbar/Footer)
- * @see {@link file://./admin/layout.tsx} Layout para painel administrativo (com Sidebar)
+ * @see {@link file://./(public)/layout.tsx} Public-pages layout (with Navbar/Footer)
+ * @see {@link file://./admin/layout.tsx} Admin-panel layout (with Sidebar)
  */
 export default function RootLayout({
   children,

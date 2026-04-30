@@ -15,19 +15,19 @@ import { estudoSchema, type EstudoFormData } from '@/lib/validations/admin'
 import { toast } from 'sonner'
 
 /**
- * Página de gerenciamento de estudos bíblicos
+ * Bible-studies management page.
  *
- * Permite criar, editar, arquivar e excluir estudos bíblicos.
- * Cada estudo contém referência bíblica (livro, capítulo, versículo),
- * texto do versículo, conteúdo do estudo e categoria.
+ * Allows admins to create, edit, archive, and delete Bible studies.
+ * Each study contains a Bible reference (book, chapter, verse), the
+ * verse text, the study content, and a category.
  *
- * @see {@link file://../../../hooks/useAdminCRUD.ts} Hook de CRUD utilizado
- * @see {@link file://../../../lib/supabase/browser.ts} Cliente Supabase utilizado
- * @see {@link file://../../../middleware.ts} Middleware que protege esta rota
+ * @see {@link file://../../../hooks/useAdminCRUD.ts} CRUD hook used here
+ * @see {@link file://../../../lib/supabase/browser.ts} Supabase client used here
+ * @see {@link file://../../../middleware.ts} Middleware protecting this route
  */
 
 /**
- * Representa um estudo bíblico
+ * Represents a Bible study.
  */
 interface Estudo {
   id: string
@@ -105,7 +105,7 @@ export default function EstudosPage() {
     defaultValues: initialFormData,
   })
 
-  // Preencher formulário ao editar
+  // Populate the form when editing
   useEffect(() => {
     if (editingItem) {
       setValue('titulo', editingItem.titulo)

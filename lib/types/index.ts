@@ -1,6 +1,7 @@
 /**
- * Exportação centralizada de todos os tipos da aplicação
- * Permite importar tipos de um único lugar: import { Evento, Estudo } from '@/types'
+ * Centralized exports for all application types.
+ * Allows importing every type from a single location:
+ *   import { Evento, Estudo } from '@/types'
  */
 
 export * from './database'

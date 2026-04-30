@@ -134,7 +134,7 @@ export default function EventosSection({ eventos }: EventosSectionProps) {
         </div>
       </section>
 
-      {/* Modal de detalhes do evento */}
+      {/* Event details modal */}
       <EventoModal
         evento={selectedEvento}
         isOpen={isModalOpen}

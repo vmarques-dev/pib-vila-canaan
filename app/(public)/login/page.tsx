@@ -17,7 +17,7 @@ export default function LoginPage() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 relative">
-          {/* Canal do Adorador */}
+          {/* Worshiper channel */}
           <Link href="/login/adorador">
             <div className="bg-white p-10 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-blue-500 group">
               <div className="flex flex-col items-center text-center space-y-4">
@@ -37,10 +37,10 @@ export default function LoginPage() {
             </div>
           </Link>
 
-          {/* Divisória vertical - apenas desktop */}
+          {/* Vertical divider — desktop only */}
           <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-px bg-gray-300" />
 
-          {/* Canal do Administrador */}
+          {/* Admin channel */}
           <Link href="/login/admin">
             <div className="bg-white p-10 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-green-500 group">
               <div className="flex flex-col items-center text-center space-y-4">

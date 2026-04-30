@@ -1,14 +1,14 @@
 /**
- * Cliente Supabase para uso no Browser (Client Components)
+ * Supabase client for use in the browser (Client Components).
  *
- * Este cliente utiliza @supabase/ssr para gerenciar cookies automaticamente,
- * garantindo que a sessão de autenticação seja sincronizada entre:
+ * This client uses @supabase/ssr to manage cookies automatically,
+ * keeping the auth session in sync across:
  * - Client Components (browser)
  * - Server Components
  * - Middleware
  *
- * IMPORTANTE: Use este cliente em vez de `@/lib/supabase/client` para
- * operações de autenticação em Client Components ('use client').
+ * IMPORTANT: prefer this client over `@/lib/supabase/client` for auth
+ * operations in Client Components ('use client').
  *
  * @example
  * ```tsx
@@ -28,13 +28,13 @@
 import { createBrowserClient } from '@supabase/ssr'
 
 /**
- * Cria uma instância do cliente Supabase otimizada para o browser.
+ * Creates a Supabase client instance optimized for the browser.
  *
- * O `createBrowserClient` do @supabase/ssr gerencia internamente
- * a reutilização da instância (singleton pattern), então é seguro
- * chamar esta função múltiplas vezes.
+ * `createBrowserClient` from @supabase/ssr internally reuses the
+ * instance (singleton pattern), so it's safe to call this function
+ * multiple times.
  *
- * @returns Instância do cliente Supabase configurada para o browser
+ * @returns Supabase client instance configured for the browser
  */
 export function createSupabaseBrowserClient() {
   return createBrowserClient(

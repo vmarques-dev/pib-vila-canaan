@@ -77,9 +77,9 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
           <p className="text-gray-600">Reveja nossos estudos passados</p>
         </motion.div>
 
-        {/* Área de navegação */}
+        {/* Navigation area */}
         <div className="relative flex items-center gap-4">
-          {/* Seta esquerda */}
+          {/* Left arrow */}
           <button
             onClick={goPrev}
             disabled={total <= 1}
@@ -89,7 +89,7 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
             <ChevronLeft className="h-5 w-5" />
           </button>
 
-          {/* Card com animação */}
+          {/* Animated card */}
           <div className="flex-1 overflow-hidden">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
@@ -125,7 +125,7 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
             </AnimatePresence>
           </div>
 
-          {/* Seta direita */}
+          {/* Right arrow */}
           <button
             onClick={goNext}
             disabled={total <= 1}
@@ -136,7 +136,7 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
           </button>
         </div>
 
-        {/* Indicador de posição */}
+        {/* Position indicator */}
         {total > 1 && (
           <div className="flex items-center justify-center gap-2 mt-5">
             {estudos.map((_, i) => (

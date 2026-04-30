@@ -8,7 +8,7 @@ import Link from 'next/link'
 import type { Evento, Estudo } from '@/lib/types/database'
 
 /**
- * Estatísticas exibidas no dashboard
+ * Statistics shown on the dashboard.
  */
 interface Stats {
   eventos: number
@@ -25,13 +25,13 @@ interface InscricaoRecente {
 }
 
 /**
- * Página principal do painel administrativo
+ * Main page of the admin panel.
  *
- * Exibe estatísticas gerais e resumos operacionais do sistema:
- * próximos eventos, estudos recentes e últimas inscrições.
+ * Displays high-level statistics and operational summaries: upcoming
+ * events, recent studies, and the latest registrations.
  *
- * @see {@link file://../../../lib/supabase/browser.ts} Cliente Supabase utilizado
- * @see {@link file://../../../middleware.ts} Middleware que protege esta rota
+ * @see {@link file://../../../lib/supabase/browser.ts} Supabase client used here
+ * @see {@link file://../../../middleware.ts} Middleware protecting this route
  */
 export default function DashboardPage() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), [])
@@ -136,7 +136,7 @@ export default function DashboardPage() {
         <p className="text-gray-600 mt-1">Bem-vindo ao painel administrativo</p>
       </header>
 
-      {/* Cartões de estatísticas */}
+      {/* Statistics cards */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" aria-label="Estatísticas">
         <article className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Eventos</h2>
@@ -157,10 +157,10 @@ export default function DashboardPage() {
         </article>
       </section>
 
-      {/* Resumos operacionais */}
+      {/* Operational summaries */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {/* Próximos eventos */}
+        {/* Upcoming events */}
         <section className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Próximos Eventos</h2>
@@ -200,7 +200,7 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* Inscrições recentes */}
+        {/* Recent registrations */}
         <section className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Inscrições Recentes</h2>
@@ -230,7 +230,7 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* Estudos recentes */}
+        {/* Recent studies */}
         <section className="bg-white rounded-lg shadow p-6 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Estudos Recentes</h2>

@@ -24,10 +24,10 @@ export default function EstudosComFiltro({ estudosAtivos, estudosAnteriores }: E
 
   return (
     <>
-      {/* Estudos Ativos — sempre exibidos, independente do filtro */}
+      {/* Active studies — always shown, regardless of the filter */}
       {estudosAtivos.length > 0 && <EstudoDestaque estudos={estudosAtivos} />}
 
-      {/* Filtros */}
+      {/* Filters */}
       <section className="py-12 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -54,7 +54,7 @@ export default function EstudosComFiltro({ estudosAtivos, estudosAnteriores }: E
         </div>
       </section>
 
-      {/* Lista de Estudos Filtrados */}
+      {/* Filtered studies list */}
       <EstudosLista estudos={estudosFiltrados} />
     </>
   )

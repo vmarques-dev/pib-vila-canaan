@@ -10,19 +10,19 @@ import { ArrowLeft } from 'lucide-react'
 import { logger } from '@/lib/logger'
 
 /**
- * Página de login para administradores
+ * Admin login page.
  *
- * Implementa autenticação com verificação em três camadas:
- * 1. Credenciais válidas (email/senha)
- * 2. Role 'admin' no user_metadata do Supabase Auth
- * 3. Registro ativo na tabela usuarios_admin
+ * Implements a three-layer authentication check:
+ * 1. Valid credentials (email/password)
+ * 2. `role: 'admin'` in the Supabase Auth `user_metadata`
+ * 3. Active record in the `usuarios_admin` table
  *
- * Após autenticação bem-sucedida, redireciona para /admin/dashboard.
- * Em caso de falha em qualquer camada, exibe mensagem de erro apropriada
- * e realiza logout para limpar sessão parcial.
+ * On successful authentication, redirects to /admin/dashboard. On
+ * failure at any layer, shows an appropriate error message and signs
+ * the user out to clear any partial session.
  *
- * @see {@link file://../../../../lib/supabase/browser.ts} Cliente Supabase utilizado
- * @see {@link file://../../../../middleware.ts} Middleware que protege rotas /admin/*
+ * @see {@link file://../../../../lib/supabase/browser.ts} Supabase client used here
+ * @see {@link file://../../../../middleware.ts} Middleware protecting /admin/* routes
  */
 export default function LoginAdminPage() {
   const router = useRouter()
@@ -33,11 +33,10 @@ export default function LoginAdminPage() {
   const [loading, setLoading] = useState(false)
 
   /**
-   * Processa o envio do formulário de login
+   * Handles the login form submission.
    *
-   * Executa as três verificações de segurança em sequência.
-   * Se todas passarem, atualiza os cookies via router.refresh()
-   * e redireciona para o dashboard administrativo.
+   * Runs the three security checks in sequence. If all pass, refreshes
+   * cookies via `router.refresh()` and redirects to the admin dashboard.
    */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -58,7 +57,7 @@ export default function LoginAdminPage() {
       }
 
       if (data.user) {
-        // Verificação 1: Tem role admin?
+        // Check 1: does the user have the admin role?
         if (data.user.user_metadata?.role !== 'admin') {
           logger.error('Tentativa de login sem role admin', null, { context: 'admin-auth' })
           setError('Usuário não é administrador')
@@ -67,7 +66,7 @@ export default function LoginAdminPage() {
           return
         }
 
-        // Verificação 2: Está na tabela usuarios_admin?
+        // Check 2: is the user in the usuarios_admin table?
         const { data: admin, error: adminError } = await supabase
           .from('usuarios_admin')
           .select('id, ativo')
@@ -82,7 +81,7 @@ export default function LoginAdminPage() {
           return
         }
 
-        // Verificação 3: Está ativo?
+        // Check 3: is the user active?
         if (!admin.ativo) {
           logger.error('Tentativa de login com admin inativo', null, { context: 'admin-auth' })
           setError('Usuário administrador inativo')

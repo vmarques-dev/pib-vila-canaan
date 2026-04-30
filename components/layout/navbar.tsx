@@ -19,7 +19,7 @@ export default function Navbar() {
   }
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // Se já estamos na página do link clicado, faz scroll to top
+    // If we're already on the clicked link's page, scroll to top
     if (pathname === href) {
       e.preventDefault()
       window.scrollTo({ top: 0, behavior: 'smooth' })

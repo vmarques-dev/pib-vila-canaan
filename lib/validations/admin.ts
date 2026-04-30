@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 /**
- * Schema de validação para estudos bíblicos
+ * Validation schema for Bible studies.
  */
 export const estudoSchema = z.object({
   titulo: z
@@ -34,7 +34,7 @@ export const estudoSchema = z.object({
 export type EstudoFormData = z.infer<typeof estudoSchema>
 
 /**
- * Schema de validação para eventos
+ * Validation schema for events.
  */
 export const eventoSchema = z.object({
   titulo: z
@@ -58,8 +58,8 @@ export const eventoSchema = z.object({
 export type EventoFormData = z.infer<typeof eventoSchema>
 
 /**
- * Schema de validação para galeria de fotos
- * URL é opcional quando há upload de arquivo
+ * Validation schema for the photo gallery.
+ * The URL is optional when a file upload is provided instead.
  */
 export const galeriaSchema = z.object({
   titulo: z
@@ -80,7 +80,7 @@ export const galeriaSchema = z.object({
 export type GaleriaFormData = z.infer<typeof galeriaSchema>
 
 /**
- * Schema de validação para equipe pastoral
+ * Validation schema for the pastoral team.
  */
 export const equipePastoralSchema = z.object({
   nome: z
@@ -101,7 +101,7 @@ export const equipePastoralSchema = z.object({
 export type EquipePastoralFormData = z.infer<typeof equipePastoralSchema>
 
 /**
- * Schema de validação para versículo destaque
+ * Validation schema for the featured verse.
  */
 export const versiculoDestaqueSchema = z.object({
   livro: z
@@ -122,23 +122,23 @@ export const versiculoDestaqueSchema = z.object({
 export type VersiculoDestaqueFormData = z.infer<typeof versiculoDestaqueSchema>
 
 /**
- * Regex para validação de telefone brasileiro
- * Suporta formatos: (XX) XXXXX-XXXX (celular) e (XX) XXXX-XXXX (fixo)
+ * Regex for validating Brazilian phone numbers.
+ * Supports formats: (XX) XXXXX-XXXX (mobile) and (XX) XXXX-XXXX (landline).
  */
 const telefoneBrasileiroRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/
 
 /**
- * Regex avançada para validação de email
- * Mais rigorosa que a validação padrão do Zod
- * - Verifica caracteres válidos no local-part
- * - Verifica formato do domínio
- * - Impede domínios genéricos inválidos
+ * Strict regex for email validation.
+ * More rigorous than Zod's default — it:
+ * - validates allowed characters in the local-part
+ * - validates the domain format
+ * - rejects malformed generic domains
  */
 const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/
 
 /**
- * Lista de domínios de email temporários/descartáveis comuns
- * Usada para bloquear emails não confiáveis
+ * List of commonly used disposable / throwaway email domains.
+ * Used to block sign-ups from untrusted addresses.
  */
 const dominiosDescartaveis = [
   'tempmail.com',
@@ -154,7 +154,7 @@ const dominiosDescartaveis = [
 ]
 
 /**
- * Valida se o domínio do email não é descartável
+ * Validates that the email domain is not disposable.
  */
 const validarDominioEmail = (email: string): boolean => {
   const dominio = email.split('@')[1]?.toLowerCase()
@@ -162,12 +162,12 @@ const validarDominioEmail = (email: string): boolean => {
 }
 
 /**
- * Schema de validação para configurações da igreja
- * Implementa validações enterprise-level com:
- * - Validação de formato de telefone brasileiro
- * - Validação rigorosa de email com bloqueio de domínios descartáveis
- * - Sanitização automática de inputs (trim, lowercase para email)
- * - Mensagens de erro descritivas em português
+ * Validation schema for church-wide settings.
+ * Implements enterprise-grade validation with:
+ * - Brazilian phone-format validation
+ * - Strict email validation that blocks disposable domains
+ * - Automatic input sanitization (trim, lowercase for email)
+ * - Descriptive error messages (kept in Portuguese for end users)
  */
 export const configuracoesSchema = z.object({
   nome: z

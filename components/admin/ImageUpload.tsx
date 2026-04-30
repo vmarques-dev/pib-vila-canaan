@@ -4,40 +4,40 @@ import { Upload, X, Image as ImageIcon } from 'lucide-react'
 import { STORAGE_CONFIG } from '@/lib/constants/config'
 
 interface ImageUploadProps {
-  /** ID único para o input (acessibilidade) */
+  /** Unique input ID (accessibility) */
   inputId: string
-  /** Label do campo */
+  /** Field label */
   label: string
-  /** Arquivo selecionado */
+  /** Selected file */
   imageFile: File | null
-  /** URL para preview (pode ser do arquivo ou URL existente) */
+  /** Preview URL (can come from the file or an existing URL) */
   imagePreview: string | null
-  /** URL atual do item sendo editado */
+  /** Current image URL of the item being edited */
   currentImageUrl?: string
-  /** Callback quando arquivo é selecionado */
+  /** Callback fired when a file is selected */
   onFileChange: (file: File | null) => void
-  /** Callback quando URL é alterada manualmente */
+  /** Callback fired when the URL is edited manually */
   onUrlChange?: (url: string) => void
-  /** Valor da URL (para input controlado) */
+  /** URL value (for the controlled input) */
   urlValue?: string
-  /** Erro de validação */
+  /** Validation error */
   error?: string
-  /** Se está desabilitado */
+  /** Whether the input is disabled */
   disabled?: boolean
-  /** Placeholder do campo de URL */
+  /** Placeholder for the URL field */
   urlPlaceholder?: string
-  /** Se deve mostrar o campo de URL */
+  /** Whether to show the URL field */
   showUrlInput?: boolean
-  /** Texto auxiliar */
+  /** Helper text */
   helperText?: string
 }
 
 /**
- * Componente reutilizável para upload de imagens no painel administrativo.
+ * Reusable image-upload component for the admin panel.
  *
- * Suporta dois modos de entrada:
- * 1. Upload de arquivo local (com drag-and-drop visual)
- * 2. URL externa (opcional)
+ * Supports two input modes:
+ * 1. Local file upload (with a visual drop target)
+ * 2. External URL (optional)
  *
  * @example
  * ```tsx
@@ -75,7 +75,7 @@ export function ImageUpload({
 
   const handleClearFile = () => {
     onFileChange(null)
-    // Limpa o input file
+    // Clear the file input
     const input = document.getElementById(inputId) as HTMLInputElement
     if (input) {
       input.value = ''
@@ -90,7 +90,7 @@ export function ImageUpload({
     <div className="space-y-3">
       <label className="block text-sm font-medium text-gray-700">{label}</label>
 
-      {/* Upload de Arquivo */}
+      {/* File upload */}
       <div className="relative">
         <label
           htmlFor={inputId}
@@ -117,7 +117,7 @@ export function ImageUpload({
           aria-describedby={error ? `${inputId}-error` : undefined}
         />
 
-        {/* Botão para limpar arquivo selecionado */}
+        {/* Clear-selected-file button */}
         {imageFile && !disabled && (
           <button
             type="button"
@@ -130,12 +130,12 @@ export function ImageUpload({
         )}
       </div>
 
-      {/* Texto auxiliar */}
+      {/* Helper text */}
       {helperText && (
         <p className="text-xs text-gray-500">{helperText}</p>
       )}
 
-      {/* Divisor OU */}
+      {/* OR divider */}
       {showUrlInput && (
         <>
           <div className="flex items-center gap-2">
@@ -144,7 +144,7 @@ export function ImageUpload({
             <div className="flex-1 border-t border-gray-300"></div>
           </div>
 
-          {/* URL da Imagem */}
+          {/* Image URL */}
           <div>
             <input
               id={`${inputId}_url`}
@@ -167,14 +167,14 @@ export function ImageUpload({
         </>
       )}
 
-      {/* Erro de validação */}
+      {/* Validation error */}
       {error && (
         <p id={`${inputId}-error`} className="text-sm text-red-500" role="alert">
           {error}
         </p>
       )}
 
-      {/* Preview da Imagem */}
+      {/* Image preview */}
       {displayPreview && (
         <div className="mt-3">
           <div className="flex items-center gap-2 mb-2">

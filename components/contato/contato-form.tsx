@@ -63,7 +63,7 @@ export default function ContatoForm() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Nome */}
+            {/* Name */}
             <div>
               <label
                 htmlFor="nome"
@@ -113,7 +113,7 @@ export default function ContatoForm() {
               )}
             </div>
 
-            {/* Telefone com máscara */}
+            {/* Phone with input mask */}
             <div>
               <label
                 htmlFor="telefone"
@@ -138,7 +138,7 @@ export default function ContatoForm() {
               )}
             </div>
 
-            {/* Assunto */}
+            {/* Subject */}
             <div>
               <label
                 htmlFor="assunto"
@@ -176,7 +176,7 @@ export default function ContatoForm() {
               )}
             </div>
 
-            {/* Mensagem */}
+            {/* Message */}
             <div>
               <label
                 htmlFor="mensagem"
@@ -201,7 +201,7 @@ export default function ContatoForm() {
               )}
             </div>
 
-            {/* Botão */}
+            {/* Submit button */}
             <button
               type="submit"
               disabled={loading}

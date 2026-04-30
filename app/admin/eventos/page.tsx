@@ -18,15 +18,15 @@ import { toast } from 'sonner'
 import { logger } from '@/lib/logger'
 
 /**
- * Página de gerenciamento de eventos
+ * Events management page.
  *
- * Permite criar, editar, concluir e excluir eventos da igreja.
- * Suporta upload de imagens com otimização automática.
- * Ao concluir um evento, a imagem é excluída para economizar espaço.
+ * Allows admins to create, edit, complete, and delete church events.
+ * Supports image upload with automatic optimization. When an event is
+ * marked as completed, its image is deleted to save storage.
  *
- * @see {@link file://../../../hooks/useAdminCRUD.ts} Hook de CRUD utilizado
- * @see {@link file://../../../lib/supabase/browser.ts} Cliente Supabase utilizado
- * @see {@link file://../../../middleware.ts} Middleware que protege esta rota
+ * @see {@link file://../../../hooks/useAdminCRUD.ts} CRUD hook used here
+ * @see {@link file://../../../lib/supabase/browser.ts} Supabase client used here
+ * @see {@link file://../../../middleware.ts} Middleware protecting this route
  */
 
 const initialFormData = {
@@ -45,12 +45,12 @@ export default function EventosPage() {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
 
-  // Estados para diálogos de confirmação
+  // State for confirmation dialogs
   const [confirmConcluir, setConfirmConcluir] = useState<Evento | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<Evento | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
-  // Inscrições
+  // Registrations
   const [inscricoesCount, setInscricoesCount] = useState<Record<string, number>>({})
   const [viewInscricoes, setViewInscricoes] = useState<Evento | null>(null)
   const [inscricoesList, setInscricoesList] = useState<Inscricao[]>([])
@@ -118,7 +118,7 @@ export default function EventosPage() {
     try {
       let finalImageUrl = ''
 
-      // Upload de imagem se houver arquivo
+      // Upload an image when a file is present
       if (imageFile) {
         setUploadingImage(true)
         toast.info('Otimizando e enviando imagem...')
@@ -145,7 +145,7 @@ export default function EventosPage() {
       }
 
       if (editingItem) {
-        // Deletar imagem antiga se estiver trocando
+        // Delete the old image when replacing it
         if (editingItem.imagem_url && imageFile) {
           await deleteImage(editingItem.imagem_url, 'eventos')
         }

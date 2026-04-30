@@ -2,17 +2,17 @@ import Navbar from '@/components/layout/navbar'
 import Footer from '@/components/layout/footer'
 
 /**
- * Public Layout - Layout para páginas públicas do site
+ * Public Layout — layout for the public-facing pages.
  *
- * Aplicado a todas as páginas dentro do Route Group (public).
- * Inclui a Navbar e o Footer do site, criando a estrutura visual padrão
- * para visitantes e membros da igreja.
+ * Applied to every page inside the (public) Route Group. Renders the
+ * site's Navbar and Footer, providing the default visual frame for
+ * visitors and church members.
  *
- * O Route Group (public) não afeta a URL - as páginas continuam acessíveis
- * em seus caminhos originais (/, /sobre, /eventos, etc.).
+ * The (public) Route Group does not affect the URL — pages remain
+ * reachable at their original paths (/, /sobre, /eventos, etc.).
  *
- * @see {@link file://../layout.tsx} Root Layout (configurações globais)
- * @see {@link file://../admin/layout.tsx} Layout para painel administrativo (com Sidebar)
+ * @see {@link file://../layout.tsx} Root Layout (global config)
+ * @see {@link file://../admin/layout.tsx} Admin-panel layout (with Sidebar)
  * @see https://nextjs.org/docs/app/building-your-application/routing/route-groups
  */
 export default function PublicLayout({

@@ -13,56 +13,56 @@ import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { logger } from '@/lib/logger'
 
 /**
- * Tipo do contexto de autenticação
+ * Auth context type.
  *
- * Define a estrutura de dados e métodos disponíveis para gerenciamento
- * de autenticação em toda a aplicação.
+ * Defines the shape of state and methods exposed to manage
+ * authentication throughout the application.
  */
 interface AuthContextType {
-  /** Usuário autenticado ou null se não estiver logado */
+  /** Authenticated user, or null if not signed in */
   user: User | null
-  /** Indica se o usuário é um administrador ativo */
+  /** Whether the user is an active administrator */
   isAdmin: boolean
-  /** Indica se a verificação de autenticação está em andamento */
+  /** Whether the auth check is currently running */
   isLoading: boolean
-  /** Realiza login com email e senha */
+  /** Signs the user in with email and password */
   login: (email: string, password: string) => Promise<{ error: Error | null }>
-  /** Realiza logout do usuário atual */
+  /** Signs the current user out */
   logout: () => Promise<void>
-  /** Verifica e atualiza o estado de autenticação */
+  /** Re-checks and refreshes the auth state */
   checkAuth: () => Promise<void>
 }
 
 /**
- * Props do componente AuthProvider
+ * Props for the AuthProvider component.
  */
 interface AuthProviderProps {
-  /** Componentes filhos que terão acesso ao contexto de autenticação */
+  /** Child components that will have access to the auth context */
   children: ReactNode
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 /**
- * Provider de autenticação da aplicação
+ * Application-wide authentication provider.
  *
- * Gerencia o estado de autenticação global, incluindo:
- * - Verificação de sessão ativa
- * - Detecção de role admin (via user_metadata e tabela usuarios_admin)
- * - Listener para mudanças de estado de autenticação
+ * Manages the global auth state, including:
+ * - Active-session check
+ * - Admin-role detection (via user_metadata and the usuarios_admin table)
+ * - Listener for auth state changes
  *
- * Deve envolver toda a aplicação para disponibilizar o contexto de auth.
+ * Must wrap the entire application so the auth context is available.
  *
  * @example
  * ```tsx
- * // Em app/layout.tsx ou providers.tsx
+ * // In app/layout.tsx or providers.tsx
  * <AuthProvider>
  *   {children}
  * </AuthProvider>
  * ```
  *
- * @see {@link useAuth} Hook para consumir o contexto de autenticação
- * @see {@link file://../supabase/browser.ts} Cliente Supabase utilizado
+ * @see {@link useAuth} Hook to consume the auth context
+ * @see {@link file://../supabase/browser.ts} Supabase client used here
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const supabase = useMemo(() => {
@@ -77,10 +77,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true)
 
   /**
-   * Verifica e atualiza o estado de autenticação
+   * Re-checks and refreshes the auth state.
    *
-   * Busca o usuário atual via Supabase Auth e, se for admin,
-   * verifica se está ativo na tabela usuarios_admin.
+   * Fetches the current user via Supabase Auth and, if they are an
+   * admin, verifies that they are active in the usuarios_admin table.
    */
   const checkAuth = async () => {
     if (!supabase) {
@@ -122,11 +122,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   /**
-   * Realiza login com email e senha
+   * Signs the user in with email and password.
    *
-   * @param email - Email do usuário
-   * @param password - Senha do usuário
-   * @returns Objeto com erro (se houver) ou null em caso de sucesso
+   * @param email - User email
+   * @param password - User password
+   * @returns Object with the error (if any) or null on success
    */
   const login = async (
     email: string,
@@ -154,9 +154,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   /**
-   * Realiza logout do usuário atual
+   * Signs the current user out.
    *
-   * Limpa a sessão no Supabase Auth e reseta o estado local.
+   * Clears the Supabase Auth session and resets local state.
    */
   const logout = async () => {
     if (!supabase) return
@@ -199,26 +199,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
 }
 
 /**
- * Hook para acessar o contexto de autenticação
+ * Hook to access the auth context.
  *
- * Fornece acesso ao estado de autenticação e métodos para login/logout.
- * Deve ser usado apenas em componentes dentro do AuthProvider.
+ * Exposes the auth state and login/logout methods. Must only be used
+ * inside components rendered under AuthProvider.
  *
- * @returns Contexto de autenticação com user, isAdmin, isLoading, login, logout e checkAuth
- * @throws Error se usado fora do AuthProvider
+ * @returns Auth context with user, isAdmin, isLoading, login, logout, and checkAuth
+ * @throws Error when used outside of AuthProvider
  *
  * @example
  * ```tsx
  * function MyComponent() {
  *   const { user, isAdmin, logout } = useAuth()
  *
- *   if (!user) return <p>Não autenticado</p>
+ *   if (!user) return <p>Not authenticated</p>
  *
  *   return (
  *     <div>
- *       <p>Olá, {user.email}</p>
- *       {isAdmin && <p>Você é admin!</p>}
- *       <button onClick={logout}>Sair</button>
+ *       <p>Hello, {user.email}</p>
+ *       {isAdmin && <p>You're an admin!</p>}
+ *       <button onClick={logout}>Sign out</button>
  *     </div>
  *   )
  * }

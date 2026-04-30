@@ -3,18 +3,18 @@ import Sidebar from '@/components/admin/Sidebar'
 export const dynamic = 'force-dynamic'
 
 /**
- * Admin Layout - Layout para o painel administrativo
+ * Admin Layout — layout for the admin panel.
  *
- * Aplicado a todas as páginas dentro de /admin/*.
- * Inclui apenas a Sidebar para navegação, seguindo o padrão profissional
- * de painéis administrativos (sem Navbar e Footer do site público).
+ * Applied to every page under /admin/*. Renders only the Sidebar for
+ * navigation, following the standard pattern for admin panels (no
+ * public-site Navbar or Footer).
  *
- * Este é um Server Component (sem 'use client').
- * A proteção de rotas é feita pelo middleware server-side,
- * não há necessidade de AdminGuard client-side.
+ * This is a Server Component (no 'use client'). Route protection is
+ * handled by the server-side middleware, so no client-side AdminGuard
+ * is needed.
  *
- * @see {@link file://../layout.tsx} Root Layout (configurações globais)
- * @see {@link file://../(public)/layout.tsx} Layout para páginas públicas (com Navbar/Footer)
+ * @see {@link file://../layout.tsx} Root Layout (global config)
+ * @see {@link file://../(public)/layout.tsx} Public-pages layout (with Navbar/Footer)
  */
 export default function AdminLayout({
   children,

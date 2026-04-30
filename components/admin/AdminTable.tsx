@@ -3,15 +3,15 @@ import { ReactNode } from 'react'
 export interface AdminTableColumn<T> {
   header: string
   accessor: keyof T | ((item: T) => ReactNode)
-  /** Largura da coluna (ex: '150px', '20%') */
+  /** Column width (e.g. '150px', '20%') */
   width?: string
-  /** Largura mínima da coluna */
+  /** Minimum column width */
   minWidth?: string
-  /** Largura máxima da coluna */
+  /** Maximum column width */
   maxWidth?: string
-  /** Classe CSS adicional para o header */
+  /** Extra CSS class for the header cell */
   headerClassName?: string
-  /** Classe CSS adicional para as células */
+  /** Extra CSS class for body cells */
   cellClassName?: string
 }
 

@@ -1,6 +1,6 @@
 /**
- * Configurações gerais da aplicação
- * Centraliza valores constantes usados em múltiplos lugares
+ * General application configuration.
+ * Centralizes constant values reused across the codebase.
  */
 
 export const SITE_CONFIG = {
@@ -32,24 +32,24 @@ export const STORAGE_CONFIG = {
 } as const
 
 export const VALIDATION_CONFIG = {
-  // Títulos e nomes
+  // Titles and names
   TITLE_MIN: 3,
   TITLE_MAX: 200,
   NOME_MIN: 3,
   NOME_MAX: 100,
 
-  // Descrições
+  // Descriptions
   DESCRIPTION_MIN: 10,
   DESCRIPTION_MAX: 1000,
 
   // Email
   EMAIL_MAX: 255,
 
-  // Conteúdos longos
+  // Long-form content
   CONTENT_MIN: 10,
   CONTENT_MAX: 10000,
 
-  // Versículos
+  // Verses
   VERSICULO_MIN: 10,
   VERSICULO_MAX: 1000,
 } as const
@@ -57,7 +57,7 @@ export const VALIDATION_CONFIG = {
 export const RATE_LIMIT_CONFIG = {
   CONTATO: {
     MAX_REQUESTS: 3,
-    WINDOW_MS: 3600000, // 1 hora
+    WINDOW_MS: 3600000, // 1 hour
   },
 } as const
 

@@ -11,8 +11,8 @@ import {
 } from 'lucide-react'
 
 /**
- * Itens de navegação do painel administrativo.
- * Centralizado aqui para evitar duplicação e facilitar manutenção.
+ * Navigation items for the admin panel.
+ * Centralized here to avoid duplication and ease maintenance.
  */
 export const ADMIN_MENU_ITEMS = [
   { href: '/admin/dashboard',          label: 'Dashboard',          icon: LayoutDashboard },
