@@ -7,9 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Converte uma string de data para Date sem shift de timezone.
- * Extrai apenas a parte YYYY-MM-DD e adiciona T12:00:00 para evitar
- * que o fuso horário local desloque o dia.
+ * Parses a date string into a Date without a timezone shift.
+ * Takes the YYYY-MM-DD portion only and appends T12:00:00 so the
+ * local timezone never shifts the day.
  */
 export function parseLocalDate(dateStr: string): Date {
   const dateOnly = dateStr.substring(0, 10)
@@ -17,8 +17,8 @@ export function parseLocalDate(dateStr: string): Date {
 }
 
 /**
- * Formata os campos horario_inicio e horario_fim para exibição.
- * Exemplos: "19:00 às 21:00" | "19:00" | null
+ * Formats the horario_inicio and horario_fim fields for display.
+ * Examples: "19:00 às 21:00" | "19:00" | null
  */
 export function formatHorario(
   inicio?: string | null,

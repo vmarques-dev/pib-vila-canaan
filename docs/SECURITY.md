@@ -1,41 +1,41 @@
-# Documentação de Segurança - PIB Vila Canaan
+# Security Documentation - PIB Vila Canaan
 
-Este documento descreve as práticas e mecanismos de segurança implementados no projeto.
+This document describes the security practices and mechanisms implemented in the project.
 
-## 📋 Índice
+## 📋 Table of Contents
 
-1. [Visão Geral](#visão-geral)
-2. [Autenticação e Autorização](#autenticação-e-autorização)
+1. [Overview](#overview)
+2. [Authentication and Authorization](#authentication-and-authorization)
 3. [Row Level Security (RLS)](#row-level-security-rls)
-4. [Validação de Dados](#validação-de-dados)
-5. [Proteção de Credenciais](#proteção-de-credenciais)
-6. [Logging Seguro](#logging-seguro)
+4. [Data Validation](#data-validation)
+5. [Credential Protection](#credential-protection)
+6. [Safe Logging](#safe-logging)
 7. [Rate Limiting](#rate-limiting)
-8. [Deploy e Rollback](#deploy-e-rollback)
-9. [Checklist de Segurança](#checklist-de-segurança)
-10. [Contato para Vulnerabilidades](#contato-para-vulnerabilidades)
+8. [Deploy and Rollback](#deploy-and-rollback)
+9. [Security Checklist](#security-checklist)
+10. [Reporting Vulnerabilities](#reporting-vulnerabilities)
 
 ---
 
-## Visão Geral
+## Overview
 
-O projeto implementa múltiplas camadas de segurança para proteger dados dos usuários e garantir que apenas administradores autorizados tenham acesso ao painel admin.
+The project implements multiple layers of security to protect user data and ensure that only authorized administrators can access the admin panel.
 
-**Princípios de Segurança**:
-- ✅ **Defense in Depth** - Múltiplas camadas de proteção
-- ✅ **Least Privilege** - Usuários têm apenas permissões necessárias
-- ✅ **Fail Secure** - Em caso de falha, sistema nega acesso
-- ✅ **Separation of Concerns** - Segurança não depende de um único ponto
+**Security Principles**:
+- ✅ **Defense in Depth** — multiple layers of protection
+- ✅ **Least Privilege** — users only get the permissions they need
+- ✅ **Fail Secure** — when something goes wrong, the system denies access
+- ✅ **Separation of Concerns** — security never depends on a single point
 
 ---
 
-## Autenticação e Autorização
+## Authentication and Authorization
 
-### Middleware Server-Side
+### Server-Side Middleware
 
-**Arquivo**: `middleware.ts`
+**File**: `middleware.ts`
 
-Todas as rotas `/admin/*` são protegidas por middleware Next.js que roda no servidor:
+All `/admin/*` routes are protected by Next.js middleware running on the server:
 
 ```typescript
 export async function middleware(req: NextRequest) {
@@ -43,18 +43,18 @@ export async function middleware(req: NextRequest) {
   const { data: { session } } = await supabase.auth.getSession()
 
   if (req.nextUrl.pathname.startsWith('/admin')) {
-    // 1. Verifica sessão ativa
+    // 1. Check for an active session
     if (!session) {
       return NextResponse.redirect(new URL('/login/admin', req.url))
     }
 
-    // 2. Verifica role='admin' no user_metadata
+    // 2. Check for role='admin' in user_metadata
     if (session.user.user_metadata?.role !== 'admin') {
       await supabase.auth.signOut()
       return NextResponse.redirect(new URL('/', req.url))
     }
 
-    // 3. Verifica se está ativo na tabela usuarios_admin
+    // 3. Check that the user is active in the usuarios_admin table
     const { data: admin } = await supabase
       .from('usuarios_admin')
       .select('ativo')
@@ -71,16 +71,16 @@ export async function middleware(req: NextRequest) {
 }
 ```
 
-**Proteções**:
-- ✅ **Server-side** - Não pode ser bypassado via DevTools
-- ✅ **Tripla verificação** - Sessão + Role + Tabela
-- ✅ **Logout automático** - Remove sessão se não autorizado
+**Protections**:
+- ✅ **Server-side** — cannot be bypassed via DevTools
+- ✅ **Triple verification** — session + role + table
+- ✅ **Automatic sign-out** — clears the session if not authorized
 
-### Tabela usuarios_admin
+### usuarios_admin Table
 
-**Arquivo**: `supabase/migrations/001_create_usuarios_admin.sql`
+**File**: `supabase/migrations/001_create_usuarios_admin.sql`
 
-Controla quais usuários têm acesso ao painel admin:
+Controls which users have access to the admin panel:
 
 ```sql
 CREATE TABLE usuarios_admin (
@@ -92,20 +92,20 @@ CREATE TABLE usuarios_admin (
 );
 ```
 
-**Como Gerenciar Admins**:
+**Managing Admins**:
 
 ```sql
--- Adicionar novo admin
+-- Add a new admin
 INSERT INTO usuarios_admin (user_id, ativo)
-SELECT id, true FROM auth.users WHERE email = 'admin@exemplo.com';
+SELECT id, true FROM auth.users WHERE email = 'admin@example.com';
 
--- Desabilitar admin (sem deletar)
-UPDATE usuarios_admin SET ativo = false WHERE user_id = 'uuid-do-usuario';
+-- Disable an admin (without deleting)
+UPDATE usuarios_admin SET ativo = false WHERE user_id = 'user-uuid';
 
--- Reabilitar admin
-UPDATE usuarios_admin SET ativo = true WHERE user_id = 'uuid-do-usuario';
+-- Re-enable an admin
+UPDATE usuarios_admin SET ativo = true WHERE user_id = 'user-uuid';
 
--- Listar todos os admins
+-- List every admin
 SELECT ua.*, u.email, u.user_metadata->'role' as role
 FROM usuarios_admin ua
 JOIN auth.users u ON ua.user_id = u.id
@@ -116,21 +116,21 @@ ORDER BY ua.created_at DESC;
 
 ## Row Level Security (RLS)
 
-### Storage - Bucket 'eventos'
+### Storage — `eventos` Bucket
 
-**Arquivo**: `supabase/migrations/002_fix_storage_rls.sql`
+**File**: `supabase/migrations/002_fix_storage_rls.sql`
 
-Apenas admins ativos podem fazer upload/delete de imagens:
+Only active admins can upload/delete images:
 
 ```sql
--- Leitura pública (imagens do site)
-CREATE POLICY "Leitura pública de eventos"
+-- Public read access (site images)
+CREATE POLICY "Public read access for eventos"
   ON storage.objects FOR SELECT
   TO public
   USING (bucket_id = 'eventos');
 
--- Upload apenas para admins ativos
-CREATE POLICY "Apenas admins ativos podem fazer upload"
+-- Upload restricted to active admins
+CREATE POLICY "Active admins can upload"
   ON storage.objects FOR INSERT
   TO authenticated
   WITH CHECK (
@@ -141,30 +141,30 @@ CREATE POLICY "Apenas admins ativos podem fazer upload"
   );
 ```
 
-**Validação**:
-- ✅ Usuário comum autenticado → Upload FALHA (403 Forbidden)
-- ✅ Admin ativo → Upload FUNCIONA
-- ✅ Admin inativo → Upload FALHA (403 Forbidden)
+**Validation**:
+- ✅ Regular authenticated user → upload FAILS (403 Forbidden)
+- ✅ Active admin → upload SUCCEEDS
+- ✅ Inactive admin → upload FAILS (403 Forbidden)
 
-### Tabelas Principais
+### Main Tables
 
-Todas as tabelas têm RLS habilitado com policies específicas:
+Every table has RLS enabled with table-specific policies:
 
-- **eventos**: Admin pode CRUD, público pode SELECT
-- **estudos**: Admin pode CRUD, público pode SELECT
-- **galeria**: Admin pode CRUD, público pode SELECT
-- **equipe_pastoral**: Admin pode CRUD, público pode SELECT
-- **usuarios_admin**: Usuário vê apenas próprio registro
+- **eventos**: admin can CRUD, public can SELECT
+- **estudos**: admin can CRUD, public can SELECT
+- **galeria**: admin can CRUD, public can SELECT
+- **equipe_pastoral**: admin can CRUD, public can SELECT
+- **usuarios_admin**: each user only sees their own row
 
 ---
 
-## Validação de Dados
+## Data Validation
 
-### Schemas Zod
+### Zod Schemas
 
-**Arquivo**: `lib/validations/contato.ts` (e outros)
+**File**: `lib/validations/contato.ts` (and others)
 
-Todas as APIs e formulários validam dados com Zod:
+Every API endpoint and form validates input through Zod:
 
 ```typescript
 export const contatoSchema = z.object({
@@ -190,17 +190,21 @@ export const contatoSchema = z.object({
 })
 ```
 
-**Proteções**:
-- ✅ **Sanitização automática** - trim(), toLowerCase()
-- ✅ **Validação de formato** - regex, email, URL
-- ✅ **Limites de tamanho** - previne DoS
-- ✅ **Mensagens descritivas** - sem expor detalhes internos
+> User-facing validation messages are kept in Portuguese because they are
+> rendered to the end user; the surrounding code and documentation are in
+> English.
 
-### Sanitização HTML
+**Protections**:
+- ✅ **Automatic sanitization** — `trim()`, `toLowerCase()`
+- ✅ **Format validation** — regex, email, URL
+- ✅ **Size limits** — prevents DoS
+- ✅ **Descriptive messages** — without exposing internals
 
-**Arquivo**: `app/api/contato/route.ts`
+### HTML Sanitization
 
-Todos os dados enviados por email são escapados:
+**File**: `app/api/contato/route.ts`
+
+All data sent in the contact email is escaped:
 
 ```typescript
 function escapeHtml(text: string): string {
@@ -215,79 +219,87 @@ function escapeHtml(text: string): string {
 }
 ```
 
-**Proteção contra**: XSS (Cross-Site Scripting)
+**Protects against**: XSS (Cross-Site Scripting)
 
 ---
 
-## Proteção de Credenciais
+## Credential Protection
 
-### Variáveis de Ambiente
+### Environment Variables
 
-**Arquivo**: `.env.local` (NÃO commitado no Git)
+**File**: `.env.local` (NOT committed to Git)
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sua-chave-anonima
-RESEND_API_KEY=re_sua-chave-resend
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+RESEND_API_KEY=re_your-resend-key
 ```
 
-**Proteções**:
-- ✅ `.env.local` no `.gitignore`
-- ✅ Apenas `NEXT_PUBLIC_*` são expostas ao browser
-- ✅ Keys privadas apenas no servidor
-- ✅ `.env.local.example` com placeholders
+**Protections**:
+- ✅ `.env.local` listed in `.gitignore`
+- ✅ Only `NEXT_PUBLIC_*` variables are exposed to the browser
+- ✅ Private keys live exclusively on the server
+- ✅ `.env.local.example` ships placeholders only
 
-**⚠️ IMPORTANTE**:
-- ❌ NUNCA commitar `.env.local` no Git
-- ❌ NUNCA expor `RESEND_API_KEY` no cliente
-- ✅ Rotacionar keys se expostas acidentalmente
+**⚠️ IMPORTANT**:
+- ❌ NEVER commit `.env.local` to Git
+- ❌ NEVER expose `RESEND_API_KEY` on the client
+- ✅ Rotate keys if accidentally leaked
 
 ---
 
-## Logging Seguro
+## Safe Logging
 
-**Arquivo**: `lib/logger.ts`
+**File**: `lib/logger.ts`
 
-Logger personalizado que não expõe dados sensíveis:
+Centralized logger with three levels (`info`, `warn`, `error`). `info` and
+`warn` are emitted only in development; `error` is always emitted, in any
+environment. Error details are extracted via `extractErrorMessage`, which
+understands `Error`, Supabase `PostgrestError` (whose `.message` is
+non-enumerable), and any plain object with a `message` property.
 
 ```typescript
 class Logger {
-  error(message: string, error?: Error, context?: LogContext): void {
-    const fullContext = {
-      ...context,
-      errorMessage: error?.message,
-      stack: error?.stack,
-      // NÃO inclui: email, user_id, role, tokens
-    }
+  private readonly isDevelopment = process.env.NODE_ENV === 'development'
 
-    console.error(this.formatMessage('ERROR', message, fullContext))
+  error(message: string, error?: unknown, context?: LogContext): void {
+    const detail = extractErrorMessage(error ?? '')
+    console.error(
+      `[ERROR] ${message}${detail ? ': ' + detail : ''}`,
+      error,
+      context ?? ''
+    )
+    // TODO: forward to an external service in production (e.g. Sentry)
   }
 }
 ```
 
-**O que NÃO logar**:
-- ❌ Emails de usuários
-- ❌ Senhas (óbvio, mas reforçando)
-- ❌ Tokens de autenticação
-- ❌ User IDs (apenas em contexto de erro crítico)
-- ❌ Roles de usuário
-- ❌ Dados pessoais
+Integration with an external error-tracking service (Sentry, Datadog, …)
+is on the roadmap — replace the `TODO` blocks with the chosen SDK's calls.
 
-**O que logar**:
-- ✅ Erros de autenticação (sem detalhes sensíveis)
-- ✅ Tentativas de acesso não autorizado
-- ✅ Operações CRUD (sem dados pessoais)
-- ✅ Uploads de arquivo (sem conteúdo)
+**What NOT to log**:
+- ❌ User emails
+- ❌ Passwords (obvious, but worth stating)
+- ❌ Auth tokens
+- ❌ User IDs (only in critical-error contexts)
+- ❌ User roles
+- ❌ Personal data
+
+**What to log**:
+- ✅ Authentication errors (without sensitive details)
+- ✅ Unauthorized-access attempts
+- ✅ CRUD operations (without personal data)
+- ✅ File uploads (without contents)
 
 ---
 
 ## Rate Limiting
 
-### API de Contato
+### Contact API
 
-**Arquivo**: `app/api/contato/route.ts`
+**File**: `app/api/contato/route.ts`
 
-Limite de 3 requests por hora por IP:
+Limit of 3 requests per hour per IP:
 
 ```typescript
 const requestCounts = new Map<string, { count: number; resetTime: number }>()
@@ -311,88 +323,84 @@ export async function POST(request: Request) {
 }
 ```
 
-**Proteção contra**: Spam, abuso, tentativas de força bruta
+**Protects against**: spam, abuse, brute-force attempts
 
 ---
 
-## Deploy e Rollback
+## Deploy and Rollback
 
 ### Feature Flags
 
-**Arquivo**: `lib/constants/features.ts`
+Two environment variables enable a fast rollback without a redeploy. Each
+is read directly via `process.env` in the file where it takes effect.
 
-Permite rollback rápido sem redeploy:
+| Variable | File | Default | Effect when `false` |
+|---|---|---|---|
+| `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `middleware.ts` | `true` | Full bypass of `/admin/*` and `/adorador/*` protection |
+| `NEXT_PUBLIC_USE_RATE_LIMITING` | `app/api/contato/route.ts` | `true` | Disables the 3 req/h IP limit |
 
-```typescript
-export const FEATURE_FLAGS = {
-  USE_MIDDLEWARE_AUTH: process.env.NEXT_PUBLIC_USE_MIDDLEWARE_AUTH === 'true',
-  USE_RATE_LIMITING: process.env.NEXT_PUBLIC_USE_RATE_LIMITING !== 'false',
-  DEBUG_MODE: process.env.NEXT_PUBLIC_DEBUG_MODE === 'true',
-} as const
-```
+**Emergency rollback procedure**:
+1. Open Vercel Dashboard → Settings → Environment Variables
+2. Set the relevant flag to `false`
+3. Wait for the automatic redeploy (~2 minutes)
 
-**Como fazer rollback**:
-1. Acessar Vercel Dashboard
-2. Settings → Environment Variables
-3. Mudar `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` para `false`
-4. Aguardar redeploy automático (~2 minutos)
-
-**Documentação completa**: `docs/FEATURE_FLAGS.md`
+⚠️ Never leave `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH=false` in production for
+long — admin-route protection is fully disabled.
 
 ---
 
-## Checklist de Segurança
+## Security Checklist
 
-### Antes de Deploy em Produção
+### Before Deploying to Production
 
-- [ ] Migrations executadas no Supabase
-- [ ] Tabela `usuarios_admin` populada com pelo menos 1 admin
-- [ ] RLS policies habilitadas em todas as tabelas
-- [ ] Storage policies restritivas aplicadas
-- [ ] `.env.local` NÃO commitado
-- [ ] Feature flags configuradas corretamente
-- [ ] Middleware testado (bloqueia não-admins)
-- [ ] Rate limiting testado
-- [ ] Logs não expõem dados sensíveis
-- [ ] README atualizado
-- [ ] Plano de rollback documentado
+- [ ] Migrations executed on Supabase
+- [ ] `usuarios_admin` table seeded with at least one admin
+- [ ] RLS policies enabled on every table
+- [ ] Restrictive Storage policies applied
+- [ ] `.env.local` NOT committed
+- [ ] Feature flags configured correctly
+- [ ] Middleware tested (blocks non-admins)
+- [ ] Rate limiting tested
+- [ ] Logs do not leak sensitive data
+- [ ] README up to date
+- [ ] Rollback plan documented
 
-### Auditoria Regular
+### Routine Audits
 
-**Mensal**:
-- [ ] Revisar usuários ativos em `usuarios_admin`
-- [ ] Verificar logs de tentativas de acesso não autorizado
-- [ ] Rotacionar API keys (se necessário)
+**Monthly**:
+- [ ] Review active users in `usuarios_admin`
+- [ ] Inspect logs for unauthorized-access attempts
+- [ ] Rotate API keys (if needed)
 
-**Trimestral**:
-- [ ] Atualizar dependências (`npm audit fix`)
-- [ ] Revisar RLS policies
-- [ ] Testar procedimento de rollback
+**Quarterly**:
+- [ ] Update dependencies (`npm audit fix`)
+- [ ] Review RLS policies
+- [ ] Test the rollback procedure
 
-**Anual**:
-- [ ] Audit completo de segurança
-- [ ] Revisão de toda documentação
-- [ ] Treinamento de equipe sobre práticas de segurança
-
----
-
-## Contato para Vulnerabilidades
-
-Se você encontrar uma vulnerabilidade de segurança, por favor:
-
-1. **NÃO abra uma issue pública** no GitHub
-2. Envie email para: [seu-email-de-seguranca@exemplo.com]
-3. Inclua:
-   - Descrição detalhada da vulnerabilidade
-   - Passos para reproduzir
-   - Impacto potencial
-   - Sugestão de correção (se tiver)
-
-Responderemos em até 48 horas e manteremos você informado sobre o progresso.
+**Annually**:
+- [ ] Full security audit
+- [ ] Review all documentation
+- [ ] Train the team on security practices
 
 ---
 
-## Referências
+## Reporting Vulnerabilities
+
+If you discover a security vulnerability, please:
+
+1. **DO NOT open a public issue** on GitHub
+2. Email: [your-security-email@example.com]
+3. Include:
+   - A detailed description of the vulnerability
+   - Steps to reproduce
+   - Potential impact
+   - A suggested fix (if you have one)
+
+We will respond within 48 hours and keep you informed about the progress.
+
+---
+
+## References
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [Supabase Auth Guide](https://supabase.com/docs/guides/auth)
@@ -401,6 +409,6 @@ Responderemos em até 48 horas e manteremos você informado sobre o progresso.
 
 ---
 
-**Última atualização**: Janeiro 2026
-**Versão**: 2.0
-**Responsável**: Equipe de Desenvolvimento
+**Last updated**: April 2026
+**Version**: 2.1
+**Owner**: Development team

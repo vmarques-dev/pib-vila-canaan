@@ -5,7 +5,7 @@ import { logger } from '@/lib/logger'
 import { RATE_LIMIT_CONFIG } from '@/lib/constants/config'
 
 /**
- * Escapa caracteres HTML para prevenir XSS
+ * Escapes HTML characters to prevent XSS.
  */
 function escapeHtml(text: string): string {
   const map: Record<string, string> = {
@@ -19,8 +19,8 @@ function escapeHtml(text: string): string {
 }
 
 /**
- * Rate limiting simples por IP
- * Em produção, considerar usar Upstash Redis ou Vercel KV
+ * Simple per-IP rate limiting.
+ * In production, consider switching to Upstash Redis or Vercel KV.
  */
 const requestCounts = new Map<string, { count: number; resetTime: number }>()
 
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     // Feature flag: rate limiting
     const useRateLimiting = process.env.NEXT_PUBLIC_USE_RATE_LIMITING !== 'false' // Default true
 
-    // Rate limiting por IP
+    // Per-IP rate limiting
     if (useRateLimiting) {
       const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
       const now = Date.now()
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // Validar com Zod
+    // Validate with Zod
     const body = await request.json()
     const validation = contatoSchema.safeParse(body)
 

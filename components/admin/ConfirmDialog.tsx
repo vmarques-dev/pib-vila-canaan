@@ -4,36 +4,36 @@ import { useEffect, useCallback } from 'react'
 import { AlertTriangle, Trash2, Info, X, CheckCircle } from 'lucide-react'
 
 /**
- * Variantes visuais do diálogo de confirmação
+ * Visual variants for the confirmation dialog.
  */
 type ConfirmDialogVariant = 'danger' | 'warning' | 'info' | 'success'
 
 /**
- * Props do componente ConfirmDialog
+ * Props for the ConfirmDialog component.
  */
 interface ConfirmDialogProps {
-  /** Controla a visibilidade do diálogo */
+  /** Controls the dialog's visibility */
   isOpen: boolean
-  /** Callback executado ao fechar o diálogo (cancelar) */
+  /** Callback fired when the dialog is dismissed (cancel) */
   onClose: () => void
-  /** Callback executado ao confirmar a ação */
+  /** Callback fired when the action is confirmed */
   onConfirm: () => void
-  /** Título do diálogo */
+  /** Dialog title */
   title: string
-  /** Mensagem descritiva da ação */
+  /** Action description message */
   message: string
-  /** Texto do botão de confirmação */
+  /** Confirm-button label */
   confirmText?: string
-  /** Texto do botão de cancelamento */
+  /** Cancel-button label */
   cancelText?: string
-  /** Variante visual do diálogo */
+  /** Visual variant of the dialog */
   variant?: ConfirmDialogVariant
-  /** Indica se a ação está em andamento */
+  /** Whether the action is currently in progress */
   isLoading?: boolean
 }
 
 /**
- * Configurações visuais para cada variante
+ * Visual configuration per variant.
  */
 const variantConfig = {
   danger: {
@@ -63,11 +63,11 @@ const variantConfig = {
 }
 
 /**
- * Diálogo de confirmação estilizado para o painel administrativo
+ * Styled confirmation dialog for the admin panel.
  *
- * Substitui o alert/confirm nativo do browser por um modal estilizado
- * e acessível. Suporta diferentes variantes visuais para diferentes
- * tipos de ação (exclusão, aviso, informação).
+ * Replaces the browser's native alert/confirm with an accessible,
+ * styled modal. Supports several visual variants for different action
+ * types (deletion, warning, info, success).
  *
  * @example
  * ```tsx
@@ -82,7 +82,7 @@ const variantConfig = {
  * />
  * ```
  *
- * @see {@link file://./AdminModal.tsx} Modal genérico do admin
+ * @see {@link file://./AdminModal.tsx} Generic admin modal
  */
 export function ConfirmDialog({
   isOpen,
@@ -99,7 +99,7 @@ export function ConfirmDialog({
   const Icon = config.icon
 
   /**
-   * Fecha o diálogo ao pressionar Escape
+   * Closes the dialog when Escape is pressed.
    */
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {

@@ -14,7 +14,7 @@ import {
 } from '@/lib/validations/admin'
 
 /**
- * Componente de campo de formulário com suporte a erros
+ * Form-field wrapper with error support.
  */
 interface FormFieldProps {
   label: string
@@ -48,21 +48,21 @@ function FormField({ label, htmlFor, error, children, hint }: FormFieldProps) {
 }
 
 /**
- * Página de configurações gerais da igreja
+ * Church-wide settings page.
  *
- * Permite editar informações básicas exibidas no site público:
- * nome, endereço, telefone, email, missão e visão da igreja.
- * Os dados são persistidos na tabela 'informacoes_igreja'.
+ * Lets admins edit the basic information shown on the public site:
+ * name, address, phone, email, mission, and vision. Data is persisted
+ * in the `informacoes_igreja` table.
  *
- * Implementa validações enterprise-level:
- * - Validação de formato de telefone brasileiro com máscara
- * - Validação rigorosa de email com bloqueio de domínios descartáveis
- * - Feedback visual em tempo real de erros de validação
- * - Sanitização automática de inputs
+ * Implements enterprise-grade validation:
+ * - Brazilian phone-format validation with input masking
+ * - Strict email validation that blocks disposable domains
+ * - Real-time visual feedback for validation errors
+ * - Automatic input sanitization
  *
- * @see {@link file://../../../lib/validations/admin.ts} Schema de validação
- * @see {@link file://../../../lib/supabase/browser.ts} Cliente Supabase utilizado
- * @see {@link file://../../../middleware.ts} Middleware que protege esta rota
+ * @see {@link file://../../../lib/validations/admin.ts} Validation schema
+ * @see {@link file://../../../lib/supabase/browser.ts} Supabase client used here
+ * @see {@link file://../../../middleware.ts} Middleware protecting this route
  */
 export default function ConfiguracoesPage() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), [])

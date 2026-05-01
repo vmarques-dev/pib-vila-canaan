@@ -91,7 +91,7 @@ export default function EventosGrid({ proximosEventos, eventosAnteriores }: Even
 
   return (
     <>
-      {/* Próximos Eventos */}
+      {/* Upcoming events */}
       <section className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
@@ -114,7 +114,7 @@ export default function EventosGrid({ proximosEventos, eventosAnteriores }: Even
         </div>
       </section>
 
-      {/* Eventos Anteriores */}
+      {/* Past events */}
       {eventosAnteriores.length > 0 && (
         <section className="py-20 px-4 bg-gray-50">
           <div className="max-w-6xl mx-auto">
@@ -128,7 +128,7 @@ export default function EventosGrid({ proximosEventos, eventosAnteriores }: Even
         </section>
       )}
 
-      {/* Modal de detalhes do evento */}
+      {/* Event details modal */}
       <EventoModal
         evento={selectedEvento}
         isOpen={isModalOpen}

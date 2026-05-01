@@ -4,7 +4,7 @@ import { logger, extractErrorMessage } from '@/lib/logger'
 import { toast } from 'sonner'
 
 /**
- * Opções de configuração do hook useAdminCRUD
+ * Configuration options for the useAdminCRUD hook.
  */
 interface UseAdminCRUDOptions<T> {
   tableName: string
@@ -16,54 +16,54 @@ interface UseAdminCRUDOptions<T> {
 }
 
 /**
- * Retorno do hook useAdminCRUD
+ * Return value of the useAdminCRUD hook.
  */
 interface UseAdminCRUDReturn<T> {
-  /** Lista de itens carregados da tabela */
+  /** Items loaded from the table */
   items: T[]
-  /** Indica se está carregando dados */
+  /** Whether data is currently loading */
   loading: boolean
-  /** Controla visibilidade do modal de criação/edição */
+  /** Controls visibility of the create/edit modal */
   showModal: boolean
-  /** Item sendo editado ou null se criando novo */
+  /** Item being edited, or null when creating a new one */
   editingItem: T | null
-  /** Dados do formulário atual */
+  /** Current form data */
   formData: Partial<T>
 
-  /** Define visibilidade do modal */
+  /** Sets modal visibility */
   setShowModal: (show: boolean) => void
-  /** Define item em edição */
+  /** Sets the item being edited */
   setEditingItem: (item: T | null) => void
-  /** Define dados do formulário */
+  /** Sets the form data */
   setFormData: (data: Partial<T>) => void
 
-  /** Recarrega itens da tabela */
+  /** Refetches items from the table */
   fetchItems: () => Promise<void>
-  /** Cria novo item */
+  /** Creates a new item */
   handleCreate: (data: Partial<T>) => Promise<boolean>
-  /** Atualiza item existente */
+  /** Updates an existing item */
   handleUpdate: (id: string, data: Partial<T>) => Promise<boolean>
-  /** Deleta item */
+  /** Deletes an item */
   handleDelete: (id: string, confirmMessage?: string) => Promise<boolean>
 
-  /** Abre modal para criar novo item */
+  /** Opens the modal to create a new item */
   openCreateModal: () => void
-  /** Abre modal para editar item existente */
+  /** Opens the modal to edit an existing item */
   openEditModal: (item: T) => void
-  /** Fecha modal e limpa estado */
+  /** Closes the modal and clears state */
   closeModal: () => void
 }
 
 /**
- * Hook genérico para operações CRUD no painel administrativo.
+ * Generic hook for CRUD operations in the admin panel.
  *
- * Gerencia estado de listagem, criação, edição e exclusão de itens
- * de qualquer tabela do Supabase. A proteção de rotas é delegada
- * ao middleware server-side, evitando verificações redundantes.
+ * Manages list / create / update / delete state for any Supabase
+ * table. Route protection is delegated to the server-side middleware,
+ * so redundant client-side checks are avoided.
  *
- * @template T - Tipo do item (deve ter propriedade 'id')
- * @param options - Configurações do hook
- * @returns Estado e funções para operações CRUD
+ * @template T - Item type (must have an 'id' property)
+ * @param options - Hook configuration
+ * @returns State and functions for the CRUD operations
  *
  * @example
  * ```tsx
@@ -79,7 +79,7 @@ interface UseAdminCRUDReturn<T> {
  * })
  * ```
  *
- * @see {@link file://../middleware.ts} Middleware que protege rotas /admin/*
+ * @see {@link file://../middleware.ts} Middleware protecting /admin/* routes
  */
 export function useAdminCRUD<T extends { id: string }>({
   tableName,
@@ -152,7 +152,8 @@ export function useAdminCRUD<T extends { id: string }>({
     id: string,
     confirmMessage = 'Tem certeza que deseja deletar este item?'
   ): Promise<boolean> => {
-    // Permite pular confirmação se já foi feita externamente (ex: ConfirmDialog)
+    // Allows skipping confirmation when it was already handled externally
+    // (e.g. by ConfirmDialog) — pass an empty string to bypass.
     if (confirmMessage && !confirm(confirmMessage)) return false
 
     const { error } = await supabase

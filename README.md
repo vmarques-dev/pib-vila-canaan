@@ -1,198 +1,202 @@
-# PIB Vila Canaan - Site Oficial
+# PIB Vila Canaan - Official Website
 
-Site oficial da Igreja Batista em Vila Canaan, desenvolvido com as melhores práticas de desenvolvimento web moderno.
+Official website of the Baptist Church in Vila Canaan, built with modern web-development best practices.
 
-## 🚀 Tecnologias
+## 🚀 Tech Stack
 
-- **Next.js 15** - Framework React com App Router e Server Components
-- **TypeScript** - Tipagem estática para código mais seguro
-- **Tailwind CSS** - Estilização utility-first responsiva
-- **shadcn/ui** - Componentes UI acessíveis e customizáveis
-- **Framer Motion** - Animações fluidas e performáticas
-- **Supabase** - Backend, banco de dados, autenticação e storage
-- **Resend** - Envio de emails transacionais
-- **React Hook Form + Zod** - Validação de formulários enterprise
-- **Lucide React** - Ícones modernos
-- **date-fns** - Manipulação de datas
-- **Sonner** - Notificações toast
+- **Next.js 16** — React framework with App Router and Server Components
+- **TypeScript** — static typing for safer code
+- **Tailwind CSS** — responsive utility-first styling
+- **shadcn/ui** — accessible, customizable UI components
+- **Framer Motion** — fluid, performant animations
+- **Supabase** — backend, database, auth, and storage
+- **Resend** — transactional email delivery
+- **React Hook Form + Zod** — enterprise-grade form validation
+- **Lucide React** — modern icon set
+- **date-fns** — date manipulation
+- **Sonner** — toast notifications
 
-## 📁 Estrutura do Projeto
+## 📁 Project Structure
 
 ```
 pib-vila-canaan/
 ├── app/
-│   ├── (public)/                 # Páginas públicas do site
-│   │   ├── page.tsx              # Página inicial
-│   │   ├── sobre/                # Sobre a igreja e equipe pastoral
-│   │   ├── estudos/              # Estudos bíblicos
-│   │   ├── eventos/              # Calendário de eventos
-│   │   ├── galeria/              # Galeria de fotos
-│   │   ├── contato/              # Formulário de contato
-│   │   ├── login/                # Login (admin e adorador)
-│   │   └── cadastro/             # Cadastro de adoradores
-│   ├── (adorador)/               # Área restrita — Canal do Adorador
+│   ├── (public)/                 # Public-facing pages
+│   │   ├── page.tsx              # Home page
+│   │   ├── sobre/                # About the church and pastoral team
+│   │   ├── estudos/              # Bible studies
+│   │   ├── eventos/              # Event calendar
+│   │   ├── galeria/              # Photo gallery
+│   │   ├── contato/              # Contact form
+│   │   ├── login/                # Login (admin and worshiper)
+│   │   └── cadastro/             # Worshiper sign-up
+│   ├── (adorador)/               # Restricted area — Worshiper Channel
 │   │   └── adorador/
-│   │       ├── dashboard/        # Painel do membro
-│   │       ├── mural/            # Mural de avisos
-│   │       ├── oracao/           # Pedidos de oração
-│   │       └── perfil/           # Perfil do adorador
-│   ├── admin/                    # Painel administrativo (protegido)
-│   │   ├── dashboard/            # Visão geral e estatísticas
-│   │   ├── eventos/              # CRUD de eventos
-│   │   ├── estudos/              # CRUD de estudos bíblicos
-│   │   ├── galeria/              # CRUD de galeria de fotos
-│   │   ├── equipe/               # CRUD da equipe pastoral
-│   │   ├── avisos/               # CRUD do mural de avisos
-│   │   ├── oracao/               # Gestão de pedidos de oração
-│   │   ├── versiculo-destaque/   # Versículo em destaque
-│   │   └── configuracoes/        # Configurações da igreja
+│   │       ├── dashboard/        # Member dashboard
+│   │       ├── mural/            # Announcement board
+│   │       ├── oracao/           # Prayer requests
+│   │       └── perfil/           # Worshiper profile
+│   ├── admin/                    # Admin panel (protected)
+│   │   ├── dashboard/            # Overview and statistics
+│   │   ├── eventos/              # Events CRUD
+│   │   ├── estudos/              # Bible studies CRUD
+│   │   ├── galeria/              # Photo gallery CRUD
+│   │   ├── equipe/               # Pastoral team CRUD
+│   │   ├── avisos/               # Announcement board CRUD
+│   │   ├── oracao/               # Prayer requests management
+│   │   ├── versiculo-destaque/   # Featured verse
+│   │   └── configuracoes/        # Church settings
 │   ├── api/
-│   │   └── contato/              # API de envio de emails
-│   ├── layout.tsx                # Layout raiz com metadata
-│   ├── sitemap.ts                # Sitemap automático
-│   └── robots.ts                 # Robots.txt automático
+│   │   └── contato/              # Email-sending API
+│   ├── layout.tsx                # Root layout with metadata
+│   ├── sitemap.ts                # Auto-generated sitemap
+│   └── robots.ts                 # Auto-generated robots.txt
 ├── components/
 │   ├── layout/
-│   │   ├── navbar.tsx            # Navegação sticky responsiva
-│   │   ├── footer.tsx            # Rodapé
-│   │   └── scroll-to-top.tsx     # Reset de scroll na navegação
-│   ├── admin/                    # Componentes do painel admin
-│   ├── adorador/                 # Componentes do canal do adorador
-│   ├── home/                     # Seções da página inicial
-│   ├── sobre/                    # Componentes da página sobre
-│   ├── estudos/                  # Componentes de estudos
-│   ├── eventos/                  # Componentes de eventos
-│   ├── galeria/                  # Componentes da galeria
-│   ├── contato/                  # Formulário de contato
-│   └── ui/                       # Componentes shadcn/ui
+│   │   ├── navbar.tsx            # Responsive sticky navigation
+│   │   ├── footer.tsx            # Footer
+│   │   └── scroll-to-top.tsx     # Scroll reset on navigation
+│   ├── admin/                    # Admin-panel components
+│   ├── adorador/                 # Worshiper-channel components
+│   ├── home/                     # Home-page sections
+│   ├── sobre/                    # About-page components
+│   ├── estudos/                  # Studies components
+│   ├── eventos/                  # Events components
+│   ├── galeria/                  # Gallery components
+│   ├── contato/                  # Contact form
+│   └── ui/                       # shadcn/ui components
 ├── lib/
-│   ├── constants/                # Constantes centralizadas
-│   │   ├── config.ts             # Configurações gerais
-│   │   ├── features.ts           # Feature flags
-│   │   ├── navigation.ts         # Rotas e navegação
-│   │   └── bible-books.ts        # Lista de livros da Bíblia
+│   ├── constants/                # Centralized constants
+│   │   ├── config.ts             # General config (site, storage, validation, rate limit)
+│   │   └── navigation.ts         # Admin menu items
 │   ├── services/
-│   │   └── storage.service.ts    # Upload/delete de imagens
+│   │   └── storage.service.ts    # Image upload / delete / optimization
 │   ├── supabase/
-│   │   ├── browser.ts            # Cliente para uso no browser
-│   │   └── middleware.ts         # Cliente para middleware SSR
+│   │   ├── browser.ts            # Client for Client Components
+│   │   ├── client.ts             # Default client (Server Components)
+│   │   └── middleware.ts         # Client for SSR middleware
 │   ├── types/
-│   │   └── database.ts           # Interfaces TypeScript do banco
-│   ├── validations/              # Schemas Zod por domínio
-│   ├── hooks/                    # React hooks customizados
-│   └── logger.ts                 # Logger seguro sem exposição de dados
-├── middleware.ts                 # Proteção server-side de rotas
+│   │   ├── database.ts           # TypeScript interfaces for the DB
+│   │   └── index.ts              # Re-exports for the @/types alias
+│   ├── validations/              # Zod schemas per domain
+│   ├── hooks/
+│   │   └── useAuth.tsx           # AuthProvider and useAuth hook
+│   ├── providers/
+│   │   └── providers.tsx         # Composition of global providers
+│   └── logger.ts                 # Safe logger (no sensitive data)
+├── hooks/
+│   └── useAdminCRUD.ts           # Generic CRUD hook for the admin panel
+├── middleware.ts                 # Server-side route protection
 ├── supabase/
-│   ├── schema.sql                # Schema completo do banco
-│   └── migrations/               # Migrations incrementais
+│   ├── schema.sql                # Full database schema
+│   └── migrations/               # Incremental migrations
 ├── docs/
-│   ├── SECURITY.md               # Documentação de segurança
-│   └── FEATURE_FLAGS.md          # Guia de feature flags
-└── public/                       # Arquivos estáticos
+│   └── SECURITY.md               # Security documentation
+└── public/                       # Static assets
 ```
 
 ## 🎨 Design
 
-- **Paleta de Cores**: Azul (#1d4ed8), Roxo (#7c3aed), Branco
-- **Hero fullscreen** com gradiente e call-to-actions
-- **Navbar sticky** com menu mobile animado
-- **Mobile-first** design 100% responsivo
-- **Animações** suaves com Framer Motion
-- **Acessibilidade** - WCAG 2.1 AA compliant
-- **Performance** - Next.js Image optimization, lazy loading
+- **Color Palette**: blue (#1d4ed8), purple (#7c3aed), white
+- **Full-screen hero** with gradient and call-to-actions
+- **Sticky navbar** with animated mobile menu
+- **Mobile-first** — fully responsive design
+- **Animations** — smooth transitions powered by Framer Motion
+- **Accessibility** — WCAG 2.1 AA compliant
+- **Performance** — Next.js Image optimization, lazy loading
 
-## 🔧 Como Executar
+## 🔧 Getting Started
 
-### 1. Clonar o repositório
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/vmarques-dev/pib-vila-canaan.git
 cd pib-vila-canaan
 ```
 
-### 2. Instalar dependências
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configurar variáveis de ambiente
+### 3. Configure environment variables
 
-Copie o arquivo de exemplo e configure suas credenciais:
+Copy the example file and set your credentials:
 
 ```bash
 cp .env.local.example .env.local
 ```
 
-Edite `.env.local` com suas credenciais:
+Edit `.env.local` with your credentials:
 
 ```env
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sua-anon-key-aqui
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
-# Resend (envio de emails)
-RESEND_API_KEY=re_sua-chave-aqui
+# Resend (email delivery)
+RESEND_API_KEY=re_your-key
 
-# Email que receberá as mensagens de contato
-CONTACT_EMAIL=contato@suaigreja.com.br
+# Email that receives contact-form submissions
+CONTACT_EMAIL=contact@yourchurch.com
 
-# URL pública do site em produção
+# Public site URL (production)
 NEXT_PUBLIC_SITE_URL=https://pibvilacanaan.com.br
 
-# Feature flags (recomendado manter true em produção)
+# Feature flags (recommended: keep both true in production)
 NEXT_PUBLIC_USE_MIDDLEWARE_AUTH=true
-NEXT_PUBLIC_USE_STORAGE_RLS=true
 NEXT_PUBLIC_USE_RATE_LIMITING=true
-NEXT_PUBLIC_DEBUG_MODE=false
 ```
 
-#### Como obter as credenciais:
+#### How to obtain the credentials
 
 **Supabase:**
-1. Crie uma conta em [supabase.com](https://supabase.com)
-2. Crie um novo projeto
-3. Vá em Settings → API
-4. Copie a **Project URL** e a **anon/public key**
+1. Create an account at [supabase.com](https://supabase.com)
+2. Create a new project
+3. Go to Settings → API
+4. Copy the **Project URL** and the **anon/public key**
 
 **Resend:**
-1. Crie uma conta em [resend.com](https://resend.com)
-2. Vá em API Keys → Create API Key
-3. Copie a chave gerada (começa com `re_`)
+1. Create an account at [resend.com](https://resend.com)
+2. Go to API Keys → Create API Key
+3. Copy the generated key (starts with `re_`)
 
-### 4. Configurar o banco de dados
+### 4. Set up the database
 
-No painel do Supabase, abra o **SQL Editor** e execute o arquivo completo:
+In the Supabase dashboard, open the **SQL Editor** and run the full file:
 
 ```
 supabase/schema.sql
 ```
 
-> Para ambientes já em produção, utilize as migrations incrementais em `supabase/migrations/` na ordem dos prefixos numéricos.
+> For environments already in production, apply the incremental migrations
+> in `supabase/migrations/` following the order described in that
+> directory's README.
 
-### 5. Executar em desenvolvimento
+### 5. Run the dev server
 
 ```bash
 npm run dev
 ```
 
-Acesse [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000)
 
-## 📝 Scripts Disponíveis
+## 📝 Available Scripts
 
 ```bash
-npm run dev      # Inicia servidor de desenvolvimento (porta 3000)
-npm run build    # Cria build otimizado de produção
-npm run start    # Inicia servidor de produção
-npm run lint     # Verifica problemas de código com ESLint
+npm run dev      # Start the dev server (port 3000)
+npm run build    # Build an optimized production bundle
+npm run start    # Start the production server
+npm run lint     # Run ESLint
 ```
 
-## 🗃️ Banco de Dados
+## 🗃️ Database
 
-O schema completo está em [`supabase/schema.sql`](supabase/schema.sql). Abaixo um resumo das tabelas principais:
+The full schema lives in [`supabase/schema.sql`](supabase/schema.sql). A summary of the main tables is below:
 
 ```sql
--- Controle de acesso de administradores
+-- Admin access control
 CREATE TABLE usuarios_admin (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -201,7 +205,7 @@ CREATE TABLE usuarios_admin (
   updated_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Membros da igreja (Canal do Adorador)
+-- Church members (Worshiper Channel)
 CREATE TABLE adoradores (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     UUID UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -212,7 +216,7 @@ CREATE TABLE adoradores (
   updated_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Eventos e programações
+-- Events and schedules
 CREATE TABLE eventos (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   titulo          TEXT NOT NULL,
@@ -227,7 +231,7 @@ CREATE TABLE eventos (
   created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Inscrições em eventos
+-- Event registrations
 CREATE TABLE inscricoes (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   evento_id   UUID NOT NULL REFERENCES eventos(id) ON DELETE CASCADE,
@@ -238,7 +242,7 @@ CREATE TABLE inscricoes (
   created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Estudos bíblicos
+-- Bible studies
 CREATE TABLE estudos (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   titulo          TEXT NOT NULL,
@@ -252,7 +256,7 @@ CREATE TABLE estudos (
   created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Equipe pastoral
+-- Pastoral team
 CREATE TABLE equipe_pastoral (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nome        TEXT NOT NULL,
@@ -264,7 +268,7 @@ CREATE TABLE equipe_pastoral (
   created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Galeria de fotos
+-- Photo gallery
 CREATE TABLE galeria (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   titulo      TEXT NOT NULL,
@@ -275,7 +279,7 @@ CREATE TABLE galeria (
   created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Mural de avisos (Canal do Adorador)
+-- Announcement board (Worshiper Channel)
 CREATE TABLE avisos (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   titulo      TEXT NOT NULL,
@@ -285,7 +289,7 @@ CREATE TABLE avisos (
   updated_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Pedidos de oração
+-- Prayer requests
 CREATE TABLE pedidos_oracao (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   adorador_id UUID NOT NULL REFERENCES adoradores(id) ON DELETE CASCADE,
@@ -294,7 +298,7 @@ CREATE TABLE pedidos_oracao (
   created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Versículo em destaque
+-- Featured verse
 CREATE TABLE versiculo_destaque (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   livro       TEXT NOT NULL,
@@ -304,7 +308,7 @@ CREATE TABLE versiculo_destaque (
   created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Informações da igreja
+-- Church information
 CREATE TABLE informacoes_igreja (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nome          TEXT NOT NULL DEFAULT 'PIB Vila Canaan',
@@ -324,118 +328,114 @@ CREATE TABLE informacoes_igreja (
 
 ## 🚀 Deploy
 
-### Vercel (Recomendado)
+### Vercel (Recommended)
 
-1. Faça push do código para o GitHub
-2. Importe o projeto na [Vercel](https://vercel.com)
-3. Configure todas as variáveis de ambiente no painel da Vercel:
+1. Push the code to GitHub
+2. Import the project on [Vercel](https://vercel.com)
+3. Configure every environment variable in the Vercel dashboard:
 
-| Variável | Descrição |
+| Variable | Description |
 |---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL do projeto Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave anon/public do Supabase |
-| `RESEND_API_KEY` | Chave da API do Resend |
-| `CONTACT_EMAIL` | Email de destino do formulário de contato |
-| `NEXT_PUBLIC_SITE_URL` | URL pública do site em produção |
-| `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `true` (recomendado em produção) |
-| `NEXT_PUBLIC_USE_STORAGE_RLS` | `true` (recomendado em produção) |
-| `NEXT_PUBLIC_USE_RATE_LIMITING` | `true` (recomendado em produção) |
-| `NEXT_PUBLIC_DEBUG_MODE` | `false` (recomendado em produção) |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
+| `RESEND_API_KEY` | Resend API key |
+| `CONTACT_EMAIL` | Recipient email for contact-form submissions |
+| `NEXT_PUBLIC_SITE_URL` | Public site URL (production) |
+| `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `true` (recommended in production) |
+| `NEXT_PUBLIC_USE_RATE_LIMITING` | `true` (recommended in production) |
 
-4. Deploy automático a cada push em `main`!
+4. Automatic deploy on every push to `main`!
 
-> Para detalhes sobre as feature flags, consulte [`docs/FEATURE_FLAGS.md`](docs/FEATURE_FLAGS.md).
+## ✅ Implemented Features
 
-## ✅ Funcionalidades Implementadas
+**Public site**
+- ✅ Modern, responsive landing page
+- ✅ About page with church history and pastoral team
+- ✅ Bible-study system with category filters
+- ✅ Event calendar with on-site registration
+- ✅ Photo gallery with lightbox and category filters
+- ✅ Contact form with email delivery (Resend)
+- ✅ Dynamic featured verse
+- ✅ Google Maps integration
+- ✅ Dynamic social-media links
 
-**Site público**
-- ✅ Landing page moderna e responsiva
-- ✅ Página sobre com história e equipe pastoral
-- ✅ Sistema de estudos bíblicos com filtros por categoria
-- ✅ Calendário de eventos com inscrições pelo site
-- ✅ Galeria de fotos com lightbox e filtros por categoria
-- ✅ Formulário de contato com envio de email (Resend)
-- ✅ Versículo em destaque dinâmico
-- ✅ Integração com Google Maps
-- ✅ Redes sociais dinâmicas
+**Worshiper Channel (member area)**
+- ✅ Member sign-up and login
+- ✅ Dashboard with upcoming events and recent announcements
+- ✅ Internal church announcement board
+- ✅ Prayer requests
+- ✅ Member profile
 
-**Canal do Adorador (área de membros)**
-- ✅ Cadastro e login de membros
-- ✅ Dashboard com próximos eventos e avisos recentes
-- ✅ Mural de avisos internos da igreja
-- ✅ Pedidos de oração
-- ✅ Perfil do membro
+**Admin Panel**
+- ✅ Dashboard with statistics and operational summaries
+- ✅ Full events CRUD (with image upload)
+- ✅ Event-registration management
+- ✅ Bible-studies CRUD
+- ✅ Photo-gallery CRUD
+- ✅ Pastoral-team CRUD
+- ✅ Announcement-board management
+- ✅ Prayer-request management
+- ✅ Featured-verse editor
+- ✅ Church-wide settings
 
-**Painel Administrativo**
-- ✅ Dashboard com estatísticas e resumos operacionais
-- ✅ CRUD completo de eventos (com upload de imagens)
-- ✅ Gestão de inscrições em eventos
-- ✅ CRUD de estudos bíblicos
-- ✅ CRUD da galeria de fotos
-- ✅ CRUD da equipe pastoral
-- ✅ Gestão do mural de avisos
-- ✅ Gestão de pedidos de oração
-- ✅ Versículo em destaque
-- ✅ Configurações gerais da igreja
+**Infrastructure**
+- ✅ SEO optimized (Open Graph, Twitter Cards, Sitemap, Robots.txt)
+- ✅ Performance optimized (Next.js Image, lazy loading)
+- ✅ Form validation with Zod
+- ✅ Input masks (phone)
+- ✅ Feature flags for fast rollback
 
-**Infraestrutura**
-- ✅ SEO otimizado (Open Graph, Twitter Cards, Sitemap, Robots.txt)
-- ✅ Performance otimizada (Next.js Image, lazy loading)
-- ✅ Validação de formulários com Zod
-- ✅ Máscaras de input (telefone)
-- ✅ Feature flags para rollback rápido
+## 🔐 Security
 
-## 🔐 Segurança
-
-- ✅ **Middleware server-side** protege rotas admin e adorador (não bypassável via DevTools)
-- ✅ **Row Level Security (RLS)** no Supabase com policies restritivas por tabela
-- ✅ **Validação Zod** em todas as APIs e formulários, com sanitização automática
-- ✅ **Proteção XSS** com escape HTML em todas as entradas do formulário de contato
-- ✅ **Rate limiting** na API de contato (3 requisições/hora por IP)
-- ✅ **Logger seguro** sem exposição de dados sensíveis em produção
-- ✅ **Tabela `usuarios_admin`** com controle de acesso ativo/inativo
-- ✅ **Storage RLS** — apenas admins ativos podem fazer upload de imagens
+- ✅ **Server-side middleware** protects admin and worshiper routes (cannot be bypassed via DevTools)
+- ✅ **Row Level Security (RLS)** on Supabase with table-specific policies
+- ✅ **Zod validation** on every API and form, with automatic sanitization
+- ✅ **XSS protection** via HTML escaping on all contact-form input
+- ✅ **Rate limiting** on the contact API (3 requests/hour per IP)
+- ✅ **Safe logger** without exposing sensitive data in production
+- ✅ **`usuarios_admin` table** with active/inactive access control
+- ✅ **Storage RLS** — only active admins can upload images
 - ✅ TypeScript strict mode
-- ✅ Variáveis de ambiente para todos os dados sensíveis
-- ⚠️ **IMPORTANTE**: Nunca commite o arquivo `.env.local`
+- ✅ Environment variables for all sensitive data
+- ⚠️ **IMPORTANT**: never commit `.env.local`
 
-> Para detalhes completos, consulte [`docs/SECURITY.md`](docs/SECURITY.md).
+> For full details, see [`docs/SECURITY.md`](docs/SECURITY.md).
 
-## ♿ Acessibilidade
+## ♿ Accessibility
 
-- ✅ HTML semântico
-- ✅ Alt text em todas as imagens
-- ✅ ARIA labels em componentes interativos
-- ✅ Navegação por teclado
-- ✅ Contraste de cores adequado (WCAG AA)
-- ✅ Focus states visíveis
+- ✅ Semantic HTML
+- ✅ Alt text on every image
+- ✅ ARIA labels on interactive components
+- ✅ Keyboard navigation
+- ✅ Adequate color contrast (WCAG AA)
+- ✅ Visible focus states
 
 ## 📊 SEO
 
-- ✅ Metadata completa por página
+- ✅ Full per-page metadata
 - ✅ Open Graph tags (Facebook, LinkedIn)
 - ✅ Twitter Cards
-- ✅ Sitemap.xml automático
-- ✅ Robots.txt configurado
-- ✅ URLs semânticas
-- 🔄 Structured data / Schema.org (próximo passo)
+- ✅ Auto-generated `sitemap.xml`
+- ✅ `robots.txt` configured
+- ✅ Semantic URLs
+- 🔄 Structured data / Schema.org (next step)
 
-## 🎯 Próximos Passos
+## 🎯 Next Steps
 
-- [ ] Adicionar testes unitários (Jest + React Testing Library)
-- [ ] Implementar testes E2E (Playwright)
-- [ ] Configurar pipeline de CI/CD (GitHub Actions)
-- [ ] Integrar error tracking (Sentry)
-- [ ] Adicionar Structured Data (Schema.org)
-- [ ] Implementar sistema de doações
-- [ ] Integrar YouTube para transmissões ao vivo
-- [ ] Adicionar PWA (Progressive Web App)
-- [ ] Dashboard com analytics
+- [ ] Add unit tests (Jest + React Testing Library)
+- [ ] Add E2E tests (Playwright)
+- [ ] Set up a CI/CD pipeline (GitHub Actions)
+- [ ] Integrate error tracking (Sentry)
+- [ ] Add Structured Data (Schema.org)
+- [ ] Implement a donations system
+- [ ] Integrate YouTube for live streams
+- [ ] Add PWA support
+- [ ] Analytics dashboard
 
-## 📄 Licença
+## 📄 License
 
-Este projeto foi desenvolvido exclusivamente para a PIB Vila Canaan.
+This project was developed exclusively for PIB Vila Canaan.
 
 ---
 
-**Desenvolvido com ❤️ para PIB Vila Canaan**
+**Built with ❤️ for PIB Vila Canaan**

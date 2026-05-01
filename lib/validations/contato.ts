@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 /**
- * Schema de validação para o formulário de contato
- * Garante que todos os dados estão sanitizados e válidos antes do envio
+ * Validation schema for the contact form.
+ * Ensures every field is sanitized and valid before submission.
  */
 export const contatoSchema = z.object({
   nome: z

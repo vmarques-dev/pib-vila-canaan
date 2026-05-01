@@ -38,10 +38,10 @@ export default function EquipeSection({ equipe }: EquipeSectionProps) {
                 transition={{ delay: index * 0.1, duration: 0.4 }}
               >
                 <Card className="overflow-hidden hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
-                  {/* Faixa decorativa superior */}
+                  {/* Decorative top stripe */}
                   <div className="h-2 bg-gradient-to-r from-blue-600 to-blue-400" />
                   <CardContent className="pt-8 pb-8 flex flex-col items-center flex-1">
-                    {/* Foto */}
+                    {/* Photo */}
                     <div className="mb-5">
                       {membro.foto_url ? (
                         <div className="relative w-28 h-28 mx-auto">
@@ -60,13 +60,13 @@ export default function EquipeSection({ equipe }: EquipeSectionProps) {
                       )}
                     </div>
 
-                    {/* Nome e cargo */}
+                    {/* Name and role */}
                     <h3 className="text-xl font-bold text-gray-900 mb-1 text-center">{membro.nome}</h3>
                     <span className="inline-block bg-blue-50 text-blue-700 text-sm font-semibold px-3 py-1 rounded-full border border-blue-200 mb-4">
                       {membro.cargo}
                     </span>
 
-                    {/* Divisor */}
+                    {/* Divider */}
                     {membro.descricao && (
                       <>
                         <div className="w-10 border-t-2 border-blue-200 mb-4" />

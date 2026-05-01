@@ -36,7 +36,7 @@ export function EventoForm({
     resolver: zodResolver(eventoSchema),
   })
 
-  // Preencher formulário ao editar
+  // Populate the form when editing
   useEffect(() => {
     if (editingItem) {
       setValue('titulo', editingItem.titulo)

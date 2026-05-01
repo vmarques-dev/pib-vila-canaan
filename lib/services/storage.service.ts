@@ -3,15 +3,15 @@ import { logger } from '@/lib/logger'
 import { STORAGE_CONFIG } from '@/lib/constants/config'
 
 /**
- * Faz upload de uma imagem para o bucket do Supabase Storage
+ * Uploads an image to a Supabase Storage bucket.
  *
- * Utiliza o cliente SSR do Supabase para garantir acesso à sessão
- * de autenticação do usuário, necessária para as políticas RLS.
+ * Uses the SSR Supabase client so the user's auth session is
+ * available — RLS policies require it.
  *
- * @param file - Arquivo a ser enviado
- * @param bucket - Nome do bucket
- * @param folder - Pasta dentro do bucket (opcional)
- * @returns URL pública da imagem ou null em caso de erro
+ * @param file - File to upload
+ * @param bucket - Bucket name
+ * @param folder - Optional folder inside the bucket
+ * @returns Public image URL, or null on error
  */
 export async function uploadImage(
   file: File,
@@ -19,31 +19,31 @@ export async function uploadImage(
   folder?: string
 ): Promise<string | null> {
   try {
-    // Validar tipo de arquivo
+    // Validate file type
     if (!STORAGE_CONFIG.ALLOWED_IMAGE_TYPES.includes(file.type as typeof STORAGE_CONFIG.ALLOWED_IMAGE_TYPES[number])) {
       logger.error('Tipo de arquivo não permitido', new Error(file.type))
       throw new Error('Apenas imagens JPG, PNG e WebP são permitidas')
     }
 
-    // Validar tamanho
+    // Validate size
     if (file.size > STORAGE_CONFIG.MAX_FILE_SIZE) {
       logger.error('Arquivo muito grande', new Error(`${file.size} bytes`))
       throw new Error('A imagem deve ter no máximo 5MB')
     }
 
-    // Gerar nome único para o arquivo
+    // Generate a unique filename
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(2, 15)
     const extension = file.name.split('.').pop()
     const fileName = `${timestamp}-${randomString}.${extension}`
 
-    // Definir caminho completo
+    // Build the full path
     const filePath = folder ? `${folder}/${fileName}` : fileName
 
-    // Cliente com sessão de autenticação
+    // Client with the auth session
     const supabase = createSupabaseBrowserClient()
 
-    // Fazer upload
+    // Perform the upload
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(filePath, file, {
@@ -56,7 +56,7 @@ export async function uploadImage(
       throw error
     }
 
-    // Obter URL pública
+    // Resolve the public URL
     const { data: { publicUrl } } = supabase.storage
       .from(bucket)
       .getPublicUrl(data.path)
@@ -70,14 +70,14 @@ export async function uploadImage(
 }
 
 /**
- * Exclui uma imagem do bucket do Supabase Storage
+ * Deletes an image from a Supabase Storage bucket.
  *
- * Utiliza o cliente SSR do Supabase para garantir acesso à sessão
- * de autenticação do usuário, necessária para as políticas RLS.
+ * Uses the SSR Supabase client so the user's auth session is
+ * available — RLS policies require it.
  *
- * @param imageUrl - URL da imagem a ser excluída
- * @param bucket - Nome do bucket
- * @returns true se excluiu com sucesso, false caso contrário
+ * @param imageUrl - URL of the image to delete
+ * @param bucket - Bucket name
+ * @returns true on success, false otherwise
  */
 export async function deleteImage(
   imageUrl: string,
@@ -85,11 +85,11 @@ export async function deleteImage(
 ): Promise<boolean> {
   try {
     if (!imageUrl || imageUrl.trim() === '') {
-      return true // Nada para excluir
+      return true // Nothing to delete
     }
 
-    // Extrair o caminho do arquivo da URL
-    // URL formato: https://[project].supabase.co/storage/v1/object/public/eventos/path/to/file.jpg
+    // Extract the file path from the URL
+    // URL format: https://[project].supabase.co/storage/v1/object/public/eventos/path/to/file.jpg
     const urlParts = imageUrl.split(`/${bucket}/`)
     if (urlParts.length < 2) {
       logger.warn('URL inválida para exclusão', { url: imageUrl })
@@ -98,10 +98,10 @@ export async function deleteImage(
 
     const filePath = urlParts[1]
 
-    // Cliente com sessão de autenticação
+    // Client with the auth session
     const supabase = createSupabaseBrowserClient()
 
-    // Excluir arquivo
+    // Delete the file
     const { error } = await supabase.storage
       .from(bucket)
       .remove([filePath])
@@ -120,11 +120,11 @@ export async function deleteImage(
 }
 
 /**
- * Otimiza uma imagem redimensionando e comprimindo antes do upload
- * @param file - Arquivo a ser otimizado
- * @param maxWidth - Largura máxima em pixels
- * @param quality - Qualidade da compressão (0-1)
- * @returns Arquivo otimizado
+ * Optimizes an image by resizing and compressing it before upload.
+ * @param file - File to optimize
+ * @param maxWidth - Maximum width in pixels
+ * @param quality - Compression quality (0–1)
+ * @returns Optimized file
  */
 export async function optimizeImage(
   file: File,
@@ -142,7 +142,7 @@ export async function optimizeImage(
         let width = img.width
         let height = img.height
 
-        // Redimensionar se necessário
+        // Resize when necessary
         if (width > maxWidth) {
           height = (height * maxWidth) / width
           width = maxWidth

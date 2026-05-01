@@ -33,18 +33,18 @@ const initialFormData: EquipePastoralFormData = {
 }
 
 /**
- * Página de gerenciamento da equipe pastoral
+ * Pastoral-team management page.
  *
- * Permite criar, editar e excluir membros da equipe pastoral.
- * Suporta upload de fotos com otimização automática.
+ * Allows admins to create, edit, and delete members of the pastoral
+ * team. Supports photo upload with automatic optimization.
  */
 export default function EquipePage() {
-  // Estados para upload de imagem
+  // Image-upload state
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [uploadingImage, setUploadingImage] = useState(false)
 
-  // Estado para diálogo de confirmação de exclusão
+  // State for the deletion confirmation dialog
   const [confirmDelete, setConfirmDelete] = useState<Membro | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -76,14 +76,14 @@ export default function EquipePage() {
     defaultValues: initialFormData,
   })
 
-  // Preencher formulário ao editar
+  // Populate the form when editing
   useEffect(() => {
     if (editingItem) {
       setValue('nome', editingItem.nome)
       setValue('cargo', editingItem.cargo)
       setValue('foto_url', editingItem.foto_url || '')
       setValue('descricao', editingItem.descricao)
-      // Se há uma foto existente, mostrar preview
+      // If a photo already exists, show its preview
       if (editingItem.foto_url) {
         setImagePreview(editingItem.foto_url)
       }
@@ -97,16 +97,16 @@ export default function EquipePage() {
   const handleImageFileChange = (file: File | null) => {
     setImageFile(file)
     if (file) {
-      // Criar preview do arquivo
+      // Build a preview from the file
       const reader = new FileReader()
       reader.onloadend = () => {
         setImagePreview(reader.result as string)
       }
       reader.readAsDataURL(file)
-      // Limpar campo de URL quando arquivo é selecionado
+      // Clear the URL field when a file is selected
       setValue('foto_url', '')
     } else {
-      // Se remover arquivo, restaurar preview da URL existente
+      // When clearing the file, restore the preview from the existing URL
       setImagePreview(editingItem?.foto_url || null)
     }
   }
@@ -115,7 +115,7 @@ export default function EquipePage() {
     try {
       let finalImageUrl = data.foto_url || ''
 
-      // Upload de imagem se houver arquivo selecionado
+      // Upload an image when a file is selected
       if (imageFile) {
         setUploadingImage(true)
         toast.info('Otimizando e enviando foto...')
@@ -142,7 +142,7 @@ export default function EquipePage() {
       }
 
       if (editingItem) {
-        // Deletar foto antiga se estiver trocando por uma nova
+        // Delete the old photo when replacing it with a new one
         if (editingItem.foto_url && imageFile) {
           await deleteImage(editingItem.foto_url, STORAGE_CONFIG.BUCKETS.EQUIPE)
         }
@@ -175,7 +175,7 @@ export default function EquipePage() {
 
     setIsProcessing(true)
     try {
-      // Excluir foto do storage se existir
+      // Delete the photo from storage if present
       if (confirmDelete.foto_url) {
         await deleteImage(confirmDelete.foto_url, STORAGE_CONFIG.BUCKETS.EQUIPE)
       }
@@ -313,7 +313,7 @@ export default function EquipePage() {
             )}
           </div>
 
-          {/* Componente de Upload de Imagem */}
+          {/* Image-upload component */}
           <ImageUpload
             inputId="foto_membro"
             label="Foto do Membro (opcional)"

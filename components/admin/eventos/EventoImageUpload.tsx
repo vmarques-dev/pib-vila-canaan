@@ -19,7 +19,7 @@ export function EventoImageUpload({
         Imagem do Evento
       </label>
 
-      {/* Upload de Arquivo */}
+      {/* File upload */}
       <div>
         <label
           htmlFor="image_file"
@@ -39,7 +39,7 @@ export function EventoImageUpload({
         />
       </div>
 
-      {/* Preview da Imagem */}
+      {/* Image preview */}
       {imagePreview && (
         <div className="mt-3">
           <p className="text-xs text-gray-500 mb-2">Preview:</p>

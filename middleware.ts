@@ -4,7 +4,7 @@ import { createMiddlewareClient } from '@/lib/supabase/middleware'
 import { logger } from '@/lib/logger'
 
 export async function middleware(req: NextRequest) {
-  // Feature flag: permite bypass do middleware para rollback de emergência
+  // Feature flag: allows bypassing the middleware for an emergency rollback
   const useMiddlewareAuth = process.env.NEXT_PUBLIC_USE_MIDDLEWARE_AUTH !== 'false' // Default true
 
   if (!useMiddlewareAuth) {
@@ -16,7 +16,7 @@ export async function middleware(req: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession()
 
-  // Proteger rotas /admin/*
+  // Protect /admin/* routes
   if (req.nextUrl.pathname.startsWith('/admin')) {
     if (!session) {
       return NextResponse.redirect(new URL('/login/admin', req.url))
@@ -39,7 +39,7 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Proteger rotas /adorador/*
+  // Protect /adorador/* routes
   if (req.nextUrl.pathname.startsWith('/adorador')) {
     if (!session) {
       return NextResponse.redirect(new URL('/login/adorador', req.url))

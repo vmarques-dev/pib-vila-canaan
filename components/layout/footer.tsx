@@ -10,7 +10,7 @@ async function getInformacoesIgreja(): Promise<InformacoesIgreja | null> {
     const { data, error } = await supabase
       .from('informacoes_igreja')
       .select('*')
-      .single()
+      .maybeSingle()
 
     if (error) throw error
     return data
@@ -123,7 +123,7 @@ export default async function Footer() {
             </div>
           </div>
 
-          {/* Mapa */}
+          {/* Map */}
           <div className="w-80 flex flex-col">
             <h3 className="text-lg font-bold text-white mb-4 h-7 flex items-center">Localização</h3>
             <div className="w-full h-48 rounded-lg overflow-hidden shadow-xl">

@@ -10,17 +10,17 @@ import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 
 /**
- * Página de login para membros da igreja (adoradores)
+ * Worshiper (church-member) login page.
  *
- * Implementa autenticação simples com email e senha para membros cadastrados.
- * Diferente do login admin, não requer verificações adicionais de role ou
- * registro em tabelas especiais.
+ * Implements simple email/password authentication for registered
+ * members. Unlike the admin login, no extra role or table-membership
+ * checks are required.
  *
- * Após autenticação bem-sucedida, redireciona para a página inicial (/).
- * Também oferece links para recuperação de senha e cadastro de novos membros.
+ * On successful authentication, redirects to the home page (/). Also
+ * offers links to password recovery and new-member sign-up.
  *
- * @see {@link file://../../../../lib/supabase/browser.ts} Cliente Supabase utilizado
- * @see {@link file://../admin/page.tsx} Login para administradores (com verificações adicionais)
+ * @see {@link file://../../../../lib/supabase/browser.ts} Supabase client used here
+ * @see {@link file://../admin/page.tsx} Admin login (with additional checks)
  */
 export default function LoginAdoradorPage() {
   const router = useRouter()
@@ -31,10 +31,10 @@ export default function LoginAdoradorPage() {
   const [loading, setLoading] = useState(false)
 
   /**
-   * Processa o envio do formulário de login
+   * Handles the login form submission.
    *
-   * Autentica o usuário via Supabase Auth e, em caso de sucesso,
-   * atualiza os cookies via router.refresh() e redireciona para home.
+   * Authenticates the user via Supabase Auth; on success, refreshes
+   * cookies through `router.refresh()` and redirects to the home page.
    */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()

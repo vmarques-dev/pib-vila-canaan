@@ -33,7 +33,7 @@ export default function EstudoDestaque({ estudos }: EstudoDestaqueProps) {
   const [direction, setDirection] = useState(0)
   const [mostrarModal, setMostrarModal] = useState(false)
 
-  // Resetar índice quando a lista de estudos mudar (ex: filtro de categoria)
+  // Reset the index when the list of studies changes (e.g. category filter)
   useEffect(() => {
     setCurrentIndex(0)
   }, [estudos])
@@ -68,9 +68,9 @@ export default function EstudoDestaque({ estudos }: EstudoDestaqueProps) {
           <p className="text-gray-600">Nosso estudo mais recente</p>
         </motion.div>
 
-        {/* Área de navegação */}
+        {/* Navigation area */}
         <div className="relative flex items-center gap-4">
-          {/* Seta esquerda */}
+          {/* Left arrow */}
           <button
             onClick={goPrev}
             disabled={total <= 1}
@@ -80,7 +80,7 @@ export default function EstudoDestaque({ estudos }: EstudoDestaqueProps) {
             <ChevronLeft className="h-5 w-5" />
           </button>
 
-          {/* Card com animação */}
+          {/* Animated card */}
           <div className="flex-1 overflow-hidden">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
@@ -124,7 +124,7 @@ export default function EstudoDestaque({ estudos }: EstudoDestaqueProps) {
             </AnimatePresence>
           </div>
 
-          {/* Seta direita */}
+          {/* Right arrow */}
           <button
             onClick={goNext}
             disabled={total <= 1}
@@ -135,7 +135,7 @@ export default function EstudoDestaque({ estudos }: EstudoDestaqueProps) {
           </button>
         </div>
 
-        {/* Indicador de posição */}
+        {/* Position indicator */}
         {total > 1 && (
           <div className="flex items-center justify-center gap-2 mt-5">
             {estudos.map((_, i) => (

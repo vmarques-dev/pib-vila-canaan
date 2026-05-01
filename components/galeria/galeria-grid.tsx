@@ -25,7 +25,7 @@ export default function GaleriaGrid({ fotos }: GaleriaGridProps) {
   return (
     <section className="py-20 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        {/* Filtros */}
+        {/* Filters */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categorias.map((categoria) => (
             <Button
@@ -43,7 +43,7 @@ export default function GaleriaGrid({ fotos }: GaleriaGridProps) {
           ))}
         </div>
 
-        {/* Grid de Fotos */}
+        {/* Photo grid */}
         {fotosFiltradas.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {fotosFiltradas.map((foto, index) => (
