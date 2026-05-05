@@ -43,18 +43,6 @@ export default function DashboardPage() {
   const [estudosRecentes, setEstudosRecentes] = useState<Estudo[]>([])
   const [inscricoesRecentes, setInscricoesRecentes] = useState<InscricaoRecente[]>([])
 
-  useEffect(() => {
-    fetchAll().then(() => setLoading(false))
-
-    const handleStatsUpdate = () => { fetchAll() }
-    window.addEventListener('admin-stats-update', handleStatsUpdate)
-    return () => window.removeEventListener('admin-stats-update', handleStatsUpdate)
-  }, [])
-
-  const fetchAll = async () => {
-    await Promise.all([fetchStats(), fetchSummaries()])
-  }
-
   const fetchStats = async () => {
     try {
       const [eventosRes, estudosRes, fotosRes] = await Promise.all([
@@ -100,9 +88,7 @@ export default function DashboardPage() {
           .select('id, nome, email, created_at, eventos(titulo)')
           .order('created_at', { ascending: false })
           .limit(5),
-        supabase
-          .from('inscricoes')
-          .select('evento_id'),
+        supabase.from('inscricoes').select('evento_id'),
       ])
 
       setProximosEventos(eventosRes.data ?? [])
@@ -120,6 +106,21 @@ export default function DashboardPage() {
       logger.error('Erro ao buscar resumos', error)
     }
   }
+
+  const fetchAll = async () => {
+    await Promise.all([fetchStats(), fetchSummaries()])
+  }
+
+  useEffect(() => {
+    fetchAll().then(() => setLoading(false))
+
+    const handleStatsUpdate = () => {
+      fetchAll()
+    }
+    window.addEventListener('admin-stats-update', handleStatsUpdate)
+    return () => window.removeEventListener('admin-stats-update', handleStatsUpdate)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (loading) {
     return (
@@ -159,7 +160,6 @@ export default function DashboardPage() {
 
       {/* Operational summaries */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
         {/* Upcoming events */}
         <section className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
@@ -191,7 +191,8 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <span className="text-xs text-gray-400 shrink-0">
-                      {inscricoesCount[evento.id] ?? 0} inscrito{(inscricoesCount[evento.id] ?? 0) !== 1 ? 's' : ''}
+                      {inscricoesCount[evento.id] ?? 0} inscrito
+                      {(inscricoesCount[evento.id] ?? 0) !== 1 ? 's' : ''}
                     </span>
                   </li>
                 )
@@ -254,7 +255,6 @@ export default function DashboardPage() {
             </ul>
           )}
         </section>
-
       </div>
     </main>
   )

@@ -66,7 +66,10 @@ export function Lightbox({ fotos, fotoAtual, onClose, onNavigate }: LightboxProp
     }
   }, [fotoAtual, handleKeyDown])
 
+  // TODO(fase-4): refactor to derive `imageLoaded` from a key-based render reset
+  // (e.g. add `key={fotoAtual?.id}` to <Image>) instead of resetting via setState in effect.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setImageLoaded(false)
   }, [fotoAtual?.id])
 
@@ -202,9 +205,7 @@ export function Lightbox({ fotos, fotoAtual, onClose, onNavigate }: LightboxProp
               {fotoAtual.titulo}
             </h2>
             {fotoAtual.descricao && (
-              <p className="text-white/70 text-sm md:text-base max-w-2xl">
-                {fotoAtual.descricao}
-              </p>
+              <p className="text-white/70 text-sm md:text-base max-w-2xl">{fotoAtual.descricao}</p>
             )}
           </div>
         </motion.div>
@@ -226,13 +227,7 @@ export function Lightbox({ fotos, fotoAtual, onClose, onNavigate }: LightboxProp
               }`}
               aria-label={`Ir para foto ${index + 1}: ${foto.titulo}`}
             >
-              <Image
-                src={foto.url}
-                alt={foto.titulo}
-                fill
-                sizes="64px"
-                className="object-cover"
-              />
+              <Image src={foto.url} alt={foto.titulo} fill sizes="64px" className="object-cover" />
             </button>
           ))}
         </div>

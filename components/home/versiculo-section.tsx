@@ -24,22 +24,18 @@ export default function VersiculoSection({ versiculo }: VersiculoSectionProps) {
               <BookOpen className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            Versículo da Semana
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Versículo da Semana</h2>
           {versiculo && versiculo.texto?.trim() ? (
             <>
               <blockquote className="text-xl md:text-2xl text-gray-800 font-serif italic mb-4 leading-relaxed">
-                "{versiculo.texto}"
+                &ldquo;{versiculo.texto}&rdquo;
               </blockquote>
               <p className="text-lg md:text-xl text-blue-700 font-semibold">
                 {versiculo.livro} {versiculo.referencia}
               </p>
             </>
           ) : (
-            <p className="text-xl text-gray-500 italic">
-              Nenhum versículo em destaque no momento
-            </p>
+            <p className="text-xl text-gray-500 italic">Nenhum versículo em destaque no momento</p>
           )}
         </motion.div>
       </div>

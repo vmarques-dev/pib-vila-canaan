@@ -8,10 +8,7 @@ import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { Save, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { logger } from '@/lib/logger'
 import { toast } from 'sonner'
-import {
-  configuracoesSchema,
-  type ConfiguracoesFormData,
-} from '@/lib/validations/admin'
+import { configuracoesSchema, type ConfiguracoesFormData } from '@/lib/validations/admin'
 
 /**
  * Form-field wrapper with error support.
@@ -27,16 +24,11 @@ interface FormFieldProps {
 function FormField({ label, htmlFor, error, children, hint }: FormFieldProps) {
   return (
     <div>
-      <label
-        htmlFor={htmlFor}
-        className="block text-sm font-medium text-gray-700 mb-2"
-      >
+      <label htmlFor={htmlFor} className="block text-sm font-medium text-gray-700 mb-2">
         {label}
       </label>
       {children}
-      {hint && !error && (
-        <p className="mt-1 text-xs text-gray-500">{hint}</p>
-      )}
+      {hint && !error && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
       {error && (
         <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
           <AlertCircle size={14} />
@@ -89,10 +81,7 @@ export default function ConfiguracoesPage() {
   })
 
   const fetchConfiguracoes = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('informacoes_igreja')
-      .select('*')
-      .single()
+    const { data, error } = await supabase.from('informacoes_igreja').select('*').single()
 
     if (error) {
       logger.error('Erro ao buscar configurações', error)
@@ -110,7 +99,9 @@ export default function ConfiguracoesPage() {
     setLoading(false)
   }, [supabase, reset])
 
+  // TODO(fase-4): migrate this initial-load pattern to TanStack Query / SWR.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchConfiguracoes()
   }, [fetchConfiguracoes])
 
@@ -155,16 +146,12 @@ export default function ConfiguracoesPage() {
 
   const inputClassName = (hasError: boolean) =>
     `w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors ${
-      hasError
-        ? 'border-red-500 focus:ring-red-500'
-        : 'border-gray-300 focus:border-blue-500'
+      hasError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500'
     }`
 
   const textareaClassName = (hasError: boolean) =>
     `w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none transition-colors ${
-      hasError
-        ? 'border-red-500 focus:ring-red-500'
-        : 'border-gray-300 focus:border-blue-500'
+      hasError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500'
     }`
 
   if (loading) {
@@ -181,18 +168,12 @@ export default function ConfiguracoesPage() {
     <main className="p-8">
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Configurações</h1>
-        <p className="text-gray-600 mt-1">
-          Configure as informações da igreja exibidas no site
-        </p>
+        <p className="text-gray-600 mt-1">Configure as informações da igreja exibidas no site</p>
       </header>
 
       <div className="bg-white rounded-lg shadow p-8 max-w-3xl">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            label="Nome da Igreja"
-            htmlFor="nome"
-            error={errors.nome?.message}
-          >
+          <FormField label="Nome da Igreja" htmlFor="nome" error={errors.nome?.message}>
             <input
               id="nome"
               type="text"
@@ -230,10 +211,7 @@ export default function ConfiguracoesPage() {
                 render={({ field: { onChange, onBlur, value, ref } }) => (
                   <IMaskInput
                     id="telefone"
-                    mask={[
-                      { mask: '(00) 0000-0000' },
-                      { mask: '(00) 00000-0000' },
-                    ]}
+                    mask={[{ mask: '(00) 0000-0000' }, { mask: '(00) 00000-0000' }]}
                     value={value}
                     onAccept={(val) => onChange(val)}
                     onBlur={onBlur}
@@ -245,11 +223,7 @@ export default function ConfiguracoesPage() {
               />
             </FormField>
 
-            <FormField
-              label="Email"
-              htmlFor="email"
-              error={errors.email?.message}
-            >
+            <FormField label="Email" htmlFor="email" error={errors.email?.message}>
               <input
                 id="email"
                 type="email"

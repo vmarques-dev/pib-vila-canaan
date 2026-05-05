@@ -31,7 +31,7 @@ export default function EsqueciSenhaPage() {
         setMessage('Instruções de recuperação enviadas para seu email!')
         setEmail('')
       }
-    } catch (err) {
+    } catch {
       setError('Erro ao enviar email de recuperação. Tente novamente.')
     } finally {
       setLoading(false)
@@ -41,7 +41,10 @@ export default function EsqueciSenhaPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
-        <Link href="/login/adorador" className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6">
+        <Link
+          href="/login/adorador"
+          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6"
+        >
           <ArrowLeft className="w-4 h-4 mr-1" />
           Voltar
         </Link>
