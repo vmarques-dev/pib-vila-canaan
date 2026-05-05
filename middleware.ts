@@ -33,7 +33,7 @@ export async function middleware(req: NextRequest) {
       .from('usuarios_admin')
       .select('ativo')
       .eq('user_id', session.user.id)
-      .single()
+      .maybeSingle()
 
     if (adminError || !admin || !admin.ativo) {
       await supabase.auth.signOut()

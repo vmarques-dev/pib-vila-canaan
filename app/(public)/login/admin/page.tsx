@@ -71,7 +71,7 @@ export default function LoginAdminPage() {
           .from('usuarios_admin')
           .select('id, ativo')
           .eq('user_id', data.user.id)
-          .single()
+          .maybeSingle()
 
         if (adminError || !admin) {
           logger.error('Admin não encontrado na tabela usuarios_admin', adminError, {

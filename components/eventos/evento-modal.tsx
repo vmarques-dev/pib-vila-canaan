@@ -43,7 +43,7 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
       .from('adoradores')
       .select('id, nome, email, telefone')
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle()
 
     if (!adorador) return
 
@@ -54,7 +54,7 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
       .select('id')
       .eq('evento_id', evento.id)
       .eq('adorador_id', adorador.id)
-      .single()
+      .maybeSingle()
 
     if (existing) {
       setRegState('registered')
