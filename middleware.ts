@@ -14,7 +14,9 @@ export async function middleware(req: NextRequest) {
 
   const { supabase, response } = createMiddlewareClient(req)
 
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
   // Protect /admin/* routes
   if (req.nextUrl.pathname.startsWith('/admin')) {
@@ -50,6 +52,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/adorador/:path*']
+  matcher: ['/admin/:path*', '/adorador/:path*'],
 }
-

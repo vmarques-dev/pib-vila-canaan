@@ -15,13 +15,15 @@ const perfilSchema = z.object({
   nome: z.string().min(2, 'Nome deve ter ao menos 2 caracteres'),
 })
 
-const senhaSchema = z.object({
-  novaSenha: z.string().min(6, 'Senha deve ter ao menos 6 caracteres'),
-  confirmarSenha: z.string(),
-}).refine((d) => d.novaSenha === d.confirmarSenha, {
-  message: 'As senhas não conferem',
-  path: ['confirmarSenha'],
-})
+const senhaSchema = z
+  .object({
+    novaSenha: z.string().min(6, 'Senha deve ter ao menos 6 caracteres'),
+    confirmarSenha: z.string(),
+  })
+  .refine((d) => d.novaSenha === d.confirmarSenha, {
+    message: 'As senhas não conferem',
+    path: ['confirmarSenha'],
+  })
 
 type PerfilForm = z.infer<typeof perfilSchema>
 type SenhaForm = z.infer<typeof senhaSchema>
@@ -45,11 +47,7 @@ export default function PerfilPage() {
   useEffect(() => {
     async function fetchAdorador() {
       if (!user) return
-      const { data } = await supabase
-        .from('adoradores')
-        .select('*')
-        .eq('user_id', user.id)
-        .single()
+      const { data } = await supabase.from('adoradores').select('*').eq('user_id', user.id).single()
 
       if (data) {
         setAdorador(data)
@@ -131,7 +129,9 @@ export default function PerfilPage() {
               }`}
             />
             {perfilForm.formState.errors.nome && (
-              <p className="text-sm text-red-500 mt-1">{perfilForm.formState.errors.nome.message}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {perfilForm.formState.errors.nome.message}
+              </p>
             )}
           </div>
 
@@ -180,12 +180,17 @@ export default function PerfilPage() {
               }`}
             />
             {senhaForm.formState.errors.novaSenha && (
-              <p className="text-sm text-red-500 mt-1">{senhaForm.formState.errors.novaSenha.message}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {senhaForm.formState.errors.novaSenha.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="confirmarSenha" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="confirmarSenha"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Confirmar nova senha
             </label>
             <input
@@ -198,7 +203,9 @@ export default function PerfilPage() {
               }`}
             />
             {senhaForm.formState.errors.confirmarSenha && (
-              <p className="text-sm text-red-500 mt-1">{senhaForm.formState.errors.confirmarSenha.message}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {senhaForm.formState.errors.confirmarSenha.message}
+              </p>
             )}
           </div>
 

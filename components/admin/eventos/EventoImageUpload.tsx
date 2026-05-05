@@ -15,9 +15,7 @@ export function EventoImageUpload({
 }: EventoImageUploadProps) {
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-gray-700">
-        Imagem do Evento
-      </label>
+      <label className="block text-sm font-medium text-gray-700">Imagem do Evento</label>
 
       {/* File upload */}
       <div>

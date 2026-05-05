@@ -66,9 +66,10 @@ export default function AdoradorSidebar() {
                   onClick={() => setIsOpen(false)}
                   className={`
                     flex items-center gap-3 px-4 py-3 rounded-lg transition
-                    ${isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'text-blue-200 hover:bg-blue-700 hover:text-white'
+                    ${
+                      isActive
+                        ? 'bg-blue-600 text-white'
+                        : 'text-blue-200 hover:bg-blue-700 hover:text-white'
                     }
                   `}
                 >

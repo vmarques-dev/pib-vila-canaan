@@ -27,20 +27,72 @@ interface VersiculoDestaque {
 }
 
 const LIVROS_BIBLIA = [
-  'Gênesis', 'Êxodo', 'Levítico', 'Números', 'Deuteronômio',
-  'Josué', 'Juízes', 'Rute', '1 Samuel', '2 Samuel',
-  '1 Reis', '2 Reis', '1 Crônicas', '2 Crônicas', 'Esdras',
-  'Neemias', 'Ester', 'Jó', 'Salmos', 'Provérbios',
-  'Eclesiastes', 'Cantares', 'Isaías', 'Jeremias', 'Lamentações',
-  'Ezequiel', 'Daniel', 'Oséias', 'Joel', 'Amós',
-  'Obadias', 'Jonas', 'Miquéias', 'Naum', 'Habacuque',
-  'Sofonias', 'Ageu', 'Zacarias', 'Malaquias',
-  'Mateus', 'Marcos', 'Lucas', 'João', 'Atos',
-  'Romanos', '1 Coríntios', '2 Coríntios', 'Gálatas', 'Efésios',
-  'Filipenses', 'Colossenses', '1 Tessalonicenses', '2 Tessalonicenses',
-  '1 Timóteo', '2 Timóteo', 'Tito', 'Filemom', 'Hebreus',
-  'Tiago', '1 Pedro', '2 Pedro', '1 João', '2 João',
-  '3 João', 'Judas', 'Apocalipse'
+  'Gênesis',
+  'Êxodo',
+  'Levítico',
+  'Números',
+  'Deuteronômio',
+  'Josué',
+  'Juízes',
+  'Rute',
+  '1 Samuel',
+  '2 Samuel',
+  '1 Reis',
+  '2 Reis',
+  '1 Crônicas',
+  '2 Crônicas',
+  'Esdras',
+  'Neemias',
+  'Ester',
+  'Jó',
+  'Salmos',
+  'Provérbios',
+  'Eclesiastes',
+  'Cantares',
+  'Isaías',
+  'Jeremias',
+  'Lamentações',
+  'Ezequiel',
+  'Daniel',
+  'Oséias',
+  'Joel',
+  'Amós',
+  'Obadias',
+  'Jonas',
+  'Miquéias',
+  'Naum',
+  'Habacuque',
+  'Sofonias',
+  'Ageu',
+  'Zacarias',
+  'Malaquias',
+  'Mateus',
+  'Marcos',
+  'Lucas',
+  'João',
+  'Atos',
+  'Romanos',
+  '1 Coríntios',
+  '2 Coríntios',
+  'Gálatas',
+  'Efésios',
+  'Filipenses',
+  'Colossenses',
+  '1 Tessalonicenses',
+  '2 Tessalonicenses',
+  '1 Timóteo',
+  '2 Timóteo',
+  'Tito',
+  'Filemom',
+  'Hebreus',
+  'Tiago',
+  '1 Pedro',
+  '2 Pedro',
+  '1 João',
+  '2 João',
+  '3 João',
+  'Judas',
+  'Apocalipse',
 ]
 
 const initialFormData = {
@@ -104,49 +156,49 @@ export default function VersiculoDestaquePage() {
    * @param excludeId - Optional verse ID to exclude from deactivation
    * @returns Object with success (true/false) and an error message if any
    */
-  const deactivateOtherVerses = useCallback(async (excludeId?: string): Promise<{ success: boolean; error?: string }> => {
-    try {
-      // First, check whether any active verses exist
-      let query = supabase
-        .from('versiculo_destaque')
-        .select('id')
-        .eq('ativo', true)
+  const deactivateOtherVerses = useCallback(
+    async (excludeId?: string): Promise<{ success: boolean; error?: string }> => {
+      try {
+        // First, check whether any active verses exist
+        let query = supabase.from('versiculo_destaque').select('id').eq('ativo', true)
 
-      // If an ID is provided, exclude it from the query
-      if (excludeId) {
-        query = query.neq('id', excludeId)
-      }
+        // If an ID is provided, exclude it from the query
+        if (excludeId) {
+          query = query.neq('id', excludeId)
+        }
 
-      const { data: activeVerses, error: selectError } = await query
+        const { data: activeVerses, error: selectError } = await query
 
-      if (selectError) {
-        logger.error('Erro ao verificar versículos ativos', selectError)
-        return { success: false, error: 'Erro ao verificar versículos ativos' }
-      }
+        if (selectError) {
+          logger.error('Erro ao verificar versículos ativos', selectError)
+          return { success: false, error: 'Erro ao verificar versículos ativos' }
+        }
 
-      // If there are no active verses to deactivate, return success
-      if (!activeVerses || activeVerses.length === 0) {
+        // If there are no active verses to deactivate, return success
+        if (!activeVerses || activeVerses.length === 0) {
+          return { success: true }
+        }
+
+        // Deactivate the active verses we found
+        const idsToDeactivate = activeVerses.map((v) => v.id)
+        const { error: updateError } = await supabase
+          .from('versiculo_destaque')
+          .update({ ativo: false })
+          .in('id', idsToDeactivate)
+
+        if (updateError) {
+          logger.error('Erro ao desativar versículos', updateError)
+          return { success: false, error: 'Erro ao desativar outros versículos' }
+        }
+
         return { success: true }
+      } catch (error) {
+        logger.error('Erro inesperado ao desativar versículos', error)
+        return { success: false, error: 'Erro inesperado ao desativar versículos' }
       }
-
-      // Deactivate the active verses we found
-      const idsToDeactivate = activeVerses.map(v => v.id)
-      const { error: updateError } = await supabase
-        .from('versiculo_destaque')
-        .update({ ativo: false })
-        .in('id', idsToDeactivate)
-
-      if (updateError) {
-        logger.error('Erro ao desativar versículos', updateError)
-        return { success: false, error: 'Erro ao desativar outros versículos' }
-      }
-
-      return { success: true }
-    } catch (error) {
-      logger.error('Erro inesperado ao desativar versículos', error)
-      return { success: false, error: 'Erro inesperado ao desativar versículos' }
-    }
-  }, [supabase])
+    },
+    [supabase]
+  )
 
   // Populate the form when editing
   useEffect(() => {
@@ -216,10 +268,7 @@ export default function VersiculoDestaquePage() {
     setIsDeleting(true)
 
     try {
-      const { error } = await supabase
-        .from('versiculo_destaque')
-        .delete()
-        .eq('id', itemToDelete.id)
+      const { error } = await supabase.from('versiculo_destaque').delete().eq('id', itemToDelete.id)
 
       if (error) {
         logger.error('Erro ao excluir versículo', error)
@@ -289,7 +338,10 @@ export default function VersiculoDestaquePage() {
       header: 'Referência',
       width: '180px',
       accessor: (versiculo) => (
-        <div className="text-sm font-medium text-gray-900 truncate" title={`${versiculo.livro} ${versiculo.referencia}`}>
+        <div
+          className="text-sm font-medium text-gray-900 truncate"
+          title={`${versiculo.livro} ${versiculo.referencia}`}
+        >
           {versiculo.livro} {versiculo.referencia}
         </div>
       ),
@@ -306,14 +358,13 @@ export default function VersiculoDestaquePage() {
     {
       header: 'Status',
       width: '100px',
-      headerClassName: 'px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider',
+      headerClassName:
+        'px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider',
       cellClassName: 'px-4 py-4 text-center',
       accessor: (versiculo) => (
         <span
           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            versiculo.ativo
-              ? 'bg-green-100 text-green-800'
-              : 'bg-gray-100 text-gray-800'
+            versiculo.ativo ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
           }`}
         >
           {versiculo.ativo ? 'Ativo' : 'Inativo'}
@@ -330,7 +381,7 @@ export default function VersiculoDestaquePage() {
       ariaLabel: 'Editar versículo',
     },
     {
-      icon: (versiculo) => versiculo.ativo ? <Eye size={18} /> : <EyeOff size={18} />,
+      icon: (versiculo) => (versiculo.ativo ? <Eye size={18} /> : <EyeOff size={18} />),
       onClick: (versiculo) => handleToggleAtivo(versiculo.id, versiculo.ativo),
       className: 'text-blue-600 hover:text-blue-900',
       ariaLabel: 'Ativar/Desativar versículo',
@@ -374,10 +425,7 @@ export default function VersiculoDestaquePage() {
       >
         <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label
-              htmlFor="livro"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="livro" className="block text-sm font-medium text-gray-700 mb-2">
               Livro
             </label>
             <select
@@ -394,16 +442,11 @@ export default function VersiculoDestaquePage() {
                 </option>
               ))}
             </select>
-            {errors.livro && (
-              <p className="text-sm text-red-500 mt-1">{errors.livro.message}</p>
-            )}
+            {errors.livro && <p className="text-sm text-red-500 mt-1">{errors.livro.message}</p>}
           </div>
 
           <div>
-            <label
-              htmlFor="referencia"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="referencia" className="block text-sm font-medium text-gray-700 mb-2">
               Capítulo e Versículo
             </label>
             <input
@@ -421,10 +464,7 @@ export default function VersiculoDestaquePage() {
           </div>
 
           <div>
-            <label
-              htmlFor="texto"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="texto" className="block text-sm font-medium text-gray-700 mb-2">
               Texto do Versículo
             </label>
             <textarea
@@ -436,9 +476,7 @@ export default function VersiculoDestaquePage() {
                 errors.texto ? 'border-red-500' : ''
               }`}
             />
-            {errors.texto && (
-              <p className="text-sm text-red-500 mt-1">{errors.texto.message}</p>
-            )}
+            {errors.texto && <p className="text-sm text-red-500 mt-1">{errors.texto.message}</p>}
           </div>
 
           <div className="flex items-center gap-2">
@@ -448,10 +486,7 @@ export default function VersiculoDestaquePage() {
               {...register('ativo')}
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            <label
-              htmlFor="ativo"
-              className="text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="ativo" className="text-sm font-medium text-gray-700">
               Ativar versículo (desativa todos os outros automaticamente)
             </label>
           </div>
@@ -462,11 +497,7 @@ export default function VersiculoDestaquePage() {
               disabled={isSubmitting}
               className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting
-                ? 'Salvando...'
-                : editingItem
-                  ? 'Atualizar'
-                  : 'Criar'}
+              {isSubmitting ? 'Salvando...' : editingItem ? 'Atualizar' : 'Criar'}
             </button>
             <button
               type="button"

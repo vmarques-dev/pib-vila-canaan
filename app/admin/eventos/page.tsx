@@ -285,25 +285,23 @@ export default function EventosPage() {
     {
       header: 'Inscrições',
       width: '100px',
-      headerClassName: 'px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider',
+      headerClassName:
+        'px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider',
       cellClassName: 'px-4 py-4 text-center',
       accessor: (evento) => (
-        <span className="text-sm font-medium text-gray-700">
-          {inscricoesCount[evento.id] ?? 0}
-        </span>
+        <span className="text-sm font-medium text-gray-700">{inscricoesCount[evento.id] ?? 0}</span>
       ),
     },
     {
       header: 'Status',
       width: '100px',
-      headerClassName: 'px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider',
+      headerClassName:
+        'px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider',
       cellClassName: 'px-4 py-4 text-center',
       accessor: (evento) => (
         <span
           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            evento.concluido
-              ? 'bg-gray-100 text-gray-800'
-              : 'bg-green-100 text-green-800'
+            evento.concluido ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800'
           }`}
         >
           {evento.concluido ? 'Concluído' : 'Ativo'}
@@ -320,7 +318,7 @@ export default function EventosPage() {
       ariaLabel: 'Editar evento',
     },
     {
-      icon: (evento) => evento.concluido ? <EyeOff size={18} /> : <Eye size={18} />,
+      icon: (evento) => (evento.concluido ? <EyeOff size={18} /> : <Eye size={18} />),
       onClick: handleConcluirEvento,
       className: 'text-blue-600 hover:text-blue-900',
       ariaLabel: 'Concluir evento',
@@ -416,7 +414,10 @@ export default function EventosPage() {
         ) : (
           <ul className="space-y-2 max-h-[60vh] overflow-y-auto">
             {inscricoesList.map((inscricao, index) => (
-              <li key={inscricao.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <li
+                key={inscricao.id}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+              >
                 <div className="flex items-center gap-3">
                   <span className="text-xs text-gray-400 w-6 text-right">{index + 1}.</span>
                   <div>

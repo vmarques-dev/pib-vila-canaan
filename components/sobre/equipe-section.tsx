@@ -61,7 +61,9 @@ export default function EquipeSection({ equipe }: EquipeSectionProps) {
                     </div>
 
                     {/* Name and role */}
-                    <h3 className="text-xl font-bold text-gray-900 mb-1 text-center">{membro.nome}</h3>
+                    <h3 className="text-xl font-bold text-gray-900 mb-1 text-center">
+                      {membro.nome}
+                    </h3>
                     <span className="inline-block bg-blue-50 text-blue-700 text-sm font-semibold px-3 py-1 rounded-full border border-blue-200 mb-4">
                       {membro.cargo}
                     </span>
@@ -81,9 +83,7 @@ export default function EquipeSection({ equipe }: EquipeSectionProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center text-gray-500 py-10">
-            Informações da equipe em breve!
-          </div>
+          <div className="text-center text-gray-500 py-10">Informações da equipe em breve!</div>
         )}
       </div>
     </section>

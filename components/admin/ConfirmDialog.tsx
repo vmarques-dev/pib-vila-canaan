@@ -164,10 +164,7 @@ export function ConfirmDialog({
                 <Icon className={config.iconColor} size={24} aria-hidden="true" />
               </div>
 
-              <h3
-                id="confirm-dialog-title"
-                className="text-lg font-semibold text-gray-900"
-              >
+              <h3 id="confirm-dialog-title" className="text-lg font-semibold text-gray-900">
                 {title}
               </h3>
             </div>

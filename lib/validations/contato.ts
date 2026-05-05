@@ -12,12 +12,7 @@ export const contatoSchema = z.object({
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras')
     .trim(),
 
-  email: z
-    .string()
-    .email('Email inválido')
-    .max(255, 'Email muito longo')
-    .toLowerCase()
-    .trim(),
+  email: z.string().email('Email inválido').max(255, 'Email muito longo').toLowerCase().trim(),
 
   telefone: z
     .string()

@@ -40,7 +40,10 @@ export default function HeroSection() {
           transition={{ delay: 0.6, duration: 0.8 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <Button size="lg" className="w-full sm:w-auto bg-white text-blue-700 hover:bg-blue-50 text-lg px-8 py-3 border-2 border-transparent">
+          <Button
+            size="lg"
+            className="w-full sm:w-auto bg-white text-blue-700 hover:bg-blue-50 text-lg px-8 py-3 border-2 border-transparent"
+          >
             Participe do Culto
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
@@ -63,7 +66,15 @@ export default function HeroSection() {
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
       >
         <div className="animate-bounce">
-          <svg className="w-6 h-6 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+          <svg
+            className="w-6 h-6 text-white"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
             <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
           </svg>
         </div>

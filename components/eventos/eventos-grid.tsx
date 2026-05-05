@@ -103,9 +103,7 @@ export default function EventosGrid({ proximosEventos, eventosAnteriores }: Even
             </div>
           ) : (
             <div className="text-center py-12 rounded-lg">
-              <p className="text-lg text-gray-500">
-                Nenhum evento agendado no momento.
-              </p>
+              <p className="text-lg text-gray-500">Nenhum evento agendado no momento.</p>
               <p className="text-sm text-gray-400 mt-2">
                 Volte em breve para conferir novos eventos!
               </p>
@@ -129,11 +127,7 @@ export default function EventosGrid({ proximosEventos, eventosAnteriores }: Even
       )}
 
       {/* Event details modal */}
-      <EventoModal
-        evento={selectedEvento}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      <EventoModal evento={selectedEvento} isOpen={isModalOpen} onClose={handleCloseModal} />
     </>
   )
 }

@@ -10,9 +10,7 @@ export default function AdoradorLayout({
   return (
     <div className="flex h-screen bg-gray-100">
       <AdoradorSidebar />
-      <main className="flex-1 overflow-y-auto">
-        {children}
-      </main>
+      <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   )
 }

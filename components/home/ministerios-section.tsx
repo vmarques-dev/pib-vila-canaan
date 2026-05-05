@@ -21,12 +21,8 @@ export default function MinisteriosSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Nossos Ministérios
-          </h2>
-          <p className="text-xl text-gray-600">
-            Encontre seu lugar para servir e crescer
-          </p>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Nossos Ministérios</h2>
+          <p className="text-xl text-gray-600">Encontre seu lugar para servir e crescer</p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -41,9 +37,7 @@ export default function MinisteriosSection() {
               <Card className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer border-2 hover:border-blue-200 h-full">
                 <CardContent className="pt-8 pb-6">
                   <div className="text-6xl mb-4">{ministerio.emoji}</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {ministerio.name}
-                  </h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{ministerio.name}</h3>
                   <p className="text-sm text-gray-600">{ministerio.descricao}</p>
                 </CardContent>
               </Card>

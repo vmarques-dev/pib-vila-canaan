@@ -20,7 +20,11 @@ export async function uploadImage(
 ): Promise<string | null> {
   try {
     // Validate file type
-    if (!STORAGE_CONFIG.ALLOWED_IMAGE_TYPES.includes(file.type as typeof STORAGE_CONFIG.ALLOWED_IMAGE_TYPES[number])) {
+    if (
+      !STORAGE_CONFIG.ALLOWED_IMAGE_TYPES.includes(
+        file.type as (typeof STORAGE_CONFIG.ALLOWED_IMAGE_TYPES)[number]
+      )
+    ) {
       logger.error('Tipo de arquivo não permitido', new Error(file.type))
       throw new Error('Apenas imagens JPG, PNG e WebP são permitidas')
     }
@@ -44,12 +48,10 @@ export async function uploadImage(
     const supabase = createSupabaseBrowserClient()
 
     // Perform the upload
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false,
-      })
+    const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+    })
 
     if (error) {
       logger.error('Erro ao fazer upload', error)
@@ -57,9 +59,9 @@ export async function uploadImage(
     }
 
     // Resolve the public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(data.path)
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(data.path)
 
     logger.info('Upload realizado com sucesso', { path: data.path, url: publicUrl })
     return publicUrl
@@ -102,9 +104,7 @@ export async function deleteImage(
     const supabase = createSupabaseBrowserClient()
 
     // Delete the file
-    const { error } = await supabase.storage
-      .from(bucket)
-      .remove([filePath])
+    const { error } = await supabase.storage.from(bucket).remove([filePath])
 
     if (error) {
       logger.error('Erro ao excluir imagem', error)

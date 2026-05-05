@@ -18,15 +18,7 @@ export const metadata: Metadata = {
   title: 'PIB Vila Canaan - Uma igreja que ama a Deus e serve às pessoas',
   description:
     'Igreja Batista em Vila Canaan. Cultos aos domingos e quartas. Venha fazer parte da nossa família!',
-  keywords: [
-    'igreja',
-    'batista',
-    'vila canaan',
-    'duque de caxias',
-    'PIB',
-    'cultos',
-    'evangelica',
-  ],
+  keywords: ['igreja', 'batista', 'vila canaan', 'duque de caxias', 'PIB', 'cultos', 'evangelica'],
   authors: [{ name: 'PIB Vila Canaan' }],
   openGraph: {
     type: 'website',
@@ -88,9 +80,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           {children}
           <Toaster

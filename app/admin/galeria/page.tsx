@@ -107,10 +107,7 @@ export default function GaleriaPage() {
       try {
         const optimizedFile = await optimizeImage(imageFile, 1200, 0.85)
 
-        const uploadedUrl = await uploadImage(
-          optimizedFile,
-          STORAGE_CONFIG.BUCKETS.GALERIA
-        )
+        const uploadedUrl = await uploadImage(optimizedFile, STORAGE_CONFIG.BUCKETS.GALERIA)
 
         if (!uploadedUrl) {
           toast.error('Erro ao fazer upload da imagem')
@@ -187,18 +184,11 @@ export default function GaleriaPage() {
               role="listitem"
             >
               <div className="h-48 relative bg-gray-100">
-                <Image
-                  src={foto.url}
-                  alt={foto.titulo}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={foto.url} alt={foto.titulo} fill className="object-cover" />
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-900 mb-1">{foto.titulo}</h3>
-                {foto.descricao && (
-                  <p className="text-sm text-gray-600 mb-3">{foto.descricao}</p>
-                )}
+                {foto.descricao && <p className="text-sm text-gray-600 mb-3">{foto.descricao}</p>}
                 <button
                   onClick={() => handleDelete(foto)}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm"
@@ -213,18 +203,10 @@ export default function GaleriaPage() {
         </div>
       )}
 
-      <AdminModal
-        isOpen={showModal}
-        onClose={handleModalClose}
-        title="Nova Foto"
-        maxWidth="lg"
-      >
+      <AdminModal isOpen={showModal} onClose={handleModalClose} title="Nova Foto" maxWidth="lg">
         <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label
-              htmlFor="titulo"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="titulo" className="block text-sm font-medium text-gray-700 mb-2">
               Título
             </label>
             <input
@@ -236,9 +218,7 @@ export default function GaleriaPage() {
                 errors.titulo ? 'border-red-500' : ''
               } ${isFormSubmitting ? 'bg-gray-100' : ''}`}
             />
-            {errors.titulo && (
-              <p className="text-sm text-red-500 mt-1">{errors.titulo.message}</p>
-            )}
+            {errors.titulo && <p className="text-sm text-red-500 mt-1">{errors.titulo.message}</p>}
           </div>
 
           <ImageUpload
@@ -254,10 +234,7 @@ export default function GaleriaPage() {
           />
 
           <div>
-            <label
-              htmlFor="categoria"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="categoria" className="block text-sm font-medium text-gray-700 mb-2">
               Categoria
             </label>
             <select
@@ -268,7 +245,9 @@ export default function GaleriaPage() {
                 errors.categoria ? 'border-red-500' : ''
               } ${isFormSubmitting ? 'bg-gray-100' : ''}`}
             >
-              <option value="" disabled>Selecione uma categoria</option>
+              <option value="" disabled>
+                Selecione uma categoria
+              </option>
               <option value="Cultos">Cultos</option>
               <option value="Jovens">Jovens</option>
               <option value="Eventos Especiais">Eventos Especiais</option>
@@ -280,10 +259,7 @@ export default function GaleriaPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="descricao"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="descricao" className="block text-sm font-medium text-gray-700 mb-2">
               Descrição (opcional)
             </label>
             <textarea

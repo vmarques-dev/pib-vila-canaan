@@ -54,10 +54,7 @@ export function EventoForm({
   return (
     <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label
-          htmlFor="titulo"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
+        <label htmlFor="titulo" className="block text-sm font-medium text-gray-700 mb-2">
           Título
         </label>
         <input
@@ -68,16 +65,11 @@ export function EventoForm({
             errors.titulo ? 'border-red-500' : ''
           }`}
         />
-        {errors.titulo && (
-          <p className="text-sm text-red-500 mt-1">{errors.titulo.message}</p>
-        )}
+        {errors.titulo && <p className="text-sm text-red-500 mt-1">{errors.titulo.message}</p>}
       </div>
 
       <div>
-        <label
-          htmlFor="descricao"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
+        <label htmlFor="descricao" className="block text-sm font-medium text-gray-700 mb-2">
           Descrição
         </label>
         <textarea
@@ -95,10 +87,7 @@ export function EventoForm({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label
-            htmlFor="data_inicio"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+          <label htmlFor="data_inicio" className="block text-sm font-medium text-gray-700 mb-2">
             Data de Início
           </label>
           <input
@@ -114,10 +103,7 @@ export function EventoForm({
           )}
         </div>
         <div>
-          <label
-            htmlFor="data_fim"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+          <label htmlFor="data_fim" className="block text-sm font-medium text-gray-700 mb-2">
             Data de Fim (opcional)
           </label>
           <input
@@ -136,10 +122,7 @@ export function EventoForm({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label
-            htmlFor="horario_inicio"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+          <label htmlFor="horario_inicio" className="block text-sm font-medium text-gray-700 mb-2">
             Horário de Início (opcional)
           </label>
           <input
@@ -155,10 +138,7 @@ export function EventoForm({
           )}
         </div>
         <div>
-          <label
-            htmlFor="horario_fim"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+          <label htmlFor="horario_fim" className="block text-sm font-medium text-gray-700 mb-2">
             Horário de Término (opcional)
           </label>
           <input
@@ -176,10 +156,7 @@ export function EventoForm({
       </div>
 
       <div>
-        <label
-          htmlFor="local"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
+        <label htmlFor="local" className="block text-sm font-medium text-gray-700 mb-2">
           Local
         </label>
         <input
@@ -190,9 +167,7 @@ export function EventoForm({
             errors.local ? 'border-red-500' : ''
           }`}
         />
-        {errors.local && (
-          <p className="text-sm text-red-500 mt-1">{errors.local.message}</p>
-        )}
+        {errors.local && <p className="text-sm text-red-500 mt-1">{errors.local.message}</p>}
       </div>
 
       <EventoImageUpload
@@ -210,10 +185,10 @@ export function EventoForm({
           {uploadingImage
             ? 'Enviando imagem...'
             : isSubmitting
-            ? 'Salvando...'
-            : editingItem
-              ? 'Atualizar'
-              : 'Criar'}
+              ? 'Salvando...'
+              : editingItem
+                ? 'Atualizar'
+                : 'Criar'}
         </button>
         <button
           type="button"

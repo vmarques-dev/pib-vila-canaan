@@ -48,19 +48,13 @@ export default function Navbar() {
             <div className="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">PIB</span>
             </div>
-            <span className="font-bold text-xl text-gray-900 hidden sm:block">
-              Vila Canaan
-            </span>
+            <span className="font-bold text-xl text-gray-900 hidden sm:block">Vila Canaan</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={(e) => handleLinkClick(e, link.href)}
-              >
+              <Link key={link.href} href={link.href} onClick={(e) => handleLinkClick(e, link.href)}>
                 <Button
                   variant="ghost"
                   className="text-gray-700 hover:text-blue-700 hover:bg-blue-50"
@@ -73,9 +67,7 @@ export default function Navbar() {
               <>
                 {!user ? (
                   <Link href="/login">
-                    <Button className="bg-blue-700 hover:bg-blue-800 text-white ml-4">
-                      Login
-                    </Button>
+                    <Button className="bg-blue-700 hover:bg-blue-800 text-white ml-4">Login</Button>
                   </Link>
                 ) : (
                   <div className="flex items-center space-x-2 ml-4">

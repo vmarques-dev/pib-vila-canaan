@@ -22,6 +22,7 @@ This document describes the security practices and mechanisms implemented in the
 The project implements multiple layers of security to protect user data and ensure that only authorized administrators can access the admin panel.
 
 **Security Principles**:
+
 - ✅ **Defense in Depth** — multiple layers of protection
 - ✅ **Least Privilege** — users only get the permissions they need
 - ✅ **Fail Secure** — when something goes wrong, the system denies access
@@ -40,7 +41,9 @@ All `/admin/*` routes are protected by Next.js middleware running on the server:
 ```typescript
 export async function middleware(req: NextRequest) {
   const { supabase, response } = createMiddlewareClient(req)
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
   if (req.nextUrl.pathname.startsWith('/admin')) {
     // 1. Check for an active session
@@ -72,6 +75,7 @@ export async function middleware(req: NextRequest) {
 ```
 
 **Protections**:
+
 - ✅ **Server-side** — cannot be bypassed via DevTools
 - ✅ **Triple verification** — session + role + table
 - ✅ **Automatic sign-out** — clears the session if not authorized
@@ -142,6 +146,7 @@ CREATE POLICY "Active admins can upload"
 ```
 
 **Validation**:
+
 - ✅ Regular authenticated user → upload FAILS (403 Forbidden)
 - ✅ Active admin → upload SUCCEEDS
 - ✅ Inactive admin → upload FAILS (403 Forbidden)
@@ -175,12 +180,7 @@ export const contatoSchema = z.object({
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras')
     .trim(),
 
-  email: z
-    .string()
-    .email('Email inválido')
-    .max(255, 'Email muito longo')
-    .toLowerCase()
-    .trim(),
+  email: z.string().email('Email inválido').max(255, 'Email muito longo').toLowerCase().trim(),
 
   mensagem: z
     .string()
@@ -195,6 +195,7 @@ export const contatoSchema = z.object({
 > English.
 
 **Protections**:
+
 - ✅ **Automatic sanitization** — `trim()`, `toLowerCase()`
 - ✅ **Format validation** — regex, email, URL
 - ✅ **Size limits** — prevents DoS
@@ -236,12 +237,14 @@ RESEND_API_KEY=re_your-resend-key
 ```
 
 **Protections**:
+
 - ✅ `.env.local` listed in `.gitignore`
 - ✅ Only `NEXT_PUBLIC_*` variables are exposed to the browser
 - ✅ Private keys live exclusively on the server
 - ✅ `.env.local.example` ships placeholders only
 
 **⚠️ IMPORTANT**:
+
 - ❌ NEVER commit `.env.local` to Git
 - ❌ NEVER expose `RESEND_API_KEY` on the client
 - ✅ Rotate keys if accidentally leaked
@@ -264,11 +267,7 @@ class Logger {
 
   error(message: string, error?: unknown, context?: LogContext): void {
     const detail = extractErrorMessage(error ?? '')
-    console.error(
-      `[ERROR] ${message}${detail ? ': ' + detail : ''}`,
-      error,
-      context ?? ''
-    )
+    console.error(`[ERROR] ${message}${detail ? ': ' + detail : ''}`, error, context ?? '')
     // TODO: forward to an external service in production (e.g. Sentry)
   }
 }
@@ -278,6 +277,7 @@ Integration with an external error-tracking service (Sentry, Datadog, …)
 is on the roadmap — replace the `TODO` blocks with the chosen SDK's calls.
 
 **What NOT to log**:
+
 - ❌ User emails
 - ❌ Passwords (obvious, but worth stating)
 - ❌ Auth tokens
@@ -286,6 +286,7 @@ is on the roadmap — replace the `TODO` blocks with the chosen SDK's calls.
 - ❌ Personal data
 
 **What to log**:
+
 - ✅ Authentication errors (without sensitive details)
 - ✅ Unauthorized-access attempts
 - ✅ CRUD operations (without personal data)
@@ -334,12 +335,13 @@ export async function POST(request: Request) {
 Two environment variables enable a fast rollback without a redeploy. Each
 is read directly via `process.env` in the file where it takes effect.
 
-| Variable | File | Default | Effect when `false` |
-|---|---|---|---|
-| `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `middleware.ts` | `true` | Full bypass of `/admin/*` and `/adorador/*` protection |
-| `NEXT_PUBLIC_USE_RATE_LIMITING` | `app/api/contato/route.ts` | `true` | Disables the 3 req/h IP limit |
+| Variable                          | File                       | Default | Effect when `false`                                    |
+| --------------------------------- | -------------------------- | ------- | ------------------------------------------------------ |
+| `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `middleware.ts`            | `true`  | Full bypass of `/admin/*` and `/adorador/*` protection |
+| `NEXT_PUBLIC_USE_RATE_LIMITING`   | `app/api/contato/route.ts` | `true`  | Disables the 3 req/h IP limit                          |
 
 **Emergency rollback procedure**:
+
 1. Open Vercel Dashboard → Settings → Environment Variables
 2. Set the relevant flag to `false`
 3. Wait for the automatic redeploy (~2 minutes)
@@ -368,16 +370,19 @@ long — admin-route protection is fully disabled.
 ### Routine Audits
 
 **Monthly**:
+
 - [ ] Review active users in `usuarios_admin`
 - [ ] Inspect logs for unauthorized-access attempts
 - [ ] Rotate API keys (if needed)
 
 **Quarterly**:
+
 - [ ] Update dependencies (`npm audit fix`)
 - [ ] Review RLS policies
 - [ ] Test the rollback procedure
 
 **Annually**:
+
 - [ ] Full security audit
 - [ ] Review all documentation
 - [ ] Train the team on security practices

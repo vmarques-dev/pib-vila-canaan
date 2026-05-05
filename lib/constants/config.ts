@@ -5,7 +5,8 @@
 
 export const SITE_CONFIG = {
   name: 'PIB Vila Canaan',
-  description: 'Primeira Igreja Batista em Vila Canaan - Uma igreja que ama a Deus e serve às pessoas',
+  description:
+    'Primeira Igreja Batista em Vila Canaan - Uma igreja que ama a Deus e serve às pessoas',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://pibvilacanaan.com.br',
   ogImage: '/og-image.jpg',
   author: 'PIB Vila Canaan',

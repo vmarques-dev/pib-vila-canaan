@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useMemo,
-  ReactNode,
-} from 'react'
+import { createContext, useContext, useEffect, useState, useMemo, ReactNode } from 'react'
 import { User } from '@supabase/supabase-js'
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { logger } from '@/lib/logger'
@@ -128,10 +121,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * @param password - User password
    * @returns Object with the error (if any) or null on success
    */
-  const login = async (
-    email: string,
-    password: string
-  ): Promise<{ error: Error | null }> => {
+  const login = async (email: string, password: string): Promise<{ error: Error | null }> => {
     if (!supabase) return { error: new Error('Supabase não configurado') }
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -190,9 +180,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [])
 
   return (
-    <AuthContext.Provider
-      value={{ user, isAdmin, isLoading, login, logout, checkAuth }}
-    >
+    <AuthContext.Provider value={{ user, isAdmin, isLoading, login, logout, checkAuth }}>
       {children}
     </AuthContext.Provider>
   )

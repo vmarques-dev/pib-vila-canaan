@@ -47,10 +47,7 @@ export default async function EstudosPage() {
   return (
     <main className="min-h-screen">
       <EstudosHero />
-      <EstudosComFiltro
-        estudosAtivos={estudosAtivos}
-        estudosAnteriores={estudosAnteriores}
-      />
+      <EstudosComFiltro estudosAtivos={estudosAtivos} estudosAnteriores={estudosAnteriores} />
     </main>
   )
 }

@@ -37,7 +37,8 @@ export default function CadastroPage() {
     if (/[0-9]/.test(passwordValue)) score++
     if (/[^A-Za-z0-9]/.test(passwordValue)) score++
     if (score <= 1) return { label: 'Fraca', color: 'bg-red-500', text: 'text-red-500', bars: 1 }
-    if (score === 2) return { label: 'Média', color: 'bg-yellow-500', text: 'text-yellow-500', bars: 2 }
+    if (score === 2)
+      return { label: 'Média', color: 'bg-yellow-500', text: 'text-yellow-500', bars: 2 }
     return { label: 'Forte', color: 'bg-green-500', text: 'text-green-500', bars: 3 }
   })()
 
@@ -81,9 +82,7 @@ export default function CadastroPage() {
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Cadastro</h1>
-          <p className="text-gray-600 text-sm">
-            Crie sua conta para ter acesso à plataforma
-          </p>
+          <p className="text-gray-600 text-sm">Crie sua conta para ter acesso à plataforma</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -101,9 +100,7 @@ export default function CadastroPage() {
                 errors.nome ? 'border-red-500' : 'border-gray-300'
               } ${isSubmitting ? 'bg-gray-100' : ''}`}
             />
-            {errors.nome && (
-              <p className="text-sm text-red-500 mt-1">{errors.nome.message}</p>
-            )}
+            {errors.nome && <p className="text-sm text-red-500 mt-1">{errors.nome.message}</p>}
           </div>
 
           <div>
@@ -120,9 +117,7 @@ export default function CadastroPage() {
                 errors.email ? 'border-red-500' : 'border-gray-300'
               } ${isSubmitting ? 'bg-gray-100' : ''}`}
             />
-            {errors.email && (
-              <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
           </div>
 
           <div>
@@ -181,7 +176,10 @@ export default function CadastroPage() {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Confirmar senha *
             </label>
             <input

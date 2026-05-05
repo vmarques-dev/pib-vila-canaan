@@ -16,9 +16,7 @@ export default function ContatoInfo({ info }: ContatoInfoProps) {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >
-      <h2 className="text-3xl font-bold text-gray-900 mb-8">
-        Informações de Contato
-      </h2>
+      <h2 className="text-3xl font-bold text-gray-900 mb-8">Informações de Contato</h2>
 
       <div className="space-y-6">
         <div>
@@ -40,9 +38,7 @@ export default function ContatoInfo({ info }: ContatoInfoProps) {
             </div>
             <h3 className="font-semibold text-lg text-gray-900">Telefone</h3>
           </div>
-          <p className="text-gray-600 ml-16">
-            {info?.telefone || '(00) 0000-0000'}
-          </p>
+          <p className="text-gray-600 ml-16">{info?.telefone || '(00) 0000-0000'}</p>
         </div>
 
         <div>
@@ -52,9 +48,7 @@ export default function ContatoInfo({ info }: ContatoInfoProps) {
             </div>
             <h3 className="font-semibold text-lg text-gray-900">E-mail</h3>
           </div>
-          <p className="text-gray-600 ml-16">
-            {info?.email || 'contato@pibvilacanaa.com.br'}
-          </p>
+          <p className="text-gray-600 ml-16">{info?.email || 'contato@pibvilacanaa.com.br'}</p>
         </div>
 
         <div>

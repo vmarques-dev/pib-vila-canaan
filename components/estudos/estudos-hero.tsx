@@ -12,9 +12,7 @@ export default function EstudosHero() {
         className="max-w-4xl mx-auto text-center"
       >
         <h1 className="text-5xl md:text-6xl font-bold mb-6">Estudos Bíblicos</h1>
-        <p className="text-xl text-blue-50">
-          Aprofunde seu conhecimento da Palavra de Deus
-        </p>
+        <p className="text-xl text-blue-50">Aprofunde seu conhecimento da Palavra de Deus</p>
       </motion.div>
     </section>
   )

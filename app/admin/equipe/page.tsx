@@ -121,10 +121,7 @@ export default function EquipePage() {
         toast.info('Otimizando e enviando foto...')
 
         const optimizedFile = await optimizeImage(imageFile, 800, 0.85)
-        const uploadedUrl = await uploadImage(
-          optimizedFile,
-          STORAGE_CONFIG.BUCKETS.EQUIPE
-        )
+        const uploadedUrl = await uploadImage(optimizedFile, STORAGE_CONFIG.BUCKETS.EQUIPE)
 
         if (!uploadedUrl) {
           toast.error('Erro ao fazer upload da foto')
@@ -221,12 +218,7 @@ export default function EquipePage() {
             >
               <div className="h-48 relative bg-gray-100">
                 {membro.foto_url ? (
-                  <Image
-                    src={membro.foto_url}
-                    alt={membro.nome}
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={membro.foto_url} alt={membro.nome} fill className="object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-200">
                     <span className="text-6xl text-gray-400">
@@ -273,10 +265,7 @@ export default function EquipePage() {
       >
         <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label
-              htmlFor="nome"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="nome" className="block text-sm font-medium text-gray-700 mb-2">
               Nome
             </label>
             <input
@@ -287,16 +276,11 @@ export default function EquipePage() {
                 errors.nome ? 'border-red-500' : ''
               }`}
             />
-            {errors.nome && (
-              <p className="text-sm text-red-500 mt-1">{errors.nome.message}</p>
-            )}
+            {errors.nome && <p className="text-sm text-red-500 mt-1">{errors.nome.message}</p>}
           </div>
 
           <div>
-            <label
-              htmlFor="cargo"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="cargo" className="block text-sm font-medium text-gray-700 mb-2">
               Cargo
             </label>
             <input
@@ -308,9 +292,7 @@ export default function EquipePage() {
               }`}
               placeholder="Ex: Pastor, Líder de Jovens, etc."
             />
-            {errors.cargo && (
-              <p className="text-sm text-red-500 mt-1">{errors.cargo.message}</p>
-            )}
+            {errors.cargo && <p className="text-sm text-red-500 mt-1">{errors.cargo.message}</p>}
           </div>
 
           {/* Image-upload component */}
@@ -328,10 +310,7 @@ export default function EquipePage() {
           />
 
           <div>
-            <label
-              htmlFor="descricao"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="descricao" className="block text-sm font-medium text-gray-700 mb-2">
               Descrição
             </label>
             <textarea
