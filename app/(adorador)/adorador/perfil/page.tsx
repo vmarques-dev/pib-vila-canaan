@@ -47,7 +47,11 @@ export default function PerfilPage() {
   useEffect(() => {
     async function fetchAdorador() {
       if (!user) return
-      const { data } = await supabase.from('adoradores').select('*').eq('user_id', user.id).single()
+      const { data } = await supabase
+        .from('adoradores')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle()
 
       if (data) {
         setAdorador(data)

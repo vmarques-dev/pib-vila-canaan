@@ -42,7 +42,7 @@ export default function PedidosOracaoPage() {
         .from('adoradores')
         .select('id')
         .eq('user_id', user.id)
-        .single()
+        .maybeSingle()
 
       if (!adorador) {
         setLoading(false)

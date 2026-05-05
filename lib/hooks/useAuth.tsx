@@ -94,7 +94,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             .from('usuarios_admin')
             .select('ativo')
             .eq('user_id', user.id)
-            .single()
+            .maybeSingle()
 
           setIsAdmin(admin?.ativo === true)
         } else {
