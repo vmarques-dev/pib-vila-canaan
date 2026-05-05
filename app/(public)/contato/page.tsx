@@ -8,7 +8,7 @@ import ContatoForm from '@/components/contato/contato-form'
 async function getInformacoesIgreja(): Promise<InformacoesIgreja | null> {
   const supabase = createSupabaseClient()
   try {
-    const { data, error } = await supabase.from('informacoes_igreja').select('*').single()
+    const { data, error } = await supabase.from('informacoes_igreja').select('*').maybeSingle()
 
     if (error) throw error
     return data

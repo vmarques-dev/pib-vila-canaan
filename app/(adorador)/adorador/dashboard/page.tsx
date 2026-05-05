@@ -27,7 +27,7 @@ export default function AdoradorDashboardPage() {
         .from('adoradores')
         .select('id')
         .eq('user_id', user.id)
-        .single()
+        .maybeSingle()
 
       const adId = adorador?.id ?? null
       const hoje = new Date().toISOString().split('T')[0]

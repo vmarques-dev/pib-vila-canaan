@@ -81,7 +81,7 @@ export default function ConfiguracoesPage() {
   })
 
   const fetchConfiguracoes = useCallback(async () => {
-    const { data, error } = await supabase.from('informacoes_igreja').select('*').single()
+    const { data, error } = await supabase.from('informacoes_igreja').select('*').maybeSingle()
 
     if (error) {
       logger.error('Erro ao buscar configurações', error)
