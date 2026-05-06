@@ -99,7 +99,7 @@ export default function ConfiguracoesPage() {
     setLoading(false)
   }, [supabase, reset])
 
-  // TODO(fase-4): migrate this initial-load pattern to TanStack Query / SWR.
+  // TODO(phase-4): migrate this initial-load pattern to TanStack Query / SWR.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchConfiguracoes()
