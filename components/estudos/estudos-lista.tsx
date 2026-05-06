@@ -33,7 +33,7 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
   const [direction, setDirection] = useState(0)
   const [estudoSelecionado, setEstudoSelecionado] = useState<Estudo | null>(null)
 
-  // TODO(fase-4): replace this effect with a render-time reset comparing previous
+  // TODO(phase-4): replace this effect with a render-time reset comparing previous
   // `estudos` length via useRef, or remount via `key={estudos.length}`.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

@@ -1,5 +1,5 @@
-# Normaliza line endings: tudo LF no repositório, independente do SO do dev.
-# Arquivos de script Windows mantêm CRLF (cmd, bat, ps1 quebram com LF).
+# Normalize line endings: store everything as LF in the repo, regardless of OS.
+# Windows script files keep CRLF (cmd, bat, ps1 break with LF).
 
 * text=auto eol=lf
 
