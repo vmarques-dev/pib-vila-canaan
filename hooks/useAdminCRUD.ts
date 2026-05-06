@@ -108,10 +108,10 @@ export function useAdminCRUD<T extends { id: string }>({
     setLoading(false)
   }, [supabase, tableName, orderBy.column, orderBy.ascending])
 
-  // TODO(fase-4): migrate this hook to TanStack Query / SWR; current pattern
+  // TODO(phase-4): migrate this hook to TanStack Query / SWR; current pattern
   // calls setState in an effect to load initial data, which the new
   // react-hooks rule discourages. Suppression is acceptable here because the
-  // entire data layer is being replaced in fase 4.
+  // entire data layer is being replaced in phase 4.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchItems()

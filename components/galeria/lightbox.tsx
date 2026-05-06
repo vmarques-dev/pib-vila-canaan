@@ -66,7 +66,7 @@ export function Lightbox({ fotos, fotoAtual, onClose, onNavigate }: LightboxProp
     }
   }, [fotoAtual, handleKeyDown])
 
-  // TODO(fase-4): refactor to derive `imageLoaded` from a key-based render reset
+  // TODO(phase-4): refactor to derive `imageLoaded` from a key-based render reset
   // (e.g. add `key={fotoAtual?.id}` to <Image>) instead of resetting via setState in effect.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
