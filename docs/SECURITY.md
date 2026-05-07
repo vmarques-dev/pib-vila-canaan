@@ -36,7 +36,9 @@ The project implements multiple layers of security to protect user data and ensu
 
 **File**: `middleware.ts`
 
-All `/admin/*` routes are protected by Next.js middleware running on the server:
+All `/admin/*` routes are protected by Next.js middleware running on the server. The snippet below is **simplified for clarity** — see
+[`middleware.ts`](../middleware.ts) for the full implementation, which also
+covers `/adorador/*`, the emergency feature flag, and error handling:
 
 ```typescript
 export async function middleware(req: NextRequest) {
@@ -62,7 +64,7 @@ export async function middleware(req: NextRequest) {
       .from('usuarios_admin')
       .select('ativo')
       .eq('user_id', session.user.id)
-      .single()
+      .maybeSingle()
 
     if (!admin || !admin.ativo) {
       await supabase.auth.signOut()
@@ -298,20 +300,23 @@ is on the roadmap — replace the `TODO` blocks with the chosen SDK's calls.
 
 ### Contact API
 
-**File**: `app/api/contato/route.ts`
+**File**: [`app/api/contato/route.ts`](../app/api/contato/route.ts)
 
-Limit of 3 requests per hour per IP:
+Limits are read from `RATE_LIMIT_CONFIG.CONTATO` (currently 3 requests
+per hour per IP). The snippet below is **simplified for clarity** — see
+the source for the full implementation, including additional client-IP
+headers and the disable-via-feature-flag path:
 
 ```typescript
 const requestCounts = new Map<string, { count: number; resetTime: number }>()
 
 export async function POST(request: Request) {
-  const ip = request.headers.get('x-forwarded-for') || 'unknown'
+  const ip = request.headers.get('x-forwarded-for') ?? request.headers.get('x-real-ip') ?? 'unknown'
   const now = Date.now()
   const limit = requestCounts.get(ip)
 
   if (limit && limit.resetTime > now) {
-    if (limit.count >= 3) {
+    if (limit.count >= RATE_LIMIT_CONFIG.CONTATO.MAX_REQUESTS) {
       return NextResponse.json(
         { error: 'Muitas requisições. Tente novamente em 1 hora.' },
         { status: 429 }
@@ -319,10 +324,17 @@ export async function POST(request: Request) {
     }
     limit.count++
   } else {
-    requestCounts.set(ip, { count: 1, resetTime: now + 3600000 })
+    requestCounts.set(ip, {
+      count: 1,
+      resetTime: now + RATE_LIMIT_CONFIG.CONTATO.WINDOW_MS,
+    })
   }
 }
 ```
+
+> ⚠️ The current store is a per-process `Map`, which does not survive
+> serverless cold starts. Migrating to a shared store (Upstash Redis or
+> Vercel KV) is tracked as a pre-production blocker.
 
 **Protects against**: spam, abuse, brute-force attempts
 
@@ -393,8 +405,9 @@ long — admin-route protection is fully disabled.
 
 If you discover a security vulnerability, please:
 
-1. **DO NOT open a public issue** on GitHub
-2. Email: [your-security-email@example.com]
+1. **DO NOT open a public issue** on GitHub.
+2. Open a private security advisory at
+   [github.com/vmarques-dev/pib-vila-canaan/security/advisories/new](https://github.com/vmarques-dev/pib-vila-canaan/security/advisories/new).
 3. Include:
    - A detailed description of the vulnerability
    - Steps to reproduce
@@ -414,6 +427,6 @@ We will respond within 48 hours and keep you informed about the progress.
 
 ---
 
-**Last updated**: April 2026
-**Version**: 2.1
+**Last updated**: May 2026
+**Version**: 2.2
 **Owner**: Development team
