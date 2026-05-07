@@ -349,11 +349,14 @@ export async function POST(request: Request) {
 
 Two environment variables enable a fast rollback without a redeploy. Each
 is read directly via `process.env` in the file where it takes effect.
+Neither variable carries the `NEXT_PUBLIC_` prefix on purpose: both are
+read only on the server, so keeping them out of the prefix means their
+values are never inlined into the client bundle.
 
-| Variable                          | File                       | Default | Effect when `false`                                    |
-| --------------------------------- | -------------------------- | ------- | ------------------------------------------------------ |
-| `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `middleware.ts`            | `true`  | Full bypass of `/admin/*` and `/adorador/*` protection |
-| `NEXT_PUBLIC_USE_RATE_LIMITING`   | `app/api/contato/route.ts` | `true`  | Disables the 3 req/h IP limit                          |
+| Variable              | File                       | Default | Effect when `false`                                    |
+| --------------------- | -------------------------- | ------- | ------------------------------------------------------ |
+| `USE_MIDDLEWARE_AUTH` | `middleware.ts`            | `true`  | Full bypass of `/admin/*` and `/adorador/*` protection |
+| `USE_RATE_LIMITING`   | `app/api/contato/route.ts` | `true`  | Disables the 3 req/h IP limit                          |
 
 **Emergency rollback procedure**:
 
@@ -361,8 +364,12 @@ is read directly via `process.env` in the file where it takes effect.
 2. Set the relevant flag to `false`
 3. Wait for the automatic redeploy (~2 minutes)
 
-⚠️ Never leave `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH=false` in production for
-long — admin-route protection is fully disabled.
+⚠️ Never leave `USE_MIDDLEWARE_AUTH=false` in production for long — admin-route
+protection is fully disabled.
+
+> Older deployments may still have `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` and
+> `NEXT_PUBLIC_USE_RATE_LIMITING` configured. Those names are no longer
+> read by the code; remove them from your environment to avoid confusion.
 
 ---
 

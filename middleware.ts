@@ -4,8 +4,10 @@ import { createMiddlewareClient } from '@/lib/supabase/middleware'
 import { logger } from '@/lib/logger'
 
 export async function middleware(req: NextRequest) {
-  // Feature flag: allows bypassing the middleware for an emergency rollback
-  const useMiddlewareAuth = process.env.NEXT_PUBLIC_USE_MIDDLEWARE_AUTH !== 'false' // Default true
+  // Feature flag: allows bypassing the middleware for an emergency rollback.
+  // Read from a server-only env var (no NEXT_PUBLIC_ prefix) so the value
+  // is not inlined into the client bundle.
+  const useMiddlewareAuth = process.env.USE_MIDDLEWARE_AUTH !== 'false' // Default true
 
   if (!useMiddlewareAuth) {
     logger.warn('Middleware auth DESABILITADO via feature flag')

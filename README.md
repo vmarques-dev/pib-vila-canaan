@@ -144,9 +144,10 @@ CONTACT_EMAIL=contact@yourchurch.com
 # Public site URL (production)
 NEXT_PUBLIC_SITE_URL=https://pibvilacanaan.com.br
 
-# Feature flags (recommended: keep both true in production)
-NEXT_PUBLIC_USE_MIDDLEWARE_AUTH=true
-NEXT_PUBLIC_USE_RATE_LIMITING=true
+# Feature flags (recommended: keep both true in production).
+# Server-only — no NEXT_PUBLIC_ prefix, so the values stay off the client bundle.
+USE_MIDDLEWARE_AUTH=true
+USE_RATE_LIMITING=true
 ```
 
 #### How to obtain the credentials
@@ -336,15 +337,15 @@ CREATE TABLE informacoes_igreja (
 2. Import the project on [Vercel](https://vercel.com)
 3. Configure every environment variable in the Vercel dashboard:
 
-| Variable                          | Description                                  |
-| --------------------------------- | -------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`        | Supabase project URL                         |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | Supabase anon/public key                     |
-| `RESEND_API_KEY`                  | Resend API key                               |
-| `CONTACT_EMAIL`                   | Recipient email for contact-form submissions |
-| `NEXT_PUBLIC_SITE_URL`            | Public site URL (production)                 |
-| `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `true` (recommended in production)           |
-| `NEXT_PUBLIC_USE_RATE_LIMITING`   | `true` (recommended in production)           |
+| Variable                        | Description                                  |
+| ------------------------------- | -------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase project URL                         |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key                     |
+| `RESEND_API_KEY`                | Resend API key                               |
+| `CONTACT_EMAIL`                 | Recipient email for contact-form submissions |
+| `NEXT_PUBLIC_SITE_URL`          | Public site URL (production)                 |
+| `USE_MIDDLEWARE_AUTH`           | `true` (recommended in production)           |
+| `USE_RATE_LIMITING`             | `true` (recommended in production)           |
 
 4. Automatic deploy on every push to `main`!
 

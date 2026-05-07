@@ -28,8 +28,9 @@ export async function POST(request: Request) {
   const resend = new Resend(process.env.RESEND_API_KEY)
 
   try {
-    // Feature flag: rate limiting
-    const useRateLimiting = process.env.NEXT_PUBLIC_USE_RATE_LIMITING !== 'false' // Default true
+    // Feature flag: rate limiting. Read from a server-only env var (no
+    // NEXT_PUBLIC_ prefix) so the value is not inlined into the client bundle.
+    const useRateLimiting = process.env.USE_RATE_LIMITING !== 'false' // Default true
 
     // Per-IP rate limiting
     if (useRateLimiting) {
