@@ -43,18 +43,21 @@ covers `/adorador/*`, the emergency feature flag, and error handling:
 ```typescript
 export async function middleware(req: NextRequest) {
   const { supabase, response } = createMiddlewareClient(req)
+
+  // getUser() revalidates the JWT with the Supabase Auth server on
+  // every request — it does not just trust the cookie like getSession().
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (req.nextUrl.pathname.startsWith('/admin')) {
-    // 1. Check for an active session
-    if (!session) {
+    // 1. Check for an authenticated user
+    if (!user) {
       return NextResponse.redirect(new URL('/login/admin', req.url))
     }
 
     // 2. Check for role='admin' in user_metadata
-    if (session.user.user_metadata?.role !== 'admin') {
+    if (user.user_metadata?.role !== 'admin') {
       await supabase.auth.signOut()
       return NextResponse.redirect(new URL('/', req.url))
     }
@@ -63,7 +66,7 @@ export async function middleware(req: NextRequest) {
     const { data: admin } = await supabase
       .from('usuarios_admin')
       .select('ativo')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .maybeSingle()
 
     if (!admin || !admin.ativo) {

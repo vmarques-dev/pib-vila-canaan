@@ -14,17 +14,21 @@ export async function middleware(req: NextRequest) {
 
   const { supabase, response } = createMiddlewareClient(req)
 
+  // Use getUser() rather than getSession(): getUser() revalidates the
+  // JWT against the Supabase Auth server on every request, while
+  // getSession() only reads the cookie locally and would accept a
+  // forged or stale token. The extra round trip is the cost of trust.
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
   // Protect /admin/* routes
   if (req.nextUrl.pathname.startsWith('/admin')) {
-    if (!session) {
+    if (!user) {
       return NextResponse.redirect(new URL('/login/admin', req.url))
     }
 
-    if (session.user.user_metadata?.role !== 'admin') {
+    if (user.user_metadata?.role !== 'admin') {
       await supabase.auth.signOut()
       return NextResponse.redirect(new URL('/', req.url))
     }
@@ -32,7 +36,7 @@ export async function middleware(req: NextRequest) {
     const { data: admin, error: adminError } = await supabase
       .from('usuarios_admin')
       .select('ativo')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .maybeSingle()
 
     if (adminError || !admin || !admin.ativo) {
@@ -43,7 +47,7 @@ export async function middleware(req: NextRequest) {
 
   // Protect /adorador/* routes
   if (req.nextUrl.pathname.startsWith('/adorador')) {
-    if (!session) {
+    if (!user) {
       return NextResponse.redirect(new URL('/login/adorador', req.url))
     }
   }
