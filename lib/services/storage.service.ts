@@ -3,10 +3,12 @@ import { logger } from '@/lib/logger'
 import { STORAGE_CONFIG } from '@/lib/constants/config'
 
 /**
- * Uploads an image to a Supabase Storage bucket.
+ * Uploads an image by delegating to the `/api/upload` server route.
  *
- * Uses the SSR Supabase client so the user's auth session is
- * available — RLS policies require it.
+ * The server is the source of truth for type validation: it inspects
+ * the actual bytes (magic numbers) and rejects anything that is not a
+ * real JPEG/PNG/WebP, regardless of what the browser reported. The
+ * checks done here are fail-fast UX optimizations only.
  *
  * @param file - File to upload
  * @param bucket - Bucket name
@@ -19,54 +21,42 @@ export async function uploadImage(
   folder?: string
 ): Promise<string | null> {
   try {
-    // Validate file type
-    if (
-      !STORAGE_CONFIG.ALLOWED_IMAGE_TYPES.includes(
-        file.type as (typeof STORAGE_CONFIG.ALLOWED_IMAGE_TYPES)[number]
-      )
-    ) {
-      logger.error('Tipo de arquivo não permitido', new Error(file.type))
-      throw new Error('Apenas imagens JPG, PNG e WebP são permitidas')
+    // Fail fast on obvious problems before paying the round trip
+    if (file.size === 0) {
+      logger.error('Empty file rejected before upload', new Error('size=0'))
+      return null
     }
-
-    // Validate size
     if (file.size > STORAGE_CONFIG.MAX_FILE_SIZE) {
-      logger.error('Arquivo muito grande', new Error(`${file.size} bytes`))
-      throw new Error('A imagem deve ter no máximo 5MB')
+      logger.error('File too large to upload', new Error(`${file.size} bytes`))
+      return null
     }
 
-    // Generate a unique filename
-    const timestamp = Date.now()
-    const randomString = Math.random().toString(36).substring(2, 15)
-    const extension = file.name.split('.').pop()
-    const fileName = `${timestamp}-${randomString}.${extension}`
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('bucket', bucket)
+    if (folder) {
+      formData.append('folder', folder)
+    }
 
-    // Build the full path
-    const filePath = folder ? `${folder}/${fileName}` : fileName
-
-    // Client with the auth session
-    const supabase = createSupabaseBrowserClient()
-
-    // Perform the upload
-    const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {
-      cacheControl: '3600',
-      upsert: false,
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
     })
 
-    if (error) {
-      logger.error('Erro ao fazer upload', error)
-      throw error
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}))
+      logger.error(
+        'Upload rejected by server',
+        new Error(payload.error ?? `HTTP ${response.status}`)
+      )
+      return null
     }
 
-    // Resolve the public URL
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from(bucket).getPublicUrl(data.path)
-
-    logger.info('Upload realizado com sucesso', { path: data.path, url: publicUrl })
-    return publicUrl
+    const { url, path } = await response.json()
+    logger.info('Upload completed', { path, url })
+    return url as string
   } catch (error) {
-    logger.error('Erro no processo de upload', error)
+    logger.error('Upload request failed', error)
     return null
   }
 }

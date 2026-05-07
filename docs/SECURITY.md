@@ -127,9 +127,27 @@ ORDER BY ua.created_at DESC;
 
 ### Storage — `eventos` Bucket
 
-**File**: `supabase/migrations/002_fix_storage_rls.sql`
+**Files**: `supabase/migrations/002_fix_storage_rls.sql`,
+[`app/api/upload/route.ts`](../app/api/upload/route.ts)
 
-Only active admins can upload/delete images:
+Image uploads no longer hit Storage directly from the browser. The
+client posts the file to `/api/upload`, which:
+
+1. Verifies the caller via the auth cookie (`getUser()`)
+2. Confirms the user is an active row in `usuarios_admin`
+3. Reads the file bytes and detects the real MIME from the magic
+   numbers (`file-type`), rejecting anything that is not in
+   `STORAGE_CONFIG.ALLOWED_IMAGE_TYPES`
+4. Uploads to Storage using the service-role client. RLS is bypassed
+   deliberately — the policy is enforced at the application layer
+   above, in code we control
+
+The browser-reported `file.type` is not trusted. Renaming `evil.exe`
+to `evil.jpg` gives the browser an `image/jpeg` MIME, but the magic
+numbers reveal the real format and the request is rejected with
+HTTP 415.
+
+The previous Storage RLS policies are kept for defence in depth:
 
 ```sql
 -- Public read access (site images)
@@ -238,6 +256,7 @@ function escapeHtml(text: string): string {
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-secret
 RESEND_API_KEY=re_your-resend-key
 ```
 
@@ -252,6 +271,9 @@ RESEND_API_KEY=re_your-resend-key
 
 - ❌ NEVER commit `.env.local` to Git
 - ❌ NEVER expose `RESEND_API_KEY` on the client
+- ❌ NEVER expose `SUPABASE_SERVICE_ROLE_KEY` on the client — it
+  bypasses Row Level Security entirely. Import it only from
+  server-only modules (e.g. `lib/supabase/admin.ts`)
 - ✅ Rotate keys if accidentally leaked
 
 ---
