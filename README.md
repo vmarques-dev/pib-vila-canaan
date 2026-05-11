@@ -320,8 +320,6 @@ CREATE TABLE informacoes_igreja (
   whatsapp      TEXT,
   email         TEXT NOT NULL,
   horarios      TEXT,
-  missao        TEXT,
-  visao         TEXT,
   facebook_url  TEXT,
   instagram_url TEXT,
   youtube_url   TEXT,

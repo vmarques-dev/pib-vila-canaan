@@ -38,6 +38,7 @@ The migrations are split into two phases. Run all the named ones first
 11. `002_fix_storage_rls.sql` — Restrictive Storage RLS (active admins only)
 12. `003_simplify_versiculo_destaque.sql` — Removes period scheduling from the featured-verse table
 13. `004_audit_fixes.sql` — Fixes identified during a database audit
+14. `005_drop_missao_visao_columns.sql` — Drops the unused `missao` and `visao` columns from `informacoes_igreja`
 
 ## Migration 001: usuarios_admin Table
 

@@ -124,8 +124,6 @@ CREATE TABLE informacoes_igreja (
     whatsapp TEXT,
     email TEXT NOT NULL,
     horarios TEXT,
-    missao TEXT,
-    visao TEXT,
     facebook_url TEXT,
     instagram_url TEXT,
     youtube_url TEXT,
@@ -140,10 +138,6 @@ COMMENT ON TABLE informacoes_igreja IS
   'Informações gerais da igreja: contato, endereço, redes sociais e textos institucionais.';
 COMMENT ON COLUMN informacoes_igreja.horarios IS
   'Horários de funcionamento e cultos da igreja.';
-COMMENT ON COLUMN informacoes_igreja.missao IS
-  'Declaração de missão da igreja.';
-COMMENT ON COLUMN informacoes_igreja.visao IS
-  'Declaração de visão da igreja.';
 
 -- ---------------------------------------------
 -- 3.4 VERSICULO_DESTAQUE
@@ -907,18 +901,14 @@ INSERT INTO informacoes_igreja (
     telefone,
     whatsapp,
     email,
-    horarios,
-    missao,
-    visao
+    horarios
 ) VALUES (
     'PIB Vila Canaan',
     'Endereço da Igreja',
     '(00) 0000-0000',
     '(00) 00000-0000',
     'contato@pibvilacanaan.com.br',
-    'Domingos: 09h e 18h | Quartas: 19h30',
-    'Glorificar a Deus e fazer discípulos de todas as nações.',
-    'Ser uma igreja relevante na comunidade, transformando vidas através do Evangelho.'
+    'Domingos: 09h e 18h | Quartas: 19h30'
 )
 ON CONFLICT DO NOTHING;
 

@@ -43,8 +43,8 @@ function FormField({ label, htmlFor, error, children, hint }: FormFieldProps) {
  * Church-wide settings page.
  *
  * Lets admins edit the basic information shown on the public site:
- * name, address, phone, email, mission, and vision. Data is persisted
- * in the `informacoes_igreja` table.
+ * name, address, phone and email. Data is persisted in the
+ * `informacoes_igreja` table.
  *
  * Implements enterprise-grade validation:
  * - Brazilian phone-format validation with input masking
@@ -75,8 +75,6 @@ export default function ConfiguracoesPage() {
       endereco: '',
       telefone: '',
       email: '',
-      missao: '',
-      visao: '',
     },
   })
 
@@ -92,8 +90,6 @@ export default function ConfiguracoesPage() {
         endereco: data.endereco || '',
         telefone: data.telefone || '',
         email: data.email || '',
-        missao: data.missao || '',
-        visao: data.visao || '',
       })
     }
     setLoading(false)
@@ -146,11 +142,6 @@ export default function ConfiguracoesPage() {
 
   const inputClassName = (hasError: boolean) =>
     `w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors ${
-      hasError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500'
-    }`
-
-  const textareaClassName = (hasError: boolean) =>
-    `w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none transition-colors ${
       hasError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-blue-500'
     }`
 
@@ -233,36 +224,6 @@ export default function ConfiguracoesPage() {
               />
             </FormField>
           </div>
-
-          <FormField
-            label="Missão"
-            htmlFor="missao"
-            error={errors.missao?.message}
-            hint="Descreva a missão da igreja (mín. 20 caracteres)"
-          >
-            <textarea
-              id="missao"
-              {...register('missao')}
-              rows={4}
-              className={textareaClassName(!!errors.missao)}
-              placeholder="Descreva a missão da igreja..."
-            />
-          </FormField>
-
-          <FormField
-            label="Visão"
-            htmlFor="visao"
-            error={errors.visao?.message}
-            hint="Descreva a visão da igreja (mín. 20 caracteres)"
-          >
-            <textarea
-              id="visao"
-              {...register('visao')}
-              rows={4}
-              className={textareaClassName(!!errors.visao)}
-              placeholder="Descreva a visão da igreja..."
-            />
-          </FormField>
 
           <div className="pt-4 flex items-center gap-4">
             <button
