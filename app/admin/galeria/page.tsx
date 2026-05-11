@@ -110,7 +110,7 @@ export default function GaleriaPage() {
         const uploadedUrl = await uploadImage(optimizedFile, STORAGE_CONFIG.BUCKETS.GALERIA)
 
         if (!uploadedUrl) {
-          toast.error('Erro ao fazer upload da imagem')
+          // uploadImage() already surfaced the specific error to the user
           setUploadingImage(false)
           return
         }

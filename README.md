@@ -134,6 +134,9 @@ Edit `.env.local` with your credentials:
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+# Server-only. Used by /api/upload after authenticating the caller.
+# NEVER expose to the browser. NEVER commit.
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # Resend (email delivery)
 RESEND_API_KEY=re_your-key
@@ -339,6 +342,7 @@ CREATE TABLE informacoes_igreja (
 | ------------------------------- | -------------------------------------------- |
 | `NEXT_PUBLIC_SUPABASE_URL`      | Supabase project URL                         |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key                     |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Supabase service-role secret (server only)   |
 | `RESEND_API_KEY`                | Resend API key                               |
 | `CONTACT_EMAIL`                 | Recipient email for contact-form submissions |
 | `NEXT_PUBLIC_SITE_URL`          | Public site URL (production)                 |

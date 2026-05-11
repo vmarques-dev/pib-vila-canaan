@@ -127,7 +127,7 @@ export default function EventosPage() {
         const uploadedUrl = await uploadImage(optimizedFile, 'eventos')
 
         if (!uploadedUrl) {
-          toast.error('Erro ao fazer upload da imagem')
+          // uploadImage() already surfaced the specific error to the user
           setUploadingImage(false)
           return
         }
