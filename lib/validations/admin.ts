@@ -181,18 +181,6 @@ export const configuracoesSchema = z.object({
     .regex(emailRegex, 'Formato de email inválido')
     .refine(validarDominioEmail, 'Domínio de email não permitido')
     .transform((val) => val.toLowerCase().trim()),
-
-  missao: z
-    .string()
-    .min(20, 'Missão deve ter no mínimo 20 caracteres')
-    .max(2000, 'Missão deve ter no máximo 2000 caracteres')
-    .transform((val) => val.trim()),
-
-  visao: z
-    .string()
-    .min(20, 'Visão deve ter no mínimo 20 caracteres')
-    .max(2000, 'Visão deve ter no máximo 2000 caracteres')
-    .transform((val) => val.trim()),
 })
 
 export type ConfiguracoesFormData = z.infer<typeof configuracoesSchema>
