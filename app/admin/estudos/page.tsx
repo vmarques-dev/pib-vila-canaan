@@ -45,20 +45,72 @@ interface Estudo {
 const CATEGORIAS_ESTUDO = ['EBD', 'Culto', 'Jovens', 'Infantil', 'Pregação']
 
 const LIVROS_BIBLIA = [
-  'Gênesis', 'Êxodo', 'Levítico', 'Números', 'Deuteronômio',
-  'Josué', 'Juízes', 'Rute', '1 Samuel', '2 Samuel',
-  '1 Reis', '2 Reis', '1 Crônicas', '2 Crônicas', 'Esdras',
-  'Neemias', 'Ester', 'Jó', 'Salmos', 'Provérbios',
-  'Eclesiastes', 'Cantares', 'Isaías', 'Jeremias', 'Lamentações',
-  'Ezequiel', 'Daniel', 'Oséias', 'Joel', 'Amós',
-  'Obadias', 'Jonas', 'Miquéias', 'Naum', 'Habacuque',
-  'Sofonias', 'Ageu', 'Zacarias', 'Malaquias',
-  'Mateus', 'Marcos', 'Lucas', 'João', 'Atos',
-  'Romanos', '1 Coríntios', '2 Coríntios', 'Gálatas', 'Efésios',
-  'Filipenses', 'Colossenses', '1 Tessalonicenses', '2 Tessalonicenses',
-  '1 Timóteo', '2 Timóteo', 'Tito', 'Filemom', 'Hebreus',
-  'Tiago', '1 Pedro', '2 Pedro', '1 João', '2 João',
-  '3 João', 'Judas', 'Apocalipse'
+  'Gênesis',
+  'Êxodo',
+  'Levítico',
+  'Números',
+  'Deuteronômio',
+  'Josué',
+  'Juízes',
+  'Rute',
+  '1 Samuel',
+  '2 Samuel',
+  '1 Reis',
+  '2 Reis',
+  '1 Crônicas',
+  '2 Crônicas',
+  'Esdras',
+  'Neemias',
+  'Ester',
+  'Jó',
+  'Salmos',
+  'Provérbios',
+  'Eclesiastes',
+  'Cantares',
+  'Isaías',
+  'Jeremias',
+  'Lamentações',
+  'Ezequiel',
+  'Daniel',
+  'Oséias',
+  'Joel',
+  'Amós',
+  'Obadias',
+  'Jonas',
+  'Miquéias',
+  'Naum',
+  'Habacuque',
+  'Sofonias',
+  'Ageu',
+  'Zacarias',
+  'Malaquias',
+  'Mateus',
+  'Marcos',
+  'Lucas',
+  'João',
+  'Atos',
+  'Romanos',
+  '1 Coríntios',
+  '2 Coríntios',
+  'Gálatas',
+  'Efésios',
+  'Filipenses',
+  'Colossenses',
+  '1 Tessalonicenses',
+  '2 Tessalonicenses',
+  '1 Timóteo',
+  '2 Timóteo',
+  'Tito',
+  'Filemom',
+  'Hebreus',
+  'Tiago',
+  '1 Pedro',
+  '2 Pedro',
+  '1 João',
+  '2 João',
+  '3 João',
+  'Judas',
+  'Apocalipse',
 ]
 
 const initialFormData = {
@@ -146,10 +198,7 @@ export default function EstudosPage() {
   }
 
   const handleArchive = async (id: string, arquivado: boolean) => {
-    const { error } = await supabase
-      .from('estudos')
-      .update({ arquivado: !arquivado })
-      .eq('id', id)
+    const { error } = await supabase.from('estudos').update({ arquivado: !arquivado }).eq('id', id)
 
     if (error) {
       logger.error('Erro ao arquivar estudo', error)
@@ -174,7 +223,10 @@ export default function EstudosPage() {
       header: 'Versículo',
       width: '20%',
       accessor: (estudo) => (
-        <div className="text-sm text-gray-500 truncate" title={`${estudo.livro} ${estudo.referencia}`}>
+        <div
+          className="text-sm text-gray-500 truncate"
+          title={`${estudo.livro} ${estudo.referencia}`}
+        >
           {estudo.livro} {estudo.referencia}
         </div>
       ),
@@ -193,11 +245,7 @@ export default function EstudosPage() {
       width: '100px',
       accessor: (estudo) => {
         const [ano, mes, dia] = estudo.data_estudo.split('-')
-        return (
-          <div className="text-sm text-gray-500">
-            {`${dia}/${mes}/${ano}`}
-          </div>
-        )
+        return <div className="text-sm text-gray-500">{`${dia}/${mes}/${ano}`}</div>
       },
     },
     {
@@ -206,9 +254,7 @@ export default function EstudosPage() {
       accessor: (estudo) => (
         <span
           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            estudo.arquivado
-              ? 'bg-gray-100 text-gray-800'
-              : 'bg-green-100 text-green-800'
+            estudo.arquivado ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800'
           }`}
         >
           {estudo.arquivado ? 'Concluído' : 'Ativo'}
@@ -225,7 +271,7 @@ export default function EstudosPage() {
       ariaLabel: 'Editar estudo',
     },
     {
-      icon: (estudo) => estudo.arquivado ? <EyeOff size={18} /> : <Eye size={18} />,
+      icon: (estudo) => (estudo.arquivado ? <EyeOff size={18} /> : <Eye size={18} />),
       onClick: (estudo) => handleArchive(estudo.id, estudo.arquivado),
       className: 'text-blue-600 hover:text-blue-900',
       ariaLabel: 'Concluir/Reativar estudo',
@@ -269,10 +315,7 @@ export default function EstudosPage() {
       >
         <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label
-              htmlFor="titulo"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="titulo" className="block text-sm font-medium text-gray-700 mb-2">
               Título
             </label>
             <input
@@ -283,16 +326,11 @@ export default function EstudosPage() {
                 errors.titulo ? 'border-red-500' : ''
               }`}
             />
-            {errors.titulo && (
-              <p className="text-sm text-red-500 mt-1">{errors.titulo.message}</p>
-            )}
+            {errors.titulo && <p className="text-sm text-red-500 mt-1">{errors.titulo.message}</p>}
           </div>
 
           <div>
-            <label
-              htmlFor="livro"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="livro" className="block text-sm font-medium text-gray-700 mb-2">
               Livro
             </label>
             <select
@@ -309,16 +347,11 @@ export default function EstudosPage() {
                 </option>
               ))}
             </select>
-            {errors.livro && (
-              <p className="text-sm text-red-500 mt-1">{errors.livro.message}</p>
-            )}
+            {errors.livro && <p className="text-sm text-red-500 mt-1">{errors.livro.message}</p>}
           </div>
 
           <div>
-            <label
-              htmlFor="referencia"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="referencia" className="block text-sm font-medium text-gray-700 mb-2">
               Capítulo e Versículo
             </label>
             <input
@@ -357,10 +390,7 @@ export default function EstudosPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="conteudo"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="conteudo" className="block text-sm font-medium text-gray-700 mb-2">
               Conteúdo
             </label>
             <textarea
@@ -377,10 +407,7 @@ export default function EstudosPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="categoria"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="categoria" className="block text-sm font-medium text-gray-700 mb-2">
               Categoria
             </label>
             <select
@@ -392,7 +419,9 @@ export default function EstudosPage() {
             >
               <option value="">Selecione a categoria</option>
               {CATEGORIAS_ESTUDO.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
             {errors.categoria && (
@@ -401,10 +430,7 @@ export default function EstudosPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="data_estudo"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="data_estudo" className="block text-sm font-medium text-gray-700 mb-2">
               Data
             </label>
             <input
@@ -426,11 +452,7 @@ export default function EstudosPage() {
               disabled={isSubmitting}
               className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting
-                ? 'Salvando...'
-                : editingItem
-                  ? 'Atualizar'
-                  : 'Criar'}
+              {isSubmitting ? 'Salvando...' : editingItem ? 'Atualizar' : 'Criar'}
             </button>
             <button
               type="button"

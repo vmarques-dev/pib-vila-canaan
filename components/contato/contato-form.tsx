@@ -43,7 +43,8 @@ export default function ContatoForm() {
       toast.success('Mensagem enviada com sucesso! Retornaremos em breve.')
       reset()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar mensagem. Tente novamente.'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro ao enviar mensagem. Tente novamente.'
       toast.error(errorMessage)
     } finally {
       setLoading(false)
@@ -65,10 +66,7 @@ export default function ContatoForm() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Name */}
             <div>
-              <label
-                htmlFor="nome"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="nome" className="block text-sm font-medium text-gray-700 mb-2">
                 Nome completo *
               </label>
               <input
@@ -81,19 +79,12 @@ export default function ContatoForm() {
                 }`}
                 disabled={loading}
               />
-              {errors.nome && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.nome.message}
-                </p>
-              )}
+              {errors.nome && <p className="mt-1 text-sm text-red-500">{errors.nome.message}</p>}
             </div>
 
             {/* Email */}
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 E-mail *
               </label>
               <input
@@ -106,19 +97,12 @@ export default function ContatoForm() {
                 }`}
                 disabled={loading}
               />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.email.message}
-                </p>
-              )}
+              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
             {/* Phone with input mask */}
             <div>
-              <label
-                htmlFor="telefone"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="telefone" className="block text-sm font-medium text-gray-700 mb-2">
                 Telefone (opcional)
               </label>
               <IMaskInput
@@ -132,18 +116,13 @@ export default function ContatoForm() {
                 disabled={loading}
               />
               {errors.telefone && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.telefone.message}
-                </p>
+                <p className="mt-1 text-sm text-red-500">{errors.telefone.message}</p>
               )}
             </div>
 
             {/* Subject */}
             <div>
-              <label
-                htmlFor="assunto"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="assunto" className="block text-sm font-medium text-gray-700 mb-2">
                 Assunto *
               </label>
               <div className="relative">
@@ -156,7 +135,9 @@ export default function ContatoForm() {
                   disabled={loading}
                   defaultValue=""
                 >
-                  <option value="" disabled>Selecione uma categoria</option>
+                  <option value="" disabled>
+                    Selecione uma categoria
+                  </option>
                   <option value="Informações Gerais">Informações Gerais</option>
                   <option value="Cultos e Programações">Cultos e Programações</option>
                   <option value="Eventos">Eventos</option>
@@ -170,18 +151,13 @@ export default function ContatoForm() {
                 />
               </div>
               {errors.assunto && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.assunto.message}
-                </p>
+                <p className="mt-1 text-sm text-red-500">{errors.assunto.message}</p>
               )}
             </div>
 
             {/* Message */}
             <div>
-              <label
-                htmlFor="mensagem"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="mensagem" className="block text-sm font-medium text-gray-700 mb-2">
                 Mensagem *
               </label>
               <textarea
@@ -195,9 +171,7 @@ export default function ContatoForm() {
                 disabled={loading}
               />
               {errors.mensagem && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.mensagem.message}
-                </p>
+                <p className="mt-1 text-sm text-red-500">{errors.mensagem.message}</p>
               )}
             </div>
 
@@ -209,11 +183,7 @@ export default function ContatoForm() {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg
-                    className="animate-spin h-5 w-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
                     <circle
                       className="opacity-25"
                       cx="12"

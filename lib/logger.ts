@@ -10,8 +10,6 @@
  * SDK calls for the chosen provider.
  */
 
-type LogLevel = 'info' | 'warn' | 'error'
-
 interface LogContext {
   [key: string]: unknown
 }
@@ -23,11 +21,7 @@ interface LogContext {
  */
 export function extractErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message
-  if (
-    typeof error === 'object' &&
-    error !== null &&
-    'message' in error
-  ) {
+  if (typeof error === 'object' && error !== null && 'message' in error) {
     return String((error as Record<string, unknown>).message)
   }
   return 'Unknown error'
@@ -59,11 +53,7 @@ class Logger {
    */
   error(message: string, error?: unknown, context?: LogContext): void {
     const detail = extractErrorMessage(error ?? '')
-    console.error(
-      `[ERROR] ${message}${detail ? ': ' + detail : ''}`,
-      error,
-      context ?? ''
-    )
+    console.error(`[ERROR] ${message}${detail ? ': ' + detail : ''}`, error, context ?? '')
     // TODO: forward to external service in production, e.g.:
     // Sentry.captureException(error, { tags: { context: message }, extra: context })
   }

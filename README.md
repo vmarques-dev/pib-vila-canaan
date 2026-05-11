@@ -134,6 +134,9 @@ Edit `.env.local` with your credentials:
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+# Server-only. Used by /api/upload after authenticating the caller.
+# NEVER expose to the browser. NEVER commit.
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # Resend (email delivery)
 RESEND_API_KEY=re_your-key
@@ -144,20 +147,23 @@ CONTACT_EMAIL=contact@yourchurch.com
 # Public site URL (production)
 NEXT_PUBLIC_SITE_URL=https://pibvilacanaan.com.br
 
-# Feature flags (recommended: keep both true in production)
-NEXT_PUBLIC_USE_MIDDLEWARE_AUTH=true
-NEXT_PUBLIC_USE_RATE_LIMITING=true
+# Feature flags (recommended: keep both true in production).
+# Server-only — no NEXT_PUBLIC_ prefix, so the values stay off the client bundle.
+USE_MIDDLEWARE_AUTH=true
+USE_RATE_LIMITING=true
 ```
 
 #### How to obtain the credentials
 
 **Supabase:**
+
 1. Create an account at [supabase.com](https://supabase.com)
 2. Create a new project
 3. Go to Settings → API
 4. Copy the **Project URL** and the **anon/public key**
 
 **Resend:**
+
 1. Create an account at [resend.com](https://resend.com)
 2. Go to API Keys → Create API Key
 3. Copy the generated key (starts with `re_`)
@@ -317,8 +323,6 @@ CREATE TABLE informacoes_igreja (
   whatsapp      TEXT,
   email         TEXT NOT NULL,
   horarios      TEXT,
-  missao        TEXT,
-  visao         TEXT,
   facebook_url  TEXT,
   instagram_url TEXT,
   youtube_url   TEXT,
@@ -334,21 +338,23 @@ CREATE TABLE informacoes_igreja (
 2. Import the project on [Vercel](https://vercel.com)
 3. Configure every environment variable in the Vercel dashboard:
 
-| Variable | Description |
-|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
-| `RESEND_API_KEY` | Resend API key |
-| `CONTACT_EMAIL` | Recipient email for contact-form submissions |
-| `NEXT_PUBLIC_SITE_URL` | Public site URL (production) |
-| `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `true` (recommended in production) |
-| `NEXT_PUBLIC_USE_RATE_LIMITING` | `true` (recommended in production) |
+| Variable                        | Description                                  |
+| ------------------------------- | -------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase project URL                         |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key                     |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Supabase service-role secret (server only)   |
+| `RESEND_API_KEY`                | Resend API key                               |
+| `CONTACT_EMAIL`                 | Recipient email for contact-form submissions |
+| `NEXT_PUBLIC_SITE_URL`          | Public site URL (production)                 |
+| `USE_MIDDLEWARE_AUTH`           | `true` (recommended in production)           |
+| `USE_RATE_LIMITING`             | `true` (recommended in production)           |
 
 4. Automatic deploy on every push to `main`!
 
 ## ✅ Implemented Features
 
 **Public site**
+
 - ✅ Modern, responsive landing page
 - ✅ About page with church history and pastoral team
 - ✅ Bible-study system with category filters
@@ -360,6 +366,7 @@ CREATE TABLE informacoes_igreja (
 - ✅ Dynamic social-media links
 
 **Worshiper Channel (member area)**
+
 - ✅ Member sign-up and login
 - ✅ Dashboard with upcoming events and recent announcements
 - ✅ Internal church announcement board
@@ -367,6 +374,7 @@ CREATE TABLE informacoes_igreja (
 - ✅ Member profile
 
 **Admin Panel**
+
 - ✅ Dashboard with statistics and operational summaries
 - ✅ Full events CRUD (with image upload)
 - ✅ Event-registration management
@@ -379,6 +387,7 @@ CREATE TABLE informacoes_igreja (
 - ✅ Church-wide settings
 
 **Infrastructure**
+
 - ✅ SEO optimized (Open Graph, Twitter Cards, Sitemap, Robots.txt)
 - ✅ Performance optimized (Next.js Image, lazy loading)
 - ✅ Form validation with Zod

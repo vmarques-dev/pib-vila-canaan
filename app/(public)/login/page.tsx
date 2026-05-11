@@ -8,12 +8,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
       <div className="max-w-5xl w-full">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Acesse sua Área
-          </h1>
-          <p className="text-gray-600">
-            Escolha o canal de acesso adequado
-          </p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Acesse sua Área</h1>
+          <p className="text-gray-600">Escolha o canal de acesso adequado</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 relative">
@@ -62,7 +58,12 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center mt-8 text-sm text-gray-600">
-          <p>Precisa de ajuda? <Link href="/contato" className="text-blue-600 hover:underline">Entre em contato</Link></p>
+          <p>
+            Precisa de ajuda?{' '}
+            <Link href="/contato" className="text-blue-600 hover:underline">
+              Entre em contato
+            </Link>
+          </p>
         </div>
       </div>
     </div>

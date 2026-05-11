@@ -59,7 +59,7 @@ export default function LoginAdoradorPage() {
         router.refresh()
         router.push('/adorador/dashboard')
       }
-    } catch (err) {
+    } catch {
       setError('Erro ao fazer login. Tente novamente.')
       setLoading(false)
     }
@@ -68,16 +68,17 @@ export default function LoginAdoradorPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
-        <Link href="/login" className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6">
+        <Link
+          href="/login"
+          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6"
+        >
           <ArrowLeft className="w-4 h-4 mr-1" />
           Voltar
         </Link>
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Área do Membro</h1>
-          <p className="text-gray-600 text-sm">
-            Faça login para acessar sua conta
-          </p>
+          <p className="text-gray-600 text-sm">Faça login para acessar sua conta</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -128,7 +129,10 @@ export default function LoginAdoradorPage() {
           </button>
 
           <div className="text-center space-y-2 pt-4 border-t border-gray-200">
-            <Link href="/esqueci-senha" className="text-sm text-gray-600 hover:text-blue-600 hover:underline block">
+            <Link
+              href="/esqueci-senha"
+              className="text-sm text-gray-600 hover:text-blue-600 hover:underline block"
+            >
               Esqueci minha senha
             </Link>
             <p className="text-sm text-gray-600">

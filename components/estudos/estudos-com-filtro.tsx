@@ -13,7 +13,10 @@ interface EstudosComFiltroProps {
 
 const categorias = ['Todas', 'EBD', 'Culto', 'Jovens', 'Infantil', 'Pregação']
 
-export default function EstudosComFiltro({ estudosAtivos, estudosAnteriores }: EstudosComFiltroProps) {
+export default function EstudosComFiltro({
+  estudosAtivos,
+  estudosAnteriores,
+}: EstudosComFiltroProps) {
   const [categoriaFiltro, setCategoriaFiltro] = useState('Todas')
 
   // Filtrar apenas estudos anteriores pela categoria

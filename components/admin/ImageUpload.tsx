@@ -131,9 +131,7 @@ export function ImageUpload({
       </div>
 
       {/* Helper text */}
-      {helperText && (
-        <p className="text-xs text-gray-500">{helperText}</p>
-      )}
+      {helperText && <p className="text-xs text-gray-500">{helperText}</p>}
 
       {/* OR divider */}
       {showUrlInput && (
@@ -159,9 +157,7 @@ export function ImageUpload({
               aria-describedby={error ? `${inputId}-error` : undefined}
             />
             {imageFile && (
-              <p className="text-xs text-gray-500 mt-1">
-                Remova o arquivo para usar uma URL
-              </p>
+              <p className="text-xs text-gray-500 mt-1">Remova o arquivo para usar uma URL</p>
             )}
           </div>
         </>

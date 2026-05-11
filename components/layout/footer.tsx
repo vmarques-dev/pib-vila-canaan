@@ -7,10 +7,7 @@ import { InformacoesIgreja } from '@/types'
 async function getInformacoesIgreja(): Promise<InformacoesIgreja | null> {
   try {
     const supabase = createSupabaseClient()
-    const { data, error } = await supabase
-      .from('informacoes_igreja')
-      .select('*')
-      .maybeSingle()
+    const { data, error } = await supabase.from('informacoes_igreja').select('*').maybeSingle()
 
     if (error) throw error
     return data

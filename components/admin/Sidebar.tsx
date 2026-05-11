@@ -51,7 +51,9 @@ export default function Sidebar() {
           {/* Logo */}
           <div className="p-6 border-b border-gray-800">
             <h1 className="text-xl font-bold">Painel Admin</h1>
-            <p className="text-sm text-gray-400 mt-1 truncate" title={identificacao}>{identificacao}</p>
+            <p className="text-sm text-gray-400 mt-1 truncate" title={identificacao}>
+              {identificacao}
+            </p>
           </div>
 
           {/* Menu */}
@@ -67,9 +69,10 @@ export default function Sidebar() {
                   onClick={() => setIsOpen(false)}
                   className={`
                     flex items-center gap-3 px-4 py-3 rounded-lg transition
-                    ${isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    ${
+                      isActive
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                     }
                   `}
                 >

@@ -16,10 +16,6 @@ export default function OracaoAdminPage() {
   const [loading, setLoading] = useState(true)
   const [filtro, setFiltro] = useState<'todos' | 'abertos' | 'respondidos'>('abertos')
 
-  useEffect(() => {
-    fetchPedidos()
-  }, [])
-
   const fetchPedidos = async () => {
     const { data, error } = await supabase
       .from('pedidos_oracao')
@@ -33,6 +29,11 @@ export default function OracaoAdminPage() {
     }
     setLoading(false)
   }
+
+  useEffect(() => {
+    fetchPedidos()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleResponder = async (pedido: PedidoComAdorador) => {
     const { error } = await supabase
@@ -106,10 +107,11 @@ export default function OracaoAdminPage() {
               }`}
             >
               <div className="shrink-0 mt-0.5">
-                {pedido.respondido
-                  ? <CheckCircle2 size={22} className="text-green-500" />
-                  : <HeartHandshake size={22} className="text-rose-500" />
-                }
+                {pedido.respondido ? (
+                  <CheckCircle2 size={22} className="text-green-500" />
+                ) : (
+                  <HeartHandshake size={22} className="text-rose-500" />
+                )}
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
@@ -122,7 +124,9 @@ export default function OracaoAdminPage() {
                 <p className="text-gray-700 whitespace-pre-wrap">{pedido.descricao}</p>
                 <p className="text-xs text-gray-400 mt-2">
                   {new Date(pedido.created_at).toLocaleDateString('pt-BR', {
-                    day: '2-digit', month: 'long', year: 'numeric',
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric',
                   })}
                 </p>
               </div>

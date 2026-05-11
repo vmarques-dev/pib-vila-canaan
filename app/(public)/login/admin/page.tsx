@@ -71,10 +71,12 @@ export default function LoginAdminPage() {
           .from('usuarios_admin')
           .select('id, ativo')
           .eq('user_id', data.user.id)
-          .single()
+          .maybeSingle()
 
         if (adminError || !admin) {
-          logger.error('Admin não encontrado na tabela usuarios_admin', adminError, { context: 'admin-auth' })
+          logger.error('Admin não encontrado na tabela usuarios_admin', adminError, {
+            context: 'admin-auth',
+          })
           setError('Usuário não cadastrado como administrador')
           await supabase.auth.signOut()
           setLoading(false)
@@ -103,7 +105,10 @@ export default function LoginAdminPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl">
-        <Link href="/login" className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6">
+        <Link
+          href="/login"
+          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6"
+        >
           <ArrowLeft className="w-4 h-4 mr-1" />
           Voltar
         </Link>

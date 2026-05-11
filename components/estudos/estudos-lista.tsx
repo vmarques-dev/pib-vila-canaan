@@ -33,7 +33,10 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
   const [direction, setDirection] = useState(0)
   const [estudoSelecionado, setEstudoSelecionado] = useState<Estudo | null>(null)
 
+  // TODO(phase-4): replace this effect with a render-time reset comparing previous
+  // `estudos` length via useRef, or remount via `key={estudos.length}`.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentIndex(0)
   }, [estudos])
 
@@ -71,9 +74,7 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
           transition={{ duration: 0.6 }}
           className="mb-8 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            Estudos Anteriores
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Estudos Anteriores</h2>
           <p className="text-gray-600">Reveja nossos estudos passados</p>
         </motion.div>
 
@@ -110,7 +111,9 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
                     <CardDescription className="flex flex-wrap gap-4 text-base">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
-                        {format(parseLocalDate(estudo.data_estudo), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                        {format(parseLocalDate(estudo.data_estudo), "dd 'de' MMMM 'de' yyyy", {
+                          locale: ptBR,
+                        })}
                       </span>
                     </CardDescription>
                   </CardHeader>
@@ -118,7 +121,7 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
                     <p className="text-blue-600 font-semibold mb-2">
                       {estudo.livro} {estudo.referencia}
                     </p>
-                    <p className="text-gray-600 italic">"{estudo.texto_versiculo}"</p>
+                    <p className="text-gray-600 italic">&ldquo;{estudo.texto_versiculo}&rdquo;</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -142,7 +145,10 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
             {estudos.map((_, i) => (
               <button
                 key={i}
-                onClick={() => { setDirection(i > currentIndex ? 1 : -1); setCurrentIndex(i) }}
+                onClick={() => {
+                  setDirection(i > currentIndex ? 1 : -1)
+                  setCurrentIndex(i)
+                }}
                 className={`w-2 h-2 rounded-full transition-all duration-200 ${
                   i === currentIndex ? 'bg-gray-600 w-4' : 'bg-gray-300 hover:bg-gray-400'
                 }`}
@@ -173,10 +179,14 @@ export default function EstudosLista({ estudos }: EstudosListaProps) {
                 <p className="text-blue-600 font-semibold mt-2 text-lg">
                   {estudoSelecionado.livro} {estudoSelecionado.referencia}
                 </p>
-                <p className="text-gray-600 italic mt-2 mb-3">"{estudoSelecionado.texto_versiculo}"</p>
+                <p className="text-gray-600 italic mt-2 mb-3">
+                  &ldquo;{estudoSelecionado.texto_versiculo}&rdquo;
+                </p>
                 <p className="text-gray-500 text-sm flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  {format(parseLocalDate(estudoSelecionado.data_estudo), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  {format(parseLocalDate(estudoSelecionado.data_estudo), "dd 'de' MMMM 'de' yyyy", {
+                    locale: ptBR,
+                  })}
                 </p>
               </div>
               <button

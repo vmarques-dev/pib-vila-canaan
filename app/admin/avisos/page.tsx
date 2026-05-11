@@ -129,12 +129,15 @@ export default function AvisosPage() {
     {
       header: 'Status',
       width: '110px',
-      headerClassName: 'px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider',
+      headerClassName:
+        'px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider',
       cellClassName: 'px-4 py-4 text-center',
       accessor: (aviso) => (
-        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-          aviso.ativo ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-        }`}>
+        <span
+          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+            aviso.ativo ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          }`}
+        >
           {aviso.ativo ? 'Ativo' : 'Inativo'}
         </span>
       ),
@@ -149,7 +152,7 @@ export default function AvisosPage() {
       ariaLabel: 'Editar aviso',
     },
     {
-      icon: (aviso) => aviso.ativo ? <Eye size={18} /> : <EyeOff size={18} />,
+      icon: (aviso) => (aviso.ativo ? <Eye size={18} /> : <EyeOff size={18} />),
       onClick: handleToggleAtivo,
       className: 'text-blue-600 hover:text-blue-900',
       ariaLabel: 'Ativar/Desativar aviso',

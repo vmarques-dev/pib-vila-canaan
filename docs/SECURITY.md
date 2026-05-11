@@ -22,6 +22,7 @@ This document describes the security practices and mechanisms implemented in the
 The project implements multiple layers of security to protect user data and ensure that only authorized administrators can access the admin panel.
 
 **Security Principles**:
+
 - ✅ **Defense in Depth** — multiple layers of protection
 - ✅ **Least Privilege** — users only get the permissions they need
 - ✅ **Fail Secure** — when something goes wrong, the system denies access
@@ -35,21 +36,28 @@ The project implements multiple layers of security to protect user data and ensu
 
 **File**: `middleware.ts`
 
-All `/admin/*` routes are protected by Next.js middleware running on the server:
+All `/admin/*` routes are protected by Next.js middleware running on the server. The snippet below is **simplified for clarity** — see
+[`middleware.ts`](../middleware.ts) for the full implementation, which also
+covers `/adorador/*`, the emergency feature flag, and error handling:
 
 ```typescript
 export async function middleware(req: NextRequest) {
   const { supabase, response } = createMiddlewareClient(req)
-  const { data: { session } } = await supabase.auth.getSession()
+
+  // getUser() revalidates the JWT with the Supabase Auth server on
+  // every request — it does not just trust the cookie like getSession().
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (req.nextUrl.pathname.startsWith('/admin')) {
-    // 1. Check for an active session
-    if (!session) {
+    // 1. Check for an authenticated user
+    if (!user) {
       return NextResponse.redirect(new URL('/login/admin', req.url))
     }
 
     // 2. Check for role='admin' in user_metadata
-    if (session.user.user_metadata?.role !== 'admin') {
+    if (user.user_metadata?.role !== 'admin') {
       await supabase.auth.signOut()
       return NextResponse.redirect(new URL('/', req.url))
     }
@@ -58,8 +66,8 @@ export async function middleware(req: NextRequest) {
     const { data: admin } = await supabase
       .from('usuarios_admin')
       .select('ativo')
-      .eq('user_id', session.user.id)
-      .single()
+      .eq('user_id', user.id)
+      .maybeSingle()
 
     if (!admin || !admin.ativo) {
       await supabase.auth.signOut()
@@ -72,6 +80,7 @@ export async function middleware(req: NextRequest) {
 ```
 
 **Protections**:
+
 - ✅ **Server-side** — cannot be bypassed via DevTools
 - ✅ **Triple verification** — session + role + table
 - ✅ **Automatic sign-out** — clears the session if not authorized
@@ -118,9 +127,27 @@ ORDER BY ua.created_at DESC;
 
 ### Storage — `eventos` Bucket
 
-**File**: `supabase/migrations/002_fix_storage_rls.sql`
+**Files**: `supabase/migrations/002_fix_storage_rls.sql`,
+[`app/api/upload/route.ts`](../app/api/upload/route.ts)
 
-Only active admins can upload/delete images:
+Image uploads no longer hit Storage directly from the browser. The
+client posts the file to `/api/upload`, which:
+
+1. Verifies the caller via the auth cookie (`getUser()`)
+2. Confirms the user is an active row in `usuarios_admin`
+3. Reads the file bytes and detects the real MIME from the magic
+   numbers (`file-type`), rejecting anything that is not in
+   `STORAGE_CONFIG.ALLOWED_IMAGE_TYPES`
+4. Uploads to Storage using the service-role client. RLS is bypassed
+   deliberately — the policy is enforced at the application layer
+   above, in code we control
+
+The browser-reported `file.type` is not trusted. Renaming `evil.exe`
+to `evil.jpg` gives the browser an `image/jpeg` MIME, but the magic
+numbers reveal the real format and the request is rejected with
+HTTP 415.
+
+The previous Storage RLS policies are kept for defence in depth:
 
 ```sql
 -- Public read access (site images)
@@ -142,6 +169,7 @@ CREATE POLICY "Active admins can upload"
 ```
 
 **Validation**:
+
 - ✅ Regular authenticated user → upload FAILS (403 Forbidden)
 - ✅ Active admin → upload SUCCEEDS
 - ✅ Inactive admin → upload FAILS (403 Forbidden)
@@ -175,12 +203,7 @@ export const contatoSchema = z.object({
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras')
     .trim(),
 
-  email: z
-    .string()
-    .email('Email inválido')
-    .max(255, 'Email muito longo')
-    .toLowerCase()
-    .trim(),
+  email: z.string().email('Email inválido').max(255, 'Email muito longo').toLowerCase().trim(),
 
   mensagem: z
     .string()
@@ -195,6 +218,7 @@ export const contatoSchema = z.object({
 > English.
 
 **Protections**:
+
 - ✅ **Automatic sanitization** — `trim()`, `toLowerCase()`
 - ✅ **Format validation** — regex, email, URL
 - ✅ **Size limits** — prevents DoS
@@ -232,18 +256,24 @@ function escapeHtml(text: string): string {
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-secret
 RESEND_API_KEY=re_your-resend-key
 ```
 
 **Protections**:
+
 - ✅ `.env.local` listed in `.gitignore`
 - ✅ Only `NEXT_PUBLIC_*` variables are exposed to the browser
 - ✅ Private keys live exclusively on the server
 - ✅ `.env.local.example` ships placeholders only
 
 **⚠️ IMPORTANT**:
+
 - ❌ NEVER commit `.env.local` to Git
 - ❌ NEVER expose `RESEND_API_KEY` on the client
+- ❌ NEVER expose `SUPABASE_SERVICE_ROLE_KEY` on the client — it
+  bypasses Row Level Security entirely. Import it only from
+  server-only modules (e.g. `lib/supabase/admin.ts`)
 - ✅ Rotate keys if accidentally leaked
 
 ---
@@ -264,11 +294,7 @@ class Logger {
 
   error(message: string, error?: unknown, context?: LogContext): void {
     const detail = extractErrorMessage(error ?? '')
-    console.error(
-      `[ERROR] ${message}${detail ? ': ' + detail : ''}`,
-      error,
-      context ?? ''
-    )
+    console.error(`[ERROR] ${message}${detail ? ': ' + detail : ''}`, error, context ?? '')
     // TODO: forward to an external service in production (e.g. Sentry)
   }
 }
@@ -278,6 +304,7 @@ Integration with an external error-tracking service (Sentry, Datadog, …)
 is on the roadmap — replace the `TODO` blocks with the chosen SDK's calls.
 
 **What NOT to log**:
+
 - ❌ User emails
 - ❌ Passwords (obvious, but worth stating)
 - ❌ Auth tokens
@@ -286,6 +313,7 @@ is on the roadmap — replace the `TODO` blocks with the chosen SDK's calls.
 - ❌ Personal data
 
 **What to log**:
+
 - ✅ Authentication errors (without sensitive details)
 - ✅ Unauthorized-access attempts
 - ✅ CRUD operations (without personal data)
@@ -297,20 +325,23 @@ is on the roadmap — replace the `TODO` blocks with the chosen SDK's calls.
 
 ### Contact API
 
-**File**: `app/api/contato/route.ts`
+**File**: [`app/api/contato/route.ts`](../app/api/contato/route.ts)
 
-Limit of 3 requests per hour per IP:
+Limits are read from `RATE_LIMIT_CONFIG.CONTATO` (currently 3 requests
+per hour per IP). The snippet below is **simplified for clarity** — see
+the source for the full implementation, including additional client-IP
+headers and the disable-via-feature-flag path:
 
 ```typescript
 const requestCounts = new Map<string, { count: number; resetTime: number }>()
 
 export async function POST(request: Request) {
-  const ip = request.headers.get('x-forwarded-for') || 'unknown'
+  const ip = request.headers.get('x-forwarded-for') ?? request.headers.get('x-real-ip') ?? 'unknown'
   const now = Date.now()
   const limit = requestCounts.get(ip)
 
   if (limit && limit.resetTime > now) {
-    if (limit.count >= 3) {
+    if (limit.count >= RATE_LIMIT_CONFIG.CONTATO.MAX_REQUESTS) {
       return NextResponse.json(
         { error: 'Muitas requisições. Tente novamente em 1 hora.' },
         { status: 429 }
@@ -318,10 +349,17 @@ export async function POST(request: Request) {
     }
     limit.count++
   } else {
-    requestCounts.set(ip, { count: 1, resetTime: now + 3600000 })
+    requestCounts.set(ip, {
+      count: 1,
+      resetTime: now + RATE_LIMIT_CONFIG.CONTATO.WINDOW_MS,
+    })
   }
 }
 ```
+
+> ⚠️ The current store is a per-process `Map`, which does not survive
+> serverless cold starts. Migrating to a shared store (Upstash Redis or
+> Vercel KV) is tracked as a pre-production blocker.
 
 **Protects against**: spam, abuse, brute-force attempts
 
@@ -333,19 +371,27 @@ export async function POST(request: Request) {
 
 Two environment variables enable a fast rollback without a redeploy. Each
 is read directly via `process.env` in the file where it takes effect.
+Neither variable carries the `NEXT_PUBLIC_` prefix on purpose: both are
+read only on the server, so keeping them out of the prefix means their
+values are never inlined into the client bundle.
 
-| Variable | File | Default | Effect when `false` |
-|---|---|---|---|
-| `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` | `middleware.ts` | `true` | Full bypass of `/admin/*` and `/adorador/*` protection |
-| `NEXT_PUBLIC_USE_RATE_LIMITING` | `app/api/contato/route.ts` | `true` | Disables the 3 req/h IP limit |
+| Variable              | File                       | Default | Effect when `false`                                    |
+| --------------------- | -------------------------- | ------- | ------------------------------------------------------ |
+| `USE_MIDDLEWARE_AUTH` | `middleware.ts`            | `true`  | Full bypass of `/admin/*` and `/adorador/*` protection |
+| `USE_RATE_LIMITING`   | `app/api/contato/route.ts` | `true`  | Disables the 3 req/h IP limit                          |
 
 **Emergency rollback procedure**:
+
 1. Open Vercel Dashboard → Settings → Environment Variables
 2. Set the relevant flag to `false`
 3. Wait for the automatic redeploy (~2 minutes)
 
-⚠️ Never leave `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH=false` in production for
-long — admin-route protection is fully disabled.
+⚠️ Never leave `USE_MIDDLEWARE_AUTH=false` in production for long — admin-route
+protection is fully disabled.
+
+> Older deployments may still have `NEXT_PUBLIC_USE_MIDDLEWARE_AUTH` and
+> `NEXT_PUBLIC_USE_RATE_LIMITING` configured. Those names are no longer
+> read by the code; remove them from your environment to avoid confusion.
 
 ---
 
@@ -368,16 +414,19 @@ long — admin-route protection is fully disabled.
 ### Routine Audits
 
 **Monthly**:
+
 - [ ] Review active users in `usuarios_admin`
 - [ ] Inspect logs for unauthorized-access attempts
 - [ ] Rotate API keys (if needed)
 
 **Quarterly**:
+
 - [ ] Update dependencies (`npm audit fix`)
 - [ ] Review RLS policies
 - [ ] Test the rollback procedure
 
 **Annually**:
+
 - [ ] Full security audit
 - [ ] Review all documentation
 - [ ] Train the team on security practices
@@ -388,8 +437,9 @@ long — admin-route protection is fully disabled.
 
 If you discover a security vulnerability, please:
 
-1. **DO NOT open a public issue** on GitHub
-2. Email: [your-security-email@example.com]
+1. **DO NOT open a public issue** on GitHub.
+2. Open a private security advisory at
+   [github.com/vmarques-dev/pib-vila-canaan/security/advisories/new](https://github.com/vmarques-dev/pib-vila-canaan/security/advisories/new).
 3. Include:
    - A detailed description of the vulnerability
    - Steps to reproduce
@@ -409,6 +459,6 @@ We will respond within 48 hours and keep you informed about the progress.
 
 ---
 
-**Last updated**: April 2026
-**Version**: 2.1
+**Last updated**: May 2026
+**Version**: 2.2
 **Owner**: Development team

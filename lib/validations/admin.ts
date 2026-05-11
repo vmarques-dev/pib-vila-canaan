@@ -8,14 +8,8 @@ export const estudoSchema = z.object({
     .string()
     .min(3, 'Título deve ter no mínimo 3 caracteres')
     .max(200, 'Título deve ter no máximo 200 caracteres'),
-  livro: z
-    .string()
-    .min(1, 'Selecione o livro')
-    .max(50, 'Nome do livro muito longo'),
-  referencia: z
-    .string()
-    .min(1, 'Informe capítulo e versículo')
-    .max(20, 'Referência muito longa'),
+  livro: z.string().min(1, 'Selecione o livro').max(50, 'Nome do livro muito longo'),
+  referencia: z.string().min(1, 'Informe capítulo e versículo').max(20, 'Referência muito longa'),
   texto_versiculo: z
     .string()
     .min(10, 'Texto do versículo muito curto')
@@ -24,10 +18,7 @@ export const estudoSchema = z.object({
     .string()
     .min(10, 'Conteúdo deve ter no mínimo 10 caracteres')
     .max(10000, 'Conteúdo muito longo'),
-  categoria: z
-    .string()
-    .min(1, 'Selecione uma categoria')
-    .max(100, 'Categoria muito longa'),
+  categoria: z.string().min(1, 'Selecione uma categoria').max(100, 'Categoria muito longa'),
   data_estudo: z.string().min(1, 'Data é obrigatória'),
 })
 
@@ -104,14 +95,8 @@ export type EquipePastoralFormData = z.infer<typeof equipePastoralSchema>
  * Validation schema for the featured verse.
  */
 export const versiculoDestaqueSchema = z.object({
-  livro: z
-    .string()
-    .min(1, 'Selecione o livro')
-    .max(50, 'Nome do livro muito longo'),
-  referencia: z
-    .string()
-    .min(1, 'Informe capítulo e versículo')
-    .max(20, 'Referência muito longa'),
+  livro: z.string().min(1, 'Selecione o livro').max(50, 'Nome do livro muito longo'),
+  referencia: z.string().min(1, 'Informe capítulo e versículo').max(20, 'Referência muito longa'),
   texto: z
     .string()
     .min(10, 'Texto muito curto')
@@ -134,7 +119,8 @@ const telefoneBrasileiroRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/
  * - validates the domain format
  * - rejects malformed generic domains
  */
-const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/
+const emailRegex =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/
 
 /**
  * List of commonly used disposable / throwaway email domains.
@@ -174,10 +160,7 @@ export const configuracoesSchema = z.object({
     .string()
     .min(3, 'Nome deve ter no mínimo 3 caracteres')
     .max(200, 'Nome deve ter no máximo 200 caracteres')
-    .regex(
-      /^[a-zA-ZÀ-ÿ0-9\s.,'-]+$/,
-      'Nome contém caracteres inválidos'
-    )
+    .regex(/^[a-zA-ZÀ-ÿ0-9\s.,'-]+$/, 'Nome contém caracteres inválidos')
     .transform((val) => val.trim()),
 
   endereco: z
@@ -189,10 +172,7 @@ export const configuracoesSchema = z.object({
   telefone: z
     .string()
     .min(1, 'Telefone é obrigatório')
-    .regex(
-      telefoneBrasileiroRegex,
-      'Formato inválido. Use: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX'
-    ),
+    .regex(telefoneBrasileiroRegex, 'Formato inválido. Use: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX'),
 
   email: z
     .string()
@@ -201,18 +181,6 @@ export const configuracoesSchema = z.object({
     .regex(emailRegex, 'Formato de email inválido')
     .refine(validarDominioEmail, 'Domínio de email não permitido')
     .transform((val) => val.toLowerCase().trim()),
-
-  missao: z
-    .string()
-    .min(20, 'Missão deve ter no mínimo 20 caracteres')
-    .max(2000, 'Missão deve ter no máximo 2000 caracteres')
-    .transform((val) => val.trim()),
-
-  visao: z
-    .string()
-    .min(20, 'Visão deve ter no mínimo 20 caracteres')
-    .max(2000, 'Visão deve ter no máximo 2000 caracteres')
-    .transform((val) => val.trim()),
 })
 
 export type ConfiguracoesFormData = z.infer<typeof configuracoesSchema>

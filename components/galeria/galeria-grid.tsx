@@ -18,9 +18,7 @@ export default function GaleriaGrid({ fotos }: GaleriaGridProps) {
   const [fotoSelecionada, setFotoSelecionada] = useState<Galeria | null>(null)
 
   const fotosFiltradas =
-    categoriaAtiva === 'Todas'
-      ? fotos
-      : fotos.filter((foto) => foto.categoria === categoriaAtiva)
+    categoriaAtiva === 'Todas' ? fotos : fotos.filter((foto) => foto.categoria === categoriaAtiva)
 
   return (
     <section className="py-20 px-4 bg-white">
@@ -78,9 +76,7 @@ export default function GaleriaGrid({ fotos }: GaleriaGridProps) {
           </div>
         ) : (
           <div className="text-center py-20">
-            <p className="text-xl text-gray-500">
-              Nenhuma foto encontrada nesta categoria.
-            </p>
+            <p className="text-xl text-gray-500">Nenhuma foto encontrada nesta categoria.</p>
           </div>
         )}
 

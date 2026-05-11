@@ -28,12 +28,14 @@ export async function POST(request: Request) {
   const resend = new Resend(process.env.RESEND_API_KEY)
 
   try {
-    // Feature flag: rate limiting
-    const useRateLimiting = process.env.NEXT_PUBLIC_USE_RATE_LIMITING !== 'false' // Default true
+    // Feature flag: rate limiting. Read from a server-only env var (no
+    // NEXT_PUBLIC_ prefix) so the value is not inlined into the client bundle.
+    const useRateLimiting = process.env.USE_RATE_LIMITING !== 'false' // Default true
 
     // Per-IP rate limiting
     if (useRateLimiting) {
-      const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+      const ip =
+        request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
       const now = Date.now()
       const limit = requestCounts.get(ip)
 
@@ -56,7 +58,10 @@ export async function POST(request: Request) {
     const validation = contatoSchema.safeParse(body)
 
     if (!validation.success) {
-      logger.warn('Validação falhou no contato', { errors: validation.error.format(), context: 'contato-api' })
+      logger.warn('Validação falhou no contato', {
+        errors: validation.error.format(),
+        context: 'contato-api',
+      })
       return NextResponse.json(
         { error: 'Dados inválidos', details: validation.error.format() },
         { status: 400 }
@@ -65,7 +70,7 @@ export async function POST(request: Request) {
 
     const { nome, email, assunto, mensagem } = validation.data
 
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: 'PIB Vila Canaan <onboarding@resend.dev>',
       to: process.env.CONTACT_EMAIL || 'contato@pibvilacanaan.com.br',
       replyTo: email,
@@ -168,12 +173,8 @@ export async function POST(request: Request) {
 
     logger.info('Email de contato enviado', { email, assunto, context: 'contato-api' })
     return NextResponse.json({ success: true }, { status: 200 })
-
   } catch (error) {
     logger.error('Erro inesperado na API de contato', error as Error, { context: 'contato-api' })
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
   }
 }

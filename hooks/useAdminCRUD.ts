@@ -108,14 +108,17 @@ export function useAdminCRUD<T extends { id: string }>({
     setLoading(false)
   }, [supabase, tableName, orderBy.column, orderBy.ascending])
 
+  // TODO(phase-4): migrate this hook to TanStack Query / SWR; current pattern
+  // calls setState in an effect to load initial data, which the new
+  // react-hooks rule discourages. Suppression is acceptable here because the
+  // entire data layer is being replaced in phase 4.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchItems()
   }, [fetchItems])
 
   const handleCreate = async (data: Partial<T>): Promise<boolean> => {
-    const { error } = await supabase
-      .from(tableName)
-      .insert([data])
+    const { error } = await supabase.from(tableName).insert([data])
 
     if (error) {
       logger.error(`Erro ao criar ${tableName}`, error)
@@ -131,10 +134,7 @@ export function useAdminCRUD<T extends { id: string }>({
   }
 
   const handleUpdate = async (id: string, data: Partial<T>): Promise<boolean> => {
-    const { error } = await supabase
-      .from(tableName)
-      .update(data)
-      .eq('id', id)
+    const { error } = await supabase.from(tableName).update(data).eq('id', id)
 
     if (error) {
       logger.error(`Erro ao atualizar ${tableName}`, error)
@@ -156,10 +156,7 @@ export function useAdminCRUD<T extends { id: string }>({
     // (e.g. by ConfirmDialog) — pass an empty string to bypass.
     if (confirmMessage && !confirm(confirmMessage)) return false
 
-    const { error } = await supabase
-      .from(tableName)
-      .delete()
-      .eq('id', id)
+    const { error } = await supabase.from(tableName).delete().eq('id', id)
 
     if (error) {
       logger.error(`Erro ao deletar ${tableName}`, error)

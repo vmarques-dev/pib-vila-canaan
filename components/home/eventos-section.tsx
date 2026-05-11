@@ -42,9 +42,7 @@ export default function EventosSection({ eventos }: EventosSectionProps) {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Próximos Eventos
-            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Próximos Eventos</h2>
             <p className="text-xl text-gray-600">
               Participe dos nossos encontros e fortaleça sua fé
             </p>
@@ -135,11 +133,7 @@ export default function EventosSection({ eventos }: EventosSectionProps) {
       </section>
 
       {/* Event details modal */}
-      <EventoModal
-        evento={selectedEvento}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      <EventoModal evento={selectedEvento} isOpen={isModalOpen} onClose={handleCloseModal} />
     </>
   )
 }

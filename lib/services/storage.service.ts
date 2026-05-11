@@ -1,12 +1,43 @@
+import { toast } from 'sonner'
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { logger } from '@/lib/logger'
 import { STORAGE_CONFIG } from '@/lib/constants/config'
 
+const MAX_FILE_SIZE_MB = Math.round(STORAGE_CONFIG.MAX_FILE_SIZE / (1024 * 1024))
+
 /**
- * Uploads an image to a Supabase Storage bucket.
+ * Maps an HTTP status returned by `/api/upload` to a user-facing
+ * Portuguese message. Falls back to a generic message for unexpected
+ * statuses so the user always sees *something*.
+ */
+function messageForUploadStatus(status: number): string {
+  switch (status) {
+    case 400:
+      return 'Arquivo inválido. Verifique o conteúdo e tente novamente.'
+    case 401:
+      return 'Sua sessão expirou. Faça login novamente.'
+    case 403:
+      return 'Você não tem permissão para enviar arquivos.'
+    case 413:
+      return `Arquivo muito grande. O tamanho máximo é ${MAX_FILE_SIZE_MB} MB.`
+    case 415:
+      return 'Arquivo inválido. Use apenas imagens JPEG, PNG ou WebP.'
+    default:
+      return 'Erro ao enviar o arquivo. Tente novamente em instantes.'
+  }
+}
+
+/**
+ * Uploads an image by delegating to the `/api/upload` server route.
  *
- * Uses the SSR Supabase client so the user's auth session is
- * available — RLS policies require it.
+ * The server is the source of truth for type validation: it inspects
+ * the actual bytes (magic numbers) and rejects anything that is not a
+ * real JPEG/PNG/WebP, regardless of what the browser reported. The
+ * checks done here are fail-fast UX optimizations only.
+ *
+ * On any failure (client-side check, server rejection, or network),
+ * shows a user-facing toast in Portuguese and logs the technical
+ * detail for the developer.
  *
  * @param file - File to upload
  * @param bucket - Bucket name
@@ -19,52 +50,46 @@ export async function uploadImage(
   folder?: string
 ): Promise<string | null> {
   try {
-    // Validate file type
-    if (!STORAGE_CONFIG.ALLOWED_IMAGE_TYPES.includes(file.type as typeof STORAGE_CONFIG.ALLOWED_IMAGE_TYPES[number])) {
-      logger.error('Tipo de arquivo não permitido', new Error(file.type))
-      throw new Error('Apenas imagens JPG, PNG e WebP são permitidas')
+    // Fail fast on obvious problems before paying the round trip
+    if (file.size === 0) {
+      toast.error('O arquivo selecionado está vazio.')
+      logger.error('Empty file rejected before upload', new Error('size=0'))
+      return null
     }
-
-    // Validate size
     if (file.size > STORAGE_CONFIG.MAX_FILE_SIZE) {
-      logger.error('Arquivo muito grande', new Error(`${file.size} bytes`))
-      throw new Error('A imagem deve ter no máximo 5MB')
+      toast.error(`Arquivo muito grande. O tamanho máximo é ${MAX_FILE_SIZE_MB} MB.`)
+      logger.error('File too large to upload', new Error(`${file.size} bytes`))
+      return null
     }
 
-    // Generate a unique filename
-    const timestamp = Date.now()
-    const randomString = Math.random().toString(36).substring(2, 15)
-    const extension = file.name.split('.').pop()
-    const fileName = `${timestamp}-${randomString}.${extension}`
-
-    // Build the full path
-    const filePath = folder ? `${folder}/${fileName}` : fileName
-
-    // Client with the auth session
-    const supabase = createSupabaseBrowserClient()
-
-    // Perform the upload
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false,
-      })
-
-    if (error) {
-      logger.error('Erro ao fazer upload', error)
-      throw error
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('bucket', bucket)
+    if (folder) {
+      formData.append('folder', folder)
     }
 
-    // Resolve the public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(data.path)
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    })
 
-    logger.info('Upload realizado com sucesso', { path: data.path, url: publicUrl })
-    return publicUrl
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}))
+      toast.error(messageForUploadStatus(response.status))
+      logger.error(
+        'Upload rejected by server',
+        new Error(payload.error ?? `HTTP ${response.status}`)
+      )
+      return null
+    }
+
+    const { url, path } = await response.json()
+    logger.info('Upload completed', { path, url })
+    return url as string
   } catch (error) {
-    logger.error('Erro no processo de upload', error)
+    toast.error('Não foi possível enviar o arquivo. Verifique sua conexão e tente novamente.')
+    logger.error('Upload request failed', error)
     return null
   }
 }
@@ -102,9 +127,7 @@ export async function deleteImage(
     const supabase = createSupabaseBrowserClient()
 
     // Delete the file
-    const { error } = await supabase.storage
-      .from(bucket)
-      .remove([filePath])
+    const { error } = await supabase.storage.from(bucket).remove([filePath])
 
     if (error) {
       logger.error('Erro ao excluir imagem', error)

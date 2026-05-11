@@ -46,10 +46,7 @@ export default async function EventosPage() {
   return (
     <main className="min-h-screen">
       <EventosHero />
-      <EventosGrid
-        proximosEventos={proximosEventos}
-        eventosAnteriores={eventosAnteriores}
-      />
+      <EventosGrid proximosEventos={proximosEventos} eventosAnteriores={eventosAnteriores} />
     </main>
   )
 }

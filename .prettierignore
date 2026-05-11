@@ -1,0 +1,30 @@
+# Build outputs
+.next/
+out/
+build/
+dist/
+coverage/
+playwright-report/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env*
+!.env.local.example
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Generated
+next-env.d.ts
+
+# Temporary
+tmpclaude-*
+.tmp-backup-*
+
+# Auto-generated docs / data
+public/sitemap*.xml
+public/robots.txt

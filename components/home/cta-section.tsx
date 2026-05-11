@@ -15,9 +15,7 @@ export default function CTASection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Faça Parte da Nossa Família
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">Faça Parte da Nossa Família</h2>
           <p className="text-xl text-blue-50 mb-10">
             Juntos, podemos crescer na fé, servir à comunidade e glorificar a Deus
           </p>

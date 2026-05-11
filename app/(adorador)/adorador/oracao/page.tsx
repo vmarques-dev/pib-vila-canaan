@@ -25,7 +25,12 @@ export default function PedidosOracaoPage() {
   const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<PedidoForm>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<PedidoForm>({
     resolver: zodResolver(pedidoSchema),
   })
 
@@ -37,9 +42,12 @@ export default function PedidosOracaoPage() {
         .from('adoradores')
         .select('id')
         .eq('user_id', user.id)
-        .single()
+        .maybeSingle()
 
-      if (!adorador) { setLoading(false); return }
+      if (!adorador) {
+        setLoading(false)
+        return
+      }
 
       setAdoradorId(adorador.id)
       await fetchPedidos(adorador.id)
@@ -147,7 +155,10 @@ export default function PedidosOracaoPage() {
               </button>
               <button
                 type="button"
-                onClick={() => { setShowForm(false); reset() }}
+                onClick={() => {
+                  setShowForm(false)
+                  reset()
+                }}
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
               >
                 Cancelar
@@ -159,7 +170,9 @@ export default function PedidosOracaoPage() {
 
       {pedidosAbertos.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-base font-semibold text-gray-700 mb-3">Em oração ({pedidosAbertos.length})</h2>
+          <h2 className="text-base font-semibold text-gray-700 mb-3">
+            Em oração ({pedidosAbertos.length})
+          </h2>
           <ul className="space-y-3">
             {pedidosAbertos.map((pedido) => (
               <li key={pedido.id} className="bg-white rounded-xl shadow p-5 flex items-start gap-4">
@@ -168,7 +181,9 @@ export default function PedidosOracaoPage() {
                   <p className="text-gray-800 whitespace-pre-wrap">{pedido.descricao}</p>
                   <p className="text-xs text-gray-400 mt-2">
                     {new Date(pedido.created_at).toLocaleDateString('pt-BR', {
-                      day: '2-digit', month: 'long', year: 'numeric',
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
                     })}
                   </p>
                 </div>
@@ -187,16 +202,23 @@ export default function PedidosOracaoPage() {
 
       {pedidosRespondidos.length > 0 && (
         <section>
-          <h2 className="text-base font-semibold text-gray-700 mb-3">Respondidos ({pedidosRespondidos.length})</h2>
+          <h2 className="text-base font-semibold text-gray-700 mb-3">
+            Respondidos ({pedidosRespondidos.length})
+          </h2>
           <ul className="space-y-3">
             {pedidosRespondidos.map((pedido) => (
-              <li key={pedido.id} className="bg-green-50 border border-green-100 rounded-xl p-5 flex items-start gap-4">
+              <li
+                key={pedido.id}
+                className="bg-green-50 border border-green-100 rounded-xl p-5 flex items-start gap-4"
+              >
                 <CheckCircle2 size={20} className="text-green-500 mt-0.5 shrink-0" />
                 <div className="flex-1">
                   <p className="text-gray-700 whitespace-pre-wrap">{pedido.descricao}</p>
                   <p className="text-xs text-gray-400 mt-2">
                     {new Date(pedido.created_at).toLocaleDateString('pt-BR', {
-                      day: '2-digit', month: 'long', year: 'numeric',
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
                     })}
                   </p>
                 </div>

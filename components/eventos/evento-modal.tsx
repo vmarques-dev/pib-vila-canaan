@@ -36,17 +36,6 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
   const [regState, setRegState] = useState<RegistrationState>('idle')
   const [adoradorProfile, setAdoradorProfile] = useState<AdoradorProfile | null>(null)
 
-  useEffect(() => {
-    if (!isOpen || !evento) return
-
-    setRegState('idle')
-    setAdoradorProfile(null)
-
-    if (user && !evento.concluido) {
-      checkAdoradorStatus()
-    }
-  }, [isOpen, evento?.id, user])
-
   const checkAdoradorStatus = async () => {
     if (!user || !evento) return
 
@@ -54,7 +43,7 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
       .from('adoradores')
       .select('id, nome, email, telefone')
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle()
 
     if (!adorador) return
 
@@ -65,12 +54,24 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
       .select('id')
       .eq('evento_id', evento.id)
       .eq('adorador_id', adorador.id)
-      .single()
+      .maybeSingle()
 
     if (existing) {
       setRegState('registered')
     }
   }
+
+  useEffect(() => {
+    if (!isOpen || !evento) return
+
+    setRegState('idle')
+    setAdoradorProfile(null)
+
+    if (user && !evento.concluido) {
+      checkAdoradorStatus()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, evento?.id, user])
 
   const handleLoginRedirect = () => {
     onClose()
@@ -164,7 +165,10 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
             className="w-full bg-blue-700 hover:bg-blue-800 text-white text-base py-6"
           >
             {regState === 'submitting' ? (
-              <><Loader2 className="mr-2 animate-spin" size={18} />Inscrevendo...</>
+              <>
+                <Loader2 className="mr-2 animate-spin" size={18} />
+                Inscrevendo...
+              </>
             ) : (
               'Confirmar Inscrição'
             )}
@@ -180,7 +184,10 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
         className="w-full bg-blue-700 hover:bg-blue-800 text-white text-base py-6"
       >
         {regState === 'submitting' ? (
-          <><Loader2 className="mr-2 animate-spin" size={18} />Inscrevendo...</>
+          <>
+            <Loader2 className="mr-2 animate-spin" size={18} />
+            Inscrevendo...
+          </>
         ) : (
           'Fazer Inscrição'
         )}
@@ -190,7 +197,10 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0 gap-0" showCloseButton={false}>
+      <DialogContent
+        className="max-w-4xl max-h-[90vh] overflow-hidden p-0 gap-0"
+        showCloseButton={false}
+      >
         <DialogHeader className="sr-only">
           <DialogTitle>{evento.titulo}</DialogTitle>
         </DialogHeader>
@@ -207,9 +217,7 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
           )}
 
           <div className="p-6 md:p-8 space-y-6 bg-white">
-            <h2 className="text-3xl md:text-4xl font-bold text-blue-700">
-              {evento.titulo}
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-blue-700">{evento.titulo}</h2>
 
             <div className="space-y-4">
               <div>
@@ -218,9 +226,17 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
                   <p className="font-semibold text-gray-900">Data</p>
                 </div>
                 <p className="text-gray-600 ml-8">
-                  {format(parseLocalDate(evento.data_inicio), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  {format(parseLocalDate(evento.data_inicio), "dd 'de' MMMM 'de' yyyy", {
+                    locale: ptBR,
+                  })}
                   {evento.data_fim && evento.data_fim !== evento.data_inicio && (
-                    <> até {format(parseLocalDate(evento.data_fim), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</>
+                    <>
+                      {' '}
+                      até{' '}
+                      {format(parseLocalDate(evento.data_fim), "dd 'de' MMMM 'de' yyyy", {
+                        locale: ptBR,
+                      })}
+                    </>
                   )}
                 </p>
               </div>
@@ -255,11 +271,7 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
               </p>
             </div>
 
-            {!evento.concluido && (
-              <div className="pt-2">
-                {renderRegistration()}
-              </div>
-            )}
+            {!evento.concluido && <div className="pt-2">{renderRegistration()}</div>}
           </div>
         </div>
       </DialogContent>

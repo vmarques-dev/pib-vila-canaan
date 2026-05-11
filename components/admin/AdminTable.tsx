@@ -119,9 +119,7 @@ export function AdminTable<T extends { id: string }>({
           </tbody>
         </table>
       </div>
-      {data.length === 0 && (
-        <div className="text-center py-12 text-gray-500">{emptyMessage}</div>
-      )}
+      {data.length === 0 && <div className="text-center py-12 text-gray-500">{emptyMessage}</div>}
     </div>
   )
 }
