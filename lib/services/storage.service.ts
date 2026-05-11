@@ -1,6 +1,31 @@
+import { toast } from 'sonner'
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 import { logger } from '@/lib/logger'
 import { STORAGE_CONFIG } from '@/lib/constants/config'
+
+const MAX_FILE_SIZE_MB = Math.round(STORAGE_CONFIG.MAX_FILE_SIZE / (1024 * 1024))
+
+/**
+ * Maps an HTTP status returned by `/api/upload` to a user-facing
+ * Portuguese message. Falls back to a generic message for unexpected
+ * statuses so the user always sees *something*.
+ */
+function messageForUploadStatus(status: number): string {
+  switch (status) {
+    case 400:
+      return 'Arquivo inválido. Verifique o conteúdo e tente novamente.'
+    case 401:
+      return 'Sua sessão expirou. Faça login novamente.'
+    case 403:
+      return 'Você não tem permissão para enviar arquivos.'
+    case 413:
+      return `Arquivo muito grande. O tamanho máximo é ${MAX_FILE_SIZE_MB} MB.`
+    case 415:
+      return 'Arquivo inválido. Use apenas imagens JPEG, PNG ou WebP.'
+    default:
+      return 'Erro ao enviar o arquivo. Tente novamente em instantes.'
+  }
+}
 
 /**
  * Uploads an image by delegating to the `/api/upload` server route.
@@ -9,6 +34,10 @@ import { STORAGE_CONFIG } from '@/lib/constants/config'
  * the actual bytes (magic numbers) and rejects anything that is not a
  * real JPEG/PNG/WebP, regardless of what the browser reported. The
  * checks done here are fail-fast UX optimizations only.
+ *
+ * On any failure (client-side check, server rejection, or network),
+ * shows a user-facing toast in Portuguese and logs the technical
+ * detail for the developer.
  *
  * @param file - File to upload
  * @param bucket - Bucket name
@@ -23,10 +52,12 @@ export async function uploadImage(
   try {
     // Fail fast on obvious problems before paying the round trip
     if (file.size === 0) {
+      toast.error('O arquivo selecionado está vazio.')
       logger.error('Empty file rejected before upload', new Error('size=0'))
       return null
     }
     if (file.size > STORAGE_CONFIG.MAX_FILE_SIZE) {
+      toast.error(`Arquivo muito grande. O tamanho máximo é ${MAX_FILE_SIZE_MB} MB.`)
       logger.error('File too large to upload', new Error(`${file.size} bytes`))
       return null
     }
@@ -45,6 +76,7 @@ export async function uploadImage(
 
     if (!response.ok) {
       const payload = await response.json().catch(() => ({}))
+      toast.error(messageForUploadStatus(response.status))
       logger.error(
         'Upload rejected by server',
         new Error(payload.error ?? `HTTP ${response.status}`)
@@ -56,6 +88,7 @@ export async function uploadImage(
     logger.info('Upload completed', { path, url })
     return url as string
   } catch (error) {
+    toast.error('Não foi possível enviar o arquivo. Verifique sua conexão e tente novamente.')
     logger.error('Upload request failed', error)
     return null
   }

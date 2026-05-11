@@ -124,7 +124,7 @@ export default function EquipePage() {
         const uploadedUrl = await uploadImage(optimizedFile, STORAGE_CONFIG.BUCKETS.EQUIPE)
 
         if (!uploadedUrl) {
-          toast.error('Erro ao fazer upload da foto')
+          // uploadImage() already surfaced the specific error to the user
           setUploadingImage(false)
           return
         }
