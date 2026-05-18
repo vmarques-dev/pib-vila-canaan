@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirme seu cadastro</title>
+  </head>
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #ffffff;
+    "
+  >
+    <div
+      style="
+        background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+        color: #ffffff;
+        padding: 32px 24px;
+        text-align: center;
+        border-radius: 10px 10px 0 0;
+      "
+    >
+      <h1 style="margin: 0; font-size: 24px">PIB Vila Canaan</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 14px">
+        Uma igreja que ama a Deus e serve às pessoas
+      </p>
+    </div>
+
+    <div style="background: #f9fafb; padding: 32px 24px; border: 1px solid #e5e7eb; border-top: 0">
+      <h2 style="color: #1d4ed8; margin-top: 0; font-size: 20px">Bem-vindo(a) à família! 🙏</h2>
+
+      <p style="margin-bottom: 16px">
+        Recebemos o seu cadastro no <strong>Canal do Adorador</strong> da PIB Vila Canaan.
+      </p>
+
+      <p style="margin-bottom: 24px">
+        Para confirmar o seu e-mail e ativar a sua conta, clique no botão abaixo:
+      </p>
+
+      <div style="text-align: center; margin: 32px 0">
+        <a
+          href="{{ .ConfirmationURL }}"
+          style="
+            background: #1d4ed8;
+            color: #ffffff;
+            padding: 14px 32px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 16px;
+          "
+        >
+          Confirmar meu cadastro
+        </a>
+      </div>
+
+      <p style="font-size: 14px; color: #6b7280; margin-bottom: 8px">
+        Se o botão não funcionar, copie e cole o seguinte endereço no seu navegador:
+      </p>
+      <p
+        style="
+          font-size: 13px;
+          color: #1d4ed8;
+          word-break: break-all;
+          background: #ffffff;
+          padding: 12px;
+          border-radius: 4px;
+          border-left: 3px solid #1d4ed8;
+        "
+      >
+        {{ .ConfirmationURL }}
+      </p>
+
+      <p style="font-size: 14px; color: #6b7280; margin-top: 24px">
+        Se você não criou esta conta, pode ignorar este e-mail.
+      </p>
+    </div>
+
+    <div
+      style="
+        background: #1f2937;
+        color: #9ca3af;
+        padding: 20px;
+        text-align: center;
+        font-size: 12px;
+        border-radius: 0 0 10px 10px;
+      "
+    >
+      <p style="margin: 0; font-style: italic">
+        "Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei."
+      </p>
+      <p style="margin: 4px 0 0 0; font-style: italic">— Mateus 11:28</p>
+      <p style="margin: 12px 0 0 0">PIB Vila Canaan</p>
+    </div>
+  </body>
+</html>
