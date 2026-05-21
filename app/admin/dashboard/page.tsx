@@ -9,10 +9,23 @@ import type { Evento, Estudo } from '@/lib/types/database'
 
 /**
  * Statistics shown on the dashboard.
+ *
+ * Eventos and estudos expose a breakdown so the admin can see at a
+ * glance how much work is pending vs already wrapped up. The split
+ * uses the table's own boolean flags — `eventos.concluido` and
+ * `estudos.arquivado` — without inferring state from dates.
  */
 interface Stats {
-  eventos: number
-  estudos: number
+  eventos: {
+    total: number
+    emAberto: number
+    concluidos: number
+  }
+  estudos: {
+    total: number
+    emAberto: number
+    arquivados: number
+  }
   fotos: number
 }
 
@@ -37,7 +50,11 @@ export default function DashboardPage() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), [])
 
   const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState<Stats>({ eventos: 0, estudos: 0, fotos: 0 })
+  const [stats, setStats] = useState<Stats>({
+    eventos: { total: 0, emAberto: 0, concluidos: 0 },
+    estudos: { total: 0, emAberto: 0, arquivados: 0 },
+    fotos: 0,
+  })
   const [proximosEventos, setProximosEventos] = useState<Evento[]>([])
   const [inscricoesCount, setInscricoesCount] = useState<Record<string, number>>({})
   const [estudosRecentes, setEstudosRecentes] = useState<Estudo[]>([])
@@ -45,19 +62,51 @@ export default function DashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const [eventosRes, estudosRes, fotosRes] = await Promise.all([
+      // Counts are fetched in parallel via head-only `count: exact`
+      // queries so we never pull the row payloads into the client.
+      const [
+        eventosTotalRes,
+        eventosEmAbertoRes,
+        eventosConcluidosRes,
+        estudosTotalRes,
+        estudosEmAbertoRes,
+        estudosArquivadosRes,
+        fotosRes,
+      ] = await Promise.all([
         supabase.from('eventos').select('*', { count: 'exact', head: true }),
+        supabase.from('eventos').select('*', { count: 'exact', head: true }).eq('concluido', false),
+        supabase.from('eventos').select('*', { count: 'exact', head: true }).eq('concluido', true),
         supabase.from('estudos').select('*', { count: 'exact', head: true }),
+        supabase.from('estudos').select('*', { count: 'exact', head: true }).eq('arquivado', false),
+        supabase.from('estudos').select('*', { count: 'exact', head: true }).eq('arquivado', true),
         supabase.from('galeria').select('*', { count: 'exact', head: true }),
       ])
 
-      if (eventosRes.error) logger.error('Erro ao buscar eventos', eventosRes.error)
-      if (estudosRes.error) logger.error('Erro ao buscar estudos', estudosRes.error)
+      if (eventosTotalRes.error)
+        logger.error('Erro ao buscar total de eventos', eventosTotalRes.error)
+      if (eventosEmAbertoRes.error)
+        logger.error('Erro ao buscar eventos em aberto', eventosEmAbertoRes.error)
+      if (eventosConcluidosRes.error)
+        logger.error('Erro ao buscar eventos concluídos', eventosConcluidosRes.error)
+      if (estudosTotalRes.error)
+        logger.error('Erro ao buscar total de estudos', estudosTotalRes.error)
+      if (estudosEmAbertoRes.error)
+        logger.error('Erro ao buscar estudos em aberto', estudosEmAbertoRes.error)
+      if (estudosArquivadosRes.error)
+        logger.error('Erro ao buscar estudos arquivados', estudosArquivadosRes.error)
       if (fotosRes.error) logger.error('Erro ao buscar fotos', fotosRes.error)
 
       setStats({
-        eventos: eventosRes.count ?? 0,
-        estudos: estudosRes.count ?? 0,
+        eventos: {
+          total: eventosTotalRes.count ?? 0,
+          emAberto: eventosEmAbertoRes.count ?? 0,
+          concluidos: eventosConcluidosRes.count ?? 0,
+        },
+        estudos: {
+          total: estudosTotalRes.count ?? 0,
+          emAberto: estudosEmAbertoRes.count ?? 0,
+          arquivados: estudosArquivadosRes.count ?? 0,
+        },
         fotos: fotosRes.count ?? 0,
       })
     } catch (error) {
@@ -141,14 +190,44 @@ export default function DashboardPage() {
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" aria-label="Estatísticas">
         <article className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Eventos</h2>
-          <p className="text-3xl font-bold text-blue-600">{stats.eventos}</p>
-          <p className="text-sm text-gray-600 mt-2">eventos cadastrados</p>
+          <p className="text-3xl font-bold text-blue-600">{stats.eventos.total}</p>
+          <dl className="text-sm text-gray-600 mt-3 space-y-1">
+            <div className="flex items-baseline gap-2">
+              <dt className="sr-only">Em aberto</dt>
+              <dd>
+                <span className="font-semibold text-gray-900">{stats.eventos.emAberto}</span> em
+                aberto
+              </dd>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <dt className="sr-only">Concluídos</dt>
+              <dd>
+                <span className="font-semibold text-gray-900">{stats.eventos.concluidos}</span>{' '}
+                concluídos
+              </dd>
+            </div>
+          </dl>
         </article>
 
         <article className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Estudos</h2>
-          <p className="text-3xl font-bold text-green-600">{stats.estudos}</p>
-          <p className="text-sm text-gray-600 mt-2">estudos publicados</p>
+          <p className="text-3xl font-bold text-green-600">{stats.estudos.total}</p>
+          <dl className="text-sm text-gray-600 mt-3 space-y-1">
+            <div className="flex items-baseline gap-2">
+              <dt className="sr-only">Em aberto</dt>
+              <dd>
+                <span className="font-semibold text-gray-900">{stats.estudos.emAberto}</span> em
+                aberto
+              </dd>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <dt className="sr-only">Arquivados</dt>
+              <dd>
+                <span className="font-semibold text-gray-900">{stats.estudos.arquivados}</span>{' '}
+                arquivados
+              </dd>
+            </div>
+          </dl>
         </article>
 
         <article className="bg-white p-6 rounded-lg shadow">
