@@ -49,15 +49,18 @@ export default function Sidebar() {
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-6 border-b border-gray-800">
-            <h1 className="text-xl font-bold">Painel Admin</h1>
-            <p className="text-sm text-gray-400 mt-1 truncate" title={identificacao}>
+          <div className="px-4 py-4 border-b border-gray-800 shrink-0">
+            <h1 className="text-lg font-bold leading-tight">Painel Admin</h1>
+            <p className="text-xs text-gray-400 mt-0.5 truncate" title={identificacao}>
               {identificacao}
             </p>
           </div>
 
-          {/* Menu */}
-          <nav className="flex-1 p-4 space-y-2">
+          {/* Menu — `overflow-y-auto` is the safety net for unusually
+              short viewports (small tablets, browser chrome eating
+              height). The reduced item density makes scrolling rare
+              in practice. */}
+          <nav className="flex-1 overflow-y-auto thin-scrollbar p-3 space-y-1">
             {ADMIN_MENU_ITEMS.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
@@ -68,7 +71,7 @@ export default function Sidebar() {
                   href={item.href}
                   onClick={() => setIsOpen(false)}
                   className={`
-                    flex items-center gap-3 px-4 py-3 rounded-lg transition
+                    flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition
                     ${
                       isActive
                         ? 'bg-blue-600 text-white'
@@ -76,7 +79,7 @@ export default function Sidebar() {
                     }
                   `}
                 >
-                  <Icon size={20} />
+                  <Icon size={18} />
                   <span>{item.label}</span>
                 </Link>
               )
@@ -84,7 +87,7 @@ export default function Sidebar() {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-800 space-y-2">
+          <div className="px-4 py-3 border-t border-gray-800 space-y-1.5 shrink-0">
             <Link
               href="/"
               className="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm"
