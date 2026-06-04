@@ -416,7 +416,7 @@ export default function DashboardPage() {
         {/* Recent registrations */}
         <section className="bg-white rounded-lg shadow p-6 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Inscrições Recentes</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Inscrições de Eventos</h2>
             <Link href="/admin/eventos" className="text-sm text-blue-600 hover:underline">
               Ver eventos
             </Link>
