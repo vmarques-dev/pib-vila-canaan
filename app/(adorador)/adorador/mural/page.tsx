@@ -48,22 +48,22 @@ export default function MuralAvisosPage() {
         <ul className="space-y-4">
           {avisos.map((aviso) => (
             <li key={aviso.id} className="bg-white rounded-xl shadow p-6">
-              <div className="flex items-start gap-3">
+              {/* Icon and title share a row centered to each other; the
+                  body and date sit below it, spanning the card width. */}
+              <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-50 rounded-lg shrink-0">
                   <Bell size={18} className="text-blue-600" />
                 </div>
-                <div className="flex-1">
-                  <h2 className="text-lg font-semibold text-gray-900">{aviso.titulo}</h2>
-                  <p className="text-gray-600 mt-2 whitespace-pre-wrap">{aviso.conteudo}</p>
-                  <p className="text-xs text-gray-400 mt-3">
-                    {new Date(aviso.created_at).toLocaleDateString('pt-BR', {
-                      day: '2-digit',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
-                  </p>
-                </div>
+                <h2 className="text-lg font-semibold text-gray-900">{aviso.titulo}</h2>
               </div>
+              <p className="text-gray-600 mt-3 whitespace-pre-wrap">{aviso.conteudo}</p>
+              <p className="text-xs text-gray-400 mt-3">
+                {new Date(aviso.created_at).toLocaleDateString('pt-BR', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                })}
+              </p>
             </li>
           ))}
         </ul>
