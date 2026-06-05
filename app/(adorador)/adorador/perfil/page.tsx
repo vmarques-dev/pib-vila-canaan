@@ -17,7 +17,12 @@ const perfilSchema = z.object({
 
 const senhaSchema = z
   .object({
-    novaSenha: z.string().min(6, 'Senha deve ter ao menos 6 caracteres'),
+    senhaAtual: z.string().min(1, 'Informe sua senha atual'),
+    novaSenha: z
+      .string()
+      .min(8, 'A senha deve ter pelo menos 8 caracteres')
+      .regex(/[A-Z]/, 'A senha deve conter pelo menos uma letra maiúscula')
+      .regex(/[0-9]/, 'A senha deve conter pelo menos um número'),
     confirmarSenha: z.string(),
   })
   .refine((d) => d.novaSenha === d.confirmarSenha, {
@@ -83,10 +88,28 @@ export default function PerfilPage() {
   }
 
   const handleAlterarSenha = async (values: SenhaForm) => {
+    if (!user?.email) return
     setLoadingSenha(true)
     try {
+      // Re-authenticate before changing the password. Supabase has no
+      // dedicated "verify my password" call, so we sign in again with
+      // the current email + the typed current password. On success the
+      // existing session is simply refreshed; on failure the password
+      // is wrong and we abort before touching anything.
+      const { error: reauthError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: values.senhaAtual,
+      })
+
+      if (reauthError) {
+        senhaForm.setError('senhaAtual', { message: 'Senha atual incorreta.' })
+        setLoadingSenha(false)
+        return
+      }
+
       const { error } = await supabase.auth.updateUser({ password: values.novaSenha })
       if (error) throw error
+
       toast.success('Senha alterada com sucesso!')
       senhaForm.reset()
     } catch {
@@ -171,12 +194,34 @@ export default function PerfilPage() {
 
         <form onSubmit={senhaForm.handleSubmit(handleAlterarSenha)} className="space-y-4">
           <div>
+            <label htmlFor="senhaAtual" className="block text-sm font-medium text-gray-700 mb-2">
+              Senha atual
+            </label>
+            <input
+              id="senhaAtual"
+              type="password"
+              autoComplete="current-password"
+              {...senhaForm.register('senhaAtual')}
+              placeholder="••••••••"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+                senhaForm.formState.errors.senhaAtual ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {senhaForm.formState.errors.senhaAtual && (
+              <p className="text-sm text-red-500 mt-1">
+                {senhaForm.formState.errors.senhaAtual.message}
+              </p>
+            )}
+          </div>
+
+          <div>
             <label htmlFor="novaSenha" className="block text-sm font-medium text-gray-700 mb-2">
               Nova senha
             </label>
             <input
               id="novaSenha"
               type="password"
+              autoComplete="new-password"
               {...senhaForm.register('novaSenha')}
               placeholder="••••••••"
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
@@ -200,6 +245,7 @@ export default function PerfilPage() {
             <input
               id="confirmarSenha"
               type="password"
+              autoComplete="new-password"
               {...senhaForm.register('confirmarSenha')}
               placeholder="••••••••"
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
