@@ -266,7 +266,7 @@ export default function EventoModal({ evento, isOpen, onClose }: EventoModalProp
 
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Sobre o Evento</h3>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line text-justify">
+              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                 {evento.descricao}
               </p>
             </div>
