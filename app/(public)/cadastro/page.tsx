@@ -43,6 +43,11 @@ export default function CadastroPage() {
   })()
 
   const onSubmit = async (data: CadastroFormData) => {
+    // `nome`, `role` and `telefone` are stored in user_metadata so the
+    // `handle_new_adorador` database trigger can create the matching
+    // `adoradores` row automatically (see migration 006). The trigger is
+    // the source of truth — the client no longer inserts the profile
+    // itself, which is what previously left worshipers orphaned.
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -50,6 +55,7 @@ export default function CadastroPage() {
         data: {
           nome: data.nome,
           role: 'adorador',
+          telefone: data.telefone || null,
         },
       },
     })
