@@ -17,9 +17,9 @@ import { useAuth } from '@/lib/hooks/useAuth'
 
 const menuItems = [
   { href: '/adorador/dashboard', label: 'Início', icon: LayoutDashboard },
-  { href: '/adorador/eventos', label: 'Meus Eventos', icon: Calendar },
   { href: '/adorador/mural', label: 'Mural de Avisos', icon: Bell },
   { href: '/adorador/oracao', label: 'Pedidos de Oração', icon: HeartHandshake },
+  { href: '/adorador/eventos', label: 'Meus Eventos', icon: Calendar },
   { href: '/adorador/perfil', label: 'Meu Perfil', icon: User },
 ]
 

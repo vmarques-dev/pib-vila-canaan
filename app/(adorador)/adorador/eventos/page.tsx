@@ -111,7 +111,9 @@ export default function MeusEventosPage() {
 
     return (
       <li key={inscricao.id} className="bg-white rounded-xl shadow p-5">
-        <div className="flex items-start gap-4">
+        {/* Date box, title and action share a row centered to each other;
+            the event details sit below, spanning the card width. */}
+        <div className="flex items-center gap-4">
           <div
             className={`rounded-lg p-2 text-center min-w-[56px] ${
               passado ? 'bg-gray-100 text-gray-500' : 'bg-blue-50 text-blue-700'
@@ -125,29 +127,7 @@ export default function MeusEventosPage() {
             </p>
           </div>
 
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-gray-900">{evento.titulo}</p>
-            <div className="mt-1 space-y-0.5 text-sm text-gray-500">
-              <p className="flex items-center gap-1.5">
-                <Calendar size={14} />
-                {parseLocalDate(evento.data_inicio).toLocaleDateString('pt-BR', {
-                  day: '2-digit',
-                  month: 'long',
-                  year: 'numeric',
-                })}
-              </p>
-              {horario && (
-                <p className="flex items-center gap-1.5">
-                  <Clock size={14} />
-                  {horario}
-                </p>
-              )}
-              <p className="flex items-center gap-1.5">
-                <MapPin size={14} />
-                {evento.local}
-              </p>
-            </div>
-          </div>
+          <p className="flex-1 min-w-0 font-semibold text-gray-900">{evento.titulo}</p>
 
           {passado ? (
             <span className="flex items-center gap-1 text-xs text-gray-400 shrink-0">
@@ -181,6 +161,27 @@ export default function MeusEventosPage() {
               Cancelar
             </button>
           )}
+        </div>
+
+        <div className="mt-3 space-y-0.5 text-sm text-gray-500">
+          <p className="flex items-center gap-1.5">
+            <Calendar size={14} />
+            {parseLocalDate(evento.data_inicio).toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </p>
+          {horario && (
+            <p className="flex items-center gap-1.5">
+              <Clock size={14} />
+              {horario}
+            </p>
+          )}
+          <p className="flex items-center gap-1.5">
+            <MapPin size={14} />
+            {evento.local}
+          </p>
         </div>
       </li>
     )
