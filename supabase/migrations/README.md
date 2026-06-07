@@ -40,6 +40,7 @@ The migrations are split into two phases. Run all the named ones first
 13. `004_audit_fixes.sql` — Fixes identified during a database audit
 14. `005_drop_missao_visao_columns.sql` — Drops the unused `missao` and `visao` columns from `informacoes_igreja`
 15. `006_auto_create_adorador_profile.sql` — Trigger that auto-creates an `adoradores` row on adorador signup, plus a backfill for existing orphans
+16. `007_adorador_cancel_inscricao.sql` — Adds a DELETE policy so worshipers can cancel their own event registrations
 
 ## Migration 001: usuarios_admin Table
 
