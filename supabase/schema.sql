@@ -394,6 +394,43 @@ CREATE TRIGGER tr_informacoes_igreja_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+-- Cria o perfil em adoradores automaticamente quando um novo usuário
+-- com role = 'adorador' é inserido em auth.users. Mantém auth.users e
+-- adoradores sempre consistentes, independente da origem do cadastro.
+-- (Ver migration 006_auto_create_adorador_profile.sql.)
+CREATE OR REPLACE FUNCTION public.handle_new_adorador()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    IF NEW.raw_user_meta_data->>'role' = 'adorador' THEN
+        INSERT INTO public.adoradores (user_id, nome, email, telefone)
+        SELECT
+            NEW.id,
+            COALESCE(NEW.raw_user_meta_data->>'nome', ''),
+            NEW.email,
+            NULLIF(NEW.raw_user_meta_data->>'telefone', '')
+        WHERE NOT EXISTS (
+            SELECT 1 FROM public.adoradores WHERE user_id = NEW.id
+        );
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+COMMENT ON FUNCTION public.handle_new_adorador() IS
+    'Creates an adoradores row when a new auth.users row has role = adorador.';
+
+DROP TRIGGER IF EXISTS on_auth_user_created_adorador ON auth.users;
+
+CREATE TRIGGER on_auth_user_created_adorador
+    AFTER INSERT ON auth.users
+    FOR EACH ROW
+    EXECUTE FUNCTION public.handle_new_adorador();
+
 -- =============================================
 -- SEÇÃO 6: ROW LEVEL SECURITY (RLS)
 -- =============================================

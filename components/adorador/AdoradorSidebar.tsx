@@ -3,13 +3,23 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, User, Bell, HeartHandshake, Menu, X, LogOut } from 'lucide-react'
+import {
+  LayoutDashboard,
+  User,
+  Bell,
+  HeartHandshake,
+  Calendar,
+  Menu,
+  X,
+  LogOut,
+} from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 
 const menuItems = [
   { href: '/adorador/dashboard', label: 'Início', icon: LayoutDashboard },
   { href: '/adorador/mural', label: 'Mural de Avisos', icon: Bell },
   { href: '/adorador/oracao', label: 'Pedidos de Oração', icon: HeartHandshake },
+  { href: '/adorador/eventos', label: 'Meus Eventos', icon: Calendar },
   { href: '/adorador/perfil', label: 'Meu Perfil', icon: User },
 ]
 

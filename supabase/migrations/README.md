@@ -39,6 +39,9 @@ The migrations are split into two phases. Run all the named ones first
 12. `003_simplify_versiculo_destaque.sql` — Removes period scheduling from the featured-verse table
 13. `004_audit_fixes.sql` — Fixes identified during a database audit
 14. `005_drop_missao_visao_columns.sql` — Drops the unused `missao` and `visao` columns from `informacoes_igreja`
+15. `006_auto_create_adorador_profile.sql` — Trigger that auto-creates an `adoradores` row on adorador signup, plus a backfill for existing orphans
+16. `007_adorador_cancel_inscricao.sql` — Adds a DELETE policy so worshipers can cancel their own event registrations
+17. `008_auto_complete_past_events.sql` — Backfills past events as completed and schedules a daily `pg_cron` job to keep them current (requires the `pg_cron` extension enabled)
 
 ## Migration 001: usuarios_admin Table
 
