@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IMaskInput } from 'react-imask'
 import { motion } from 'framer-motion'
@@ -19,6 +19,7 @@ export default function ContatoForm() {
     formState: { errors },
     reset,
     watch,
+    control,
   } = useForm<ContatoFormData>({
     resolver: zodResolver(contatoSchema),
   })
@@ -105,15 +106,24 @@ export default function ContatoForm() {
               <label htmlFor="telefone" className="block text-sm font-medium text-gray-700 mb-2">
                 Telefone (opcional)
               </label>
-              <IMaskInput
-                {...register('telefone')}
-                id="telefone"
-                mask="(00) 00000-0000"
-                placeholder="(21) 99999-9999"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                  errors.telefone ? 'border-red-500' : 'border-gray-300'
-                }`}
-                disabled={loading}
+              <Controller
+                name="telefone"
+                control={control}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <IMaskInput
+                    id="telefone"
+                    mask="(00) 00000-0000"
+                    value={value ?? ''}
+                    onAccept={(val) => onChange(val)}
+                    onBlur={onBlur}
+                    inputRef={ref}
+                    placeholder="(21) 99999-9999"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                      errors.telefone ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    disabled={loading}
+                  />
+                )}
               />
               {errors.telefone && (
                 <p className="mt-1 text-sm text-red-500">{errors.telefone.message}</p>
