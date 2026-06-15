@@ -247,11 +247,11 @@ export default function DashboardPage() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900">Pedidos de Oração em Aberto</h2>
-              <p className="text-sm text-gray-500">
-                {stats.pedidosOracaoAbertos === 0
-                  ? 'Nenhum pedido pendente'
-                  : `${stats.pedidosOracaoAbertos} pendente${stats.pedidosOracaoAbertos !== 1 ? 's' : ''}`}
-              </p>
+              {stats.pedidosOracaoAbertos > 0 && (
+                <p className="text-sm text-gray-500">
+                  {`${stats.pedidosOracaoAbertos} pendente${stats.pedidosOracaoAbertos !== 1 ? 's' : ''}`}
+                </p>
+              )}
             </div>
           </div>
           <Link href="/admin/oracao" className="text-sm text-blue-600 hover:underline">
