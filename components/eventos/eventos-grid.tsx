@@ -74,7 +74,7 @@ export default function EventosGrid({ proximosEventos, eventosAnteriores }: Even
             </div>
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="mt-auto">
           <Button
             className="w-full bg-blue-700 hover:bg-blue-800"
             onClick={(e) => {
