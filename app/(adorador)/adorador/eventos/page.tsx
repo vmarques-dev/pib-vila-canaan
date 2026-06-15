@@ -135,7 +135,7 @@ export default function MeusEventosPage() {
               Realizado
             </span>
           ) : confirmando ? (
-            <div className="flex flex-col gap-1 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => handleCancelar(inscricao.id)}
                 disabled={cancelando}
