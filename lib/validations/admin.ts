@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { GALERIA_CATEGORIAS } from '@/lib/constants/config'
 
 /**
  * Validation schema for Bible studies.
@@ -58,7 +59,7 @@ export const galeriaSchema = z.object({
     .min(3, 'Título deve ter no mínimo 3 caracteres')
     .max(100, 'Título deve ter no máximo 100 caracteres'),
   url: z.string().url('URL da imagem inválida').or(z.literal('')).optional(),
-  categoria: z.enum(['Cultos', 'Jovens', 'Eventos Especiais', 'Infantil'], {
+  categoria: z.enum(GALERIA_CATEGORIAS, {
     error: 'Selecione uma categoria',
   }),
   descricao: z

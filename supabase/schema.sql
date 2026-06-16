@@ -275,7 +275,7 @@ COMMENT ON COLUMN equipe_pastoral.ativo IS
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'categoria_galeria') THEN
-        CREATE TYPE categoria_galeria AS ENUM ('Cultos', 'Jovens', 'Eventos Especiais', 'Infantil');
+        CREATE TYPE categoria_galeria AS ENUM ('Cultos', 'Eventos', 'Jovens', 'Infantil', 'Nossa Igreja', 'Batismos', 'Santa Ceia', 'Missões e Ação Social');
     END IF;
 END $$;
 
@@ -296,7 +296,7 @@ CREATE TABLE galeria (
 COMMENT ON TABLE galeria IS
   'Galeria de fotos da igreja organizadas por categoria.';
 COMMENT ON COLUMN galeria.categoria IS
-  'Categoria da foto: Cultos, Jovens, Eventos Especiais, Infantil.';
+  'Categoria da foto: Cultos, Eventos, Jovens, Infantil, Nossa Igreja, Batismos, Santa Ceia, Missões e Ação Social.';
 COMMENT ON COLUMN galeria.url IS
   'URL da imagem (pode ser do Supabase Storage ou URL externa).';
 COMMENT ON COLUMN galeria.ordem IS

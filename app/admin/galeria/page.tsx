@@ -12,14 +12,14 @@ import { AdminModal } from '@/components/admin/AdminModal'
 import { ImageUpload } from '@/components/admin/ImageUpload'
 import { galeriaSchema, type GaleriaFormData } from '@/lib/validations/admin'
 import { uploadImage, deleteImage, optimizeImage } from '@/lib/services/storage.service'
-import { STORAGE_CONFIG } from '@/lib/constants/config'
+import { STORAGE_CONFIG, GALERIA_CATEGORIAS, type GaleriaCategoria } from '@/lib/constants/config'
 
 interface Foto {
   id: string
   titulo: string
   url: string
   descricao: string
-  categoria: 'Cultos' | 'Jovens' | 'Eventos Especiais' | 'Infantil'
+  categoria: GaleriaCategoria
   created_at: string
 }
 
@@ -248,10 +248,11 @@ export default function GaleriaPage() {
               <option value="" disabled>
                 Selecione uma categoria
               </option>
-              <option value="Cultos">Cultos</option>
-              <option value="Jovens">Jovens</option>
-              <option value="Eventos Especiais">Eventos Especiais</option>
-              <option value="Infantil">Infantil</option>
+              {GALERIA_CATEGORIAS.map((categoria) => (
+                <option key={categoria} value={categoria}>
+                  {categoria}
+                </option>
+              ))}
             </select>
             {errors.categoria && (
               <p className="text-sm text-red-500 mt-1">{errors.categoria.message}</p>
