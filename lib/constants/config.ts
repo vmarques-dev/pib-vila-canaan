@@ -22,6 +22,24 @@ export const SITE_CONFIG = {
   ],
 } as const
 
+/**
+ * Photo categories for the gallery. Single source of truth shared by the
+ * Zod schema, the database type, the admin form select and the public
+ * filter — add or rename a category here and every place stays in sync.
+ */
+export const GALERIA_CATEGORIAS = [
+  'Cultos',
+  'Eventos',
+  'Jovens',
+  'Infantil',
+  'Nossa Igreja',
+  'Batismos',
+  'Santa Ceia',
+  'Missões e Ação Social',
+] as const
+
+export type GaleriaCategoria = (typeof GALERIA_CATEGORIAS)[number]
+
 export const STORAGE_CONFIG = {
   MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
   ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'] as const,

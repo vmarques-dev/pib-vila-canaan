@@ -1,3 +1,5 @@
+import type { GaleriaCategoria } from '@/lib/constants/config'
+
 export interface VersiculoDestaque {
   id: string
   livro: string
@@ -48,7 +50,7 @@ export interface Estudo {
 export interface Galeria {
   id: string
   titulo: string
-  categoria: 'Cultos' | 'Jovens' | 'Eventos Especiais' | 'Infantil'
+  categoria: GaleriaCategoria
   url: string
   descricao?: string
   ordem: number
