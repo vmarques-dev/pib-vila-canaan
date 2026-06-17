@@ -68,7 +68,18 @@ export async function POST(request: Request) {
       )
     }
 
-    const { nome, email, assunto, mensagem } = validation.data
+    const { nome, email, telefone, assunto, mensagem } = validation.data
+
+    // The phone is optional. Only render its field when the visitor
+    // actually provided one, so the email stays clean otherwise.
+    const telefoneField = telefone
+      ? `
+    <div class="field">
+      <span class="label">Telefone:</span>
+      <div class="value">${escapeHtml(telefone)}</div>
+    </div>
+`
+      : ''
 
     const { error } = await resend.emails.send({
       from: 'PIB Vila Canaan <onboarding@resend.dev>',
@@ -142,7 +153,7 @@ export async function POST(request: Request) {
       <span class="label">Email:</span>
       <div class="value"><a href="mailto:${escapeHtml(email)}" style="color: #1d4ed8; text-decoration: none;">${escapeHtml(email)}</a></div>
     </div>
-
+${telefoneField}
     <div class="field">
       <span class="label">Assunto:</span>
       <div class="value">${escapeHtml(assunto)}</div>

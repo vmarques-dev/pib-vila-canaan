@@ -5,13 +5,14 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Galeria } from '@/types'
 import { Button } from '@/components/ui/button'
+import { GALERIA_CATEGORIAS } from '@/lib/constants/config'
 import { Lightbox } from './lightbox'
 
 interface GaleriaGridProps {
   fotos: Galeria[]
 }
 
-const categorias = ['Todas', 'Cultos', 'Jovens', 'Eventos Especiais', 'Infantil']
+const categorias = ['Todas', ...GALERIA_CATEGORIAS]
 
 export default function GaleriaGrid({ fotos }: GaleriaGridProps) {
   const [categoriaAtiva, setCategoriaAtiva] = useState('Todas')

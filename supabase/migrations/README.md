@@ -42,6 +42,7 @@ The migrations are split into two phases. Run all the named ones first
 15. `006_auto_create_adorador_profile.sql` — Trigger that auto-creates an `adoradores` row on adorador signup, plus a backfill for existing orphans
 16. `007_adorador_cancel_inscricao.sql` — Adds a DELETE policy so worshipers can cancel their own event registrations
 17. `008_auto_complete_past_events.sql` — Backfills past events as completed and schedules a daily `pg_cron` job to keep them current (requires the `pg_cron` extension enabled)
+18. `009_expand_galeria_categories.sql` — Renames the `Eventos Especiais` gallery category to `Eventos` and adds `Nossa Igreja`, `Batismos`, `Santa Ceia` and `Missões e Ação Social` to the `categoria_galeria` enum (idempotent)
 
 ## Migration 001: usuarios_admin Table
 

@@ -54,7 +54,9 @@ export default function EventosGrid({ proximosEventos, eventosAnteriores }: Even
           </div>
         )}
         <CardHeader>
-          <CardTitle className="text-2xl text-blue-700">{evento.titulo}</CardTitle>
+          <CardTitle className="text-2xl text-blue-700 min-h-[2lh] line-clamp-2">
+            {evento.titulo}
+          </CardTitle>
           <CardDescription className="space-y-2 text-base">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
@@ -74,7 +76,7 @@ export default function EventosGrid({ proximosEventos, eventosAnteriores }: Even
             </div>
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="mt-auto">
           <Button
             className="w-full bg-blue-700 hover:bg-blue-800"
             onClick={(e) => {

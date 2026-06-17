@@ -278,7 +278,7 @@ CREATE TABLE equipe_pastoral (
 CREATE TABLE galeria (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   titulo      TEXT NOT NULL,
-  categoria   TEXT NOT NULL, -- 'Cultos' | 'Jovens' | 'Eventos Especiais' | 'Infantil'
+  categoria   TEXT NOT NULL, -- 'Cultos' | 'Eventos' | 'Jovens' | 'Infantil' | 'Nossa Igreja' | 'Batismos' | 'Santa Ceia' | 'Missões e Ação Social'
   url         TEXT NOT NULL,
   descricao   TEXT,
   ordem       INTEGER NOT NULL DEFAULT 0,
