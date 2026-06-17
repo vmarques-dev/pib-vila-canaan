@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import { useAdminCRUD } from '@/hooks/useAdminCRUD'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { AdminModal } from '@/components/admin/AdminModal'
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
 import { ImageUpload } from '@/components/admin/ImageUpload'
 import { galeriaSchema, type GaleriaFormData } from '@/lib/validations/admin'
 import { uploadImage, deleteImage, optimizeImage } from '@/lib/services/storage.service'
@@ -34,6 +35,8 @@ export default function GaleriaPage() {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState<Foto | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const {
     items: fotos,
@@ -138,13 +141,24 @@ export default function GaleriaPage() {
     resetImageState()
   }
 
-  const handleDelete = async (foto: Foto) => {
+  const executeDelete = async () => {
+    if (!confirmDelete) return
+
+    const foto = confirmDelete
     const isSupabaseUrl = foto.url.includes(STORAGE_CONFIG.BUCKETS.GALERIA)
 
-    await crudDelete(foto.id, 'Tem certeza que deseja deletar esta foto?')
+    setIsProcessing(true)
+    try {
+      // Confirmation is handled by ConfirmDialog, so bypass the hook's
+      // native confirm() by passing an empty message.
+      const deleted = await crudDelete(foto.id, '')
 
-    if (isSupabaseUrl) {
-      await deleteImage(foto.url, STORAGE_CONFIG.BUCKETS.GALERIA)
+      if (deleted && isSupabaseUrl) {
+        await deleteImage(foto.url, STORAGE_CONFIG.BUCKETS.GALERIA)
+      }
+    } finally {
+      setIsProcessing(false)
+      setConfirmDelete(null)
     }
   }
 
@@ -190,7 +204,7 @@ export default function GaleriaPage() {
                 <h3 className="font-semibold text-gray-900 mb-1">{foto.titulo}</h3>
                 {foto.descricao && <p className="text-sm text-gray-600 mb-3">{foto.descricao}</p>}
                 <button
-                  onClick={() => handleDelete(foto)}
+                  onClick={() => setConfirmDelete(foto)}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm"
                   aria-label={`Deletar foto ${foto.titulo}`}
                 >
@@ -296,6 +310,18 @@ export default function GaleriaPage() {
           </div>
         </form>
       </AdminModal>
+
+      <ConfirmDialog
+        isOpen={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={executeDelete}
+        title="Excluir foto"
+        message={`Tem certeza que deseja excluir a foto "${confirmDelete?.titulo}"? Esta ação não pode ser desfeita.`}
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        variant="danger"
+        isLoading={isProcessing}
+      />
     </main>
   )
 }
